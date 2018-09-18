@@ -1,23 +1,7 @@
 function DebugPrint(...)
-  local spew = Convars:GetInt('barebones_spew') or -1
-  if spew == -1 and BAREBONES_DEBUG_SPEW then
-    spew = 1
-  end
-
-  if spew == 1 then
-    print(...)
-  end
-end
-
-function DebugPrintTable(...)
-  local spew = Convars:GetInt('barebones_spew') or -1
-  if spew == -1 and BAREBONES_DEBUG_SPEW then
-    spew = 1
-  end
-
-  if spew == 1 then
-    PrintTable(...)
-  end
+	if GameRules.Debug then
+		print(...)
+	end
 end
 
 function PrintTable(t, indent, done)
@@ -56,6 +40,28 @@ function PrintTable(t, indent, done)
       end
     end
   end
+end
+
+-- Given element and table, returns true if element is in the table.
+function TableContains(table1, element)
+    if table1 == nil then return false end
+    for k,v in pairs(table1) do
+        if k == element then
+            return true
+        end
+    end
+    return false
+end
+
+function TableLength(table1)
+    if table1 == nil or table1 == {} then
+        return 0
+    end
+    local length = 0
+    for k,v in pairs(table1) do
+        length = length + 1
+    end
+    return length
 end
 
 -- Colors
@@ -98,15 +104,10 @@ function DebugAllCalls()
     end
 end
 
-
-
-
---[[Author: Noya
-  Date: 09.08.2015.
-  Hides all dem hats
-]]
-function HideWearables( unit )
-  unit.hiddenWearables = {} -- Keep every wearable handle in a table to show them later
+-- Author: Noya
+-- This function hides all dota item cosmetics (hats/wearables) from the hero/unit and store them into a handle variable
+function HideWearables(unit)
+	unit.hiddenWearables = {} -- Keep every wearable handle in a table to show them later
     local model = unit:FirstMoveChild()
     while model ~= nil do
         if model:GetClassname() == "dota_item_wearable" then
@@ -117,9 +118,61 @@ function HideWearables( unit )
     end
 end
 
-function ShowWearables( unit )
+-- Author: Noya
+-- This function un-hides (shows) wearables that were hidden with HideWearables() function.
+function ShowWearables(unit)
+	for i,v in pairs(unit.hiddenWearables) do
+		v:RemoveEffects(EF_NODRAW)
+	end
+end
 
-  for i,v in pairs(unit.hiddenWearables) do
-    v:RemoveEffects(EF_NODRAW)
-  end
+-- Author: Noya
+-- This function changes (swaps) dota item cosmetic models (hats/wearables)
+function SwapWearable(unit, target_model, new_model)
+    local wearable = unit:FirstMoveChild()
+    while wearable ~= nil do
+        if wearable:GetClassname() == "dota_item_wearable" then
+            if wearable:GetModelName() == target_model then
+                wearable:SetModel( new_model )
+                return
+            end
+        end
+        wearable = wearable:NextMovePeer()
+    end
+end
+
+-- This function checks if a given unit is Roshan, returns boolean value;
+function IsRoshan(unit)
+	if unit:IsAncient() and unit:GetName() == "npc_dota_roshan" then
+		return true
+	else
+		return false
+	end
+end
+
+-- This function checks if this unit/entity is a fountain or not; returns boolean value;
+function IsFountain(unit)
+	if unit:GetName() == "ent_dota_fountain_bad" or unit:GetName() == "ent_dota_fountain_good" then
+		return true
+	end
+	
+	return false
+end
+
+-- Initializes heroes' innate abilities
+function InitializeInnateAbilities(hero)
+
+	-- List of innate abilities
+	local innate_abilities = {
+		"innate_ability1",
+		"innate_ability2"
+	}
+
+	-- Cycle through any innate abilities found, then upgrade them
+	for i = 1, #innate_abilities do
+		local current_ability = hero:FindAbilityByName(innate_abilities[i])
+		if current_ability then
+			current_ability:SetLevel(1)
+		end
+	end
 end

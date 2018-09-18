@@ -1,6 +1,6 @@
 # Barebones Starter Mod Kit
 
-### Version 1.01c
+### Version 2.00
 ### [Change Log](https://github.com/bmddota/barebones/blob/source2/ChangeLog.md)
 
 ## Introduction
@@ -56,41 +56,9 @@ See [libraries/animations.lua](https://github.com/bmddota/barebones/blob/source2
 This library can be used to set up and put in place 'Frankenstein' attachments for attaching props to units.  
 See [libraries/attachments.lua](https://github.com/bmddota/barebones/blob/source2/game/dota_addons/barebones/scripts/vscripts/libraries/attachments.lua) for usage details and examples.
 
-#### playertables.lua  [Change Log](https://github.com/bmddota/barebones/blob/source2/PlayerTablesChangeLog.md)
-This library sets up tables that are shared between server (lua) and client (javascript) between specific (but changeable) clients.  Similar to nettables.
-See [libraries/playertables.lua](https://github.com/bmddota/barebones/blob/source2/game/dota_addons/barebones/scripts/vscripts/libraries/playertables.lua) for usage details and examples.  
-
-#### containers.lua  [Change Log](https://github.com/bmddota/barebones/blob/source2/ContainersChangeLog.md)
-This library allows for additional inventory/item containing objects and shops to be used in your game mode.
-See [libraries/containers.lua](https://github.com/bmddota/barebones/blob/source2/game/dota_addons/barebones/scripts/vscripts/libraries/containers.lua) for usage details.  
-See [examples/playground.lua](https://github.com/bmddota/barebones/blob/source2/game/dota_addons/barebones/scripts/vscripts/examples/playground.lua) for detailed examples.
-
-#### worldpanels.lua  [Change Log](https://github.com/bmddota/barebones/blob/source2/WorldPanelsChangeLog.md)
-This library allows for creating panorama layout panels that track the world position of an entity (or fixed world coordinate).
-See [libraries/worldpanels.lua](https://github.com/bmddota/barebones/blob/source2/game/dota_addons/barebones/scripts/vscripts/libraries/worldpanels.lua) for usage details and examples.  
-
 #### selection.lua  [By Noya](https://github.com/MNoya)
 This library allows for querying and managing the selection status of players from the server-side lua script.  It also allows for automatic redirection and selection event handling.
 See [libraries/selection.lua](https://github.com/bmddota/barebones/blob/source2/game/dota_addons/barebones/scripts/vscripts/libraries/selection.lua) for usage details and examples.  
-
-#### pathgraph.lua  [Change Log](https://github.com/bmddota/barebones/blob/source2/PathGraphChangeLog.md)
-This library constructs a full-edge graph of all "path_corner" objects, allowing for the use of the path links via lua script.
-See [libraries/pathgraph.lua](https://github.com/bmddota/barebones/blob/source2/game/dota_addons/barebones/scripts/vscripts/libraries/pathgraph.lua) for usage details and examples.  
-
-#### modmaker.lua  [Change Log](https://github.com/bmddota/barebones/blob/source2/ModmakerChangeLog.md)
-This library offers a searchable version of the lua server vscript API through the "modmaker_api" console command (in tools mode)
-See [libraries/modmaker.lua](https://github.com/bmddota/barebones/blob/source2/game/dota_addons/barebones/scripts/vscripts/libraries/modmaker.lua) for usage details and examples.  
-
-
-
-## Internals
-Barebones uses a few internal lua files in order to put together and handle the properties and pseudo-events systems.  You will likely not have to adjust these files at all.
-These files are found in the internal directory.
-
-## Debugging
-Barebones now only prints out (spams) debugging information when told to by setting the BAREBONES_DEBUG_SPEW value in gamemode.lua to true.
-Previously there was a 'barebones_spew' cvar that could be used to change the debug printing state at any time from the console, but Valve broke RegisterConvar for some reason, so this has been disabled.
-
 
 ## Additional Information
 - Barebones also comes with a sample loading screen implementation in panorama which you can view and edit via the content panorama directory.

@@ -55,7 +55,7 @@
 
   <Panel>
     <!-- CustomUIElements go here.-->
-    <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/barebones_notifications.xml"/>
+    <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/barebones_hud_base.xml"/>
     <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/barebones_attachments.xml"/>
     <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/selection.xml"/>
 	<CustomUIElement type="HeroSelection" layoutfile="file://{resources}/layout/custom_game/hero_select_overlay.xml"/>
