@@ -39,7 +39,7 @@ end
 -- Fetches a player's hero
 function CDOTA_PlayerResource:GetAssignedHero(playerID)
 	if self:IsRealPlayer(playerID) then
-		local player = self:GetPlayer(playerID) -- can be nil if this check is not delayed 1 or more frames
+		local player = self:GetPlayer(playerID)
 		if player then 
 			local hero = player:GetAssignedHero()
 			if hero then
@@ -109,7 +109,7 @@ function CDOTA_PlayerResource:DecrementTeamPlayerCount(playerID)
 	end
 end
 
--- While active, redistributes a player's gold to its allies
+-- While active, redistributes a player's gold to its allies (Work in Progress)
 function CDOTA_PlayerResource:StartAbandonGoldRedistribution(playerID)
 
 	-- Set redistribution as active
@@ -121,7 +121,7 @@ function CDOTA_PlayerResource:StartAbandonGoldRedistribution(playerID)
 	local current_gold = self:GetGold(playerID)
 	local current_allies = {}
 	local ally_amount = 0
-	local gold_per_interval = 3 * ( 1 + CUSTOM_GOLD_BONUS * 0.01 ) / GOLD_TICK_TIME
+	local gold_per_interval = GOLD_PER_TICK
 
 	-- Distribute initial gold
 	for id = 0, 19 do

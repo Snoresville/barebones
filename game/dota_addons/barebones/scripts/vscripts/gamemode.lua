@@ -1,20 +1,22 @@
 -- This is the primary barebones gamemode script and should be used to assist in initializing your game mode
 BAREBONES_VERSION = "2.00"
 
--- This library allow for easily delayed/timed actions
+-- Timers library allow for easily delayed/timed actions
 require('libraries/timers')
--- This library can be used for advancted physics/motion/collision of units.  See PhysicsReadme.txt for more information.
+-- Physics library can be used for advanced physics/motion/collision of units.  See PhysicsReadme.txt for more information.
 require('libraries/physics')
--- This library can be used for advanced 3D projectile systems.
+-- Projectiles library can be used for advanced 3D projectile systems.
 require('libraries/projectiles')
--- This library can be used for sending panorama notifications to the UIs of players/teams/everyone
+-- Notifications library can be used for sending panorama notifications to the UIs of players/teams/everyone
 require('libraries/notifications')
--- This library can be used for starting customized animations on units from lua
+-- Animations library can be used for starting customized animations on units from lua
 require('libraries/animations')
--- This library can be used for performing "Frankenstein" attachments on units
+-- Attachments library can be used for performing "Frankenstein" attachments on units
 require('libraries/attachments')
--- This library (by Noya) provides player selection inspection and management from server lua
+-- Selection library (by Noya) provides player selection inspection and management from server lua
 require('libraries/selection')
+-- Player library extending PlayerResource
+require('libraries/player')
 
 -- settings.lua is where you can specify many different properties for your game mode and is one of the core barebones files.
 require('settings')
@@ -77,8 +79,6 @@ function your_gamemode_name:OnHeroInGame(hero)
 	Timers:CreateTimer(0.5, function()
 		local playerID = hero:GetPlayerID()	-- never nil (-1 by default), needs delay 1 or more frames
 		
-		GameRules.Heroes[playerID] = hero
-	
 		if PlayerResource:IsFakeClient(playerID) then
 			-- This is happening only for bots
 			-- Set starting gold for bots
@@ -237,10 +237,15 @@ function your_gamemode_name:InitGameMode()
 	-- Setting the Tracking Projectile filter
 	gamemode:SetTrackingProjectileFilter(Dynamic_Wrap(your_gamemode_name, "ProjectileFilter"), self)
   
-	-- Lua Modifiers not tied to ability or unit
+	-- Global Lua Modifiers
 	LinkLuaModifier("modifier_custom_invulnerable", "modifiers/modifier_custom_invulnerable", LUA_MODIFIER_MOTION_NONE)
+	
+	-- Talent modifiers (this can be done in ability scripts, but it can be done here as well)
+	LinkLuaModifier("modifier_ability_name_talent_name_1", "modifiers/talents/modifier_ability_name_talent_name_1", LUA_MODIFIER_MOTION_NONE)
+	LinkLuaModifier("modifier_ability_name_talent_name_2", "modifiers/talents/modifier_ability_name_talent_name_2", LUA_MODIFIER_MOTION_NONE)
+	LinkLuaModifier("modifier_ability_name_talent_name_3", "modifiers/talents/modifier_ability_name_talent_name_3", LUA_MODIFIER_MOTION_NONE)
 
-	print("Your game mode name initialized.")
+	print("your_gamemode_name initialized.")
 	--DebugPrint('[BAREBONES] Done loading Barebones gamemode!\n\n')
 end
 

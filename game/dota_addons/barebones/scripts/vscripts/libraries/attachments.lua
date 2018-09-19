@@ -60,9 +60,7 @@ ATTACHMENTS_VERSION = "1.00"
 
 ]]
 
---LinkLuaModifier( "modifier_animation_freeze", "libraries/modifiers/modifier_animation_freeze.lua", LUA_MODIFIER_MOTION_NONE )
-
-LinkLuaModifier( "modifier_animation_freeze_stun", "libraries/attachments.lua", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier("modifier_animation_freeze_stun", "libraries/attachments.lua", LUA_MODIFIER_MOTION_NONE )
 
 modifier_animation_freeze_stun = class({})
 

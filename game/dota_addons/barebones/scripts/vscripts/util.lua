@@ -168,7 +168,7 @@ function InitializeInnateAbilities(hero)
 		"innate_ability2"
 	}
 
-	-- Cycle through any innate abilities found, then upgrade them
+	-- Cycle through any innate abilities found, then set their level to 1
 	for i = 1, #innate_abilities do
 		local current_ability = hero:FindAbilityByName(innate_abilities[i])
 		if current_ability then

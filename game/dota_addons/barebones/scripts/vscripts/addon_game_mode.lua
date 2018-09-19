@@ -7,7 +7,6 @@ end
 
 require('util')
 require('gamemode')
-require('player')
 
 function Precache(context)
 --[[
@@ -52,7 +51,6 @@ end
 
 -- Create the game mode when we activate
 function Activate()
-	print("Your game mode name activated.")
-	--GameRules.GameMode = your_gamemode_name
+	print("your_gamemode_name activated.")
 	your_gamemode_name:InitGameMode()
 end
