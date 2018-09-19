@@ -289,7 +289,6 @@ function your_gamemode_name:CaptureGameMode()
 	end
 
 	gamemode:SetUnseenFogOfWarEnabled(USE_UNSEEN_FOG_OF_WAR)
-	
 	gamemode:SetDaynightCycleDisabled(DISABLE_DAY_NIGHT_CYCLE)
 	gamemode:SetKillingSpreeAnnouncerDisabled(DISABLE_KILLING_SPREE_ANNOUNCER)
 	gamemode:SetStickyItemDisabled(DISABLE_STICKY_ITEM)

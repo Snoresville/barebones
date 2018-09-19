@@ -145,9 +145,9 @@ end
 function IsRoshan(unit)
 	if unit:IsAncient() and unit:GetName() == "npc_dota_roshan" then
 		return true
-	else
-		return false
 	end
+	
+	return false
 end
 
 -- This function checks if this unit/entity is a fountain or not; returns boolean value;
@@ -175,4 +175,13 @@ function InitializeInnateAbilities(hero)
 			current_ability:SetLevel(1)
 		end
 	end
+end
+
+
+-- Author: Noya
+-- This function is showing custom Error Messages using notifications library
+function SendErrorMessage(pID, string)
+    Notifications:ClearBottom(pID)
+    Notifications:Bottom(pID, {text=string, style={color='#E62020'}, duration=2})
+    EmitSoundOnClient("General.Cancel", PlayerResource:GetPlayer(pID))
 end
