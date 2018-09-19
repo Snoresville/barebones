@@ -1,6 +1,7 @@
 # Basic Barebones for Dota 2 Modding
 
-Original BMDdota's Barebones can be found [here](https://github.com/bmddota/barebones/blob/source2/)
+Original BMDdota's Barebones can be found [here](https://github.com/bmddota/barebones/blob/source2/).
+
 BMDdota made most libraries. His email: bmddota@gmail.com
 
 ### Version 0.10
