@@ -1,5 +1,5 @@
 function DebugPrint(...)
-	if GameRules.Debug then
+	if USE_DEBUG == true then
 		print(...)
 	end
 end
@@ -176,7 +176,6 @@ function InitializeInnateAbilities(hero)
 		end
 	end
 end
-
 
 -- Author: Noya
 -- This function is showing custom Error Messages using notifications library

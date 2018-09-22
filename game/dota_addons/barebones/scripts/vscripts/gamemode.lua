@@ -1,5 +1,5 @@
 -- This is the primary barebones gamemode script and should be used to assist in initializing your game mode
-BAREBONES_VERSION = "0.20"
+BAREBONES_VERSION = "0.30"
 
 -- Timers library allow for easily delayed/timed actions
 require('libraries/timers')
@@ -12,10 +12,10 @@ require('libraries/notifications')
 -- Animations library can be used for starting customized animations on units from lua
 require('libraries/animations')
 -- Attachments library can be used for performing "Frankenstein" attachments on units
-require('libraries/attachments')
+--require('libraries/attachments')
 -- Selection library (by Noya) provides player selection inspection and management from server lua
 require('libraries/selection')
--- Player library extending PlayerResource
+-- Player library extending PlayerResource - DON'T REMOVE IF YOU INTEND TO USE MOST OF THE STUFF HERE!
 require('libraries/player')
 
 -- settings.lua is where you can specify many different properties for your game mode and is one of the core barebones files.
@@ -39,7 +39,7 @@ require('events')
   This function should generally only be used if the Precache() function in addon_game_mode.lua is not working.
 ]]
 function your_gamemode_name:PostLoadPrecache()
-	--DebugPrint("[BAREBONES] Performing Post-Load precache")    
+	DebugPrint("[BAREBONES] Performing Post-Load precache")
 	--PrecacheItemByNameAsync("item_example_item", function(...) end)
 	--PrecacheItemByNameAsync("example_ability", function(...) end)
 
@@ -52,7 +52,7 @@ end
   It can be used to initialize state that isn't initializeable in InitGameMode() but needs to be done before everyone loads in.
 ]]
 function your_gamemode_name:OnFirstPlayerLoaded()
-	--DebugPrint("[BAREBONES] First Player has loaded")
+	DebugPrint("[BAREBONES] First Player has loaded")
 end
 
 --[[
@@ -60,7 +60,7 @@ end
   It can be used to initialize non-hero player state or adjust the hero selection (i.e. force random etc)
 ]]
 function your_gamemode_name:OnAllPlayersLoaded()
-	--DebugPrint("[BAREBONES] All Players have loaded into the game")
+	DebugPrint("[BAREBONES] All Players have loaded into the game")
 end
 
 --[[
@@ -71,7 +71,7 @@ end
   The hero parameter is the hero entity that just spawned in
 ]]
 function your_gamemode_name:OnHeroInGame(hero)
-	--DebugPrint("[BAREBONES] Hero spawned in game for first time -- " .. hero:GetUnitName())
+	DebugPrint("[BAREBONES] Hero spawned in game for the first time -- " .. hero:GetUnitName())
 
 	-- Innate abilities (this is applied to custom created heroes/illusions too)
 	InitializeInnateAbilities(hero)
@@ -121,15 +121,13 @@ end
   is useful for starting any game logic timers/thinkers, beginning the first round, etc.
 ]]
 function your_gamemode_name:OnGameInProgress()
-	--DebugPrint("[BAREBONES] The game has officially begun")
+	DebugPrint("[BAREBONES] The game has officially begun")
 end
-
-
 
 -- This function initializes the game mode and is called before anyone loads into the game
 -- It can be used to pre-initialize any values/tables that will be needed later
 function your_gamemode_name:InitGameMode()
-	--DebugPrint('[BAREBONES] Starting to load Barebones gamemode...')
+	DebugPrint("[BAREBONES] Starting to load Game Rules.")
 	-- Setup rules
 	GameRules:SetHeroRespawnEnabled(ENABLE_HERO_RESPAWN)
 	GameRules:SetUseUniversalShopMode(UNIVERSAL_SHOP_MODE)
@@ -152,7 +150,7 @@ function your_gamemode_name:InitGameMode()
 	
 	--GameRules:SetRuneSpawnTime(RUNE_SPAWN_TIME) Doesn't work?
 	
-	-- This is multiteam configuration stuff
+	-- This is multi-team configuration stuff
 	if USE_AUTOMATIC_PLAYERS_PER_TEAM then
 		local num = math.floor(10/MAX_NUMBER_OF_TEAMS)
 		local count = 0
@@ -182,7 +180,7 @@ function your_gamemode_name:InitGameMode()
 		end
 	end
 	
-	print('[BAREBONES] GameRules set')
+	DebugPrint("[BAREBONES] GameRules set")
 	
 	-- Event Hooks / Listeners
 	ListenToGameEvent('dota_player_gained_level', Dynamic_Wrap(your_gamemode_name, 'OnPlayerLevelUp'), self)
@@ -220,6 +218,8 @@ function your_gamemode_name:InitGameMode()
 	local timeTxt = string.gsub(string.gsub(GetSystemTime(), ':', ''), '0','')
 	math.randomseed(tonumber(timeTxt))
 
+	DebugPrint("[BAREBONES] Setting filters")
+
 	local gamemode = GameRules:GetGameModeEntity()
 	
 	-- Setting the Order filter 
@@ -236,6 +236,15 @@ function your_gamemode_name:InitGameMode()
 	
 	-- Setting the Tracking Projectile filter
 	gamemode:SetTrackingProjectileFilter(Dynamic_Wrap(your_gamemode_name, "ProjectileFilter"), self)
+	
+	-- Setting the rune filters
+	gamemode:SetBountyRunePickupFilter(Dynamic_Wrap(your_gamemode_name, "BountyRuneFilter"), self)
+	gamemode:SetRuneSpawnFilter(Dynamic_Wrap(your_gamemode_name, "RuneSpawnFilter"), self)
+	
+	-- Setting the healing filter
+	gamemode:SetHealingFilter(Dynamic_Wrap(your_gamemode_name, "HealingFilter"), self)
+	
+	DebugPrint("[BAREBONES] Filters set")
   
 	-- Global Lua Modifiers
 	LinkLuaModifier("modifier_custom_invulnerable", "modifiers/modifier_custom_invulnerable", LUA_MODIFIER_MOTION_NONE)
@@ -246,7 +255,7 @@ function your_gamemode_name:InitGameMode()
 	LinkLuaModifier("modifier_ability_name_talent_name_3", "modifiers/talents/modifier_ability_name_talent_name_3", LUA_MODIFIER_MOTION_NONE)
 
 	print("your_gamemode_name initialized.")
-	--DebugPrint('[BAREBONES] Done loading Barebones gamemode!\n\n')
+	DebugPrint("[BAREBONES] Done loading gamemode!\n\n")
 end
 
 -- This function is called as the first player loads and sets up the game mode parameters
@@ -288,6 +297,7 @@ function your_gamemode_name:CaptureGameMode()
 	if USE_DEFAULT_RUNE_SYSTEM then
 		gamemode:SetUseDefaultDOTARuneSpawnLogic(USE_DEFAULT_RUNE_SYSTEM)
 	else
+		-- Most runes are broken by Valve, if they don't fix them: use RuneSpawnFilter
 		for rune, spawn in pairs(ENABLED_RUNES) do
 			gamemode:SetRuneEnabled(rune, spawn)
 		end
@@ -357,7 +367,7 @@ function your_gamemode_name:DamageFilter(keys)
 	return true
 end
 
--- Modifier filter function
+-- Modifier (buffs, debuffs) filter function
 function your_gamemode_name:ModifierFilter(keys)
 	--PrintTable(keys)
 	
@@ -396,6 +406,24 @@ function your_gamemode_name:ProjectileFilter(keys)
 	local is_an_attack_projectile = keys.is_attack		-- values: 1 or 0
 	local max_impact_time = keys.max_impact_time
 	local projectile_speed = keys.move_speed
+	
+	return true
+end
+
+function your_gamemode_name:BountyRuneFilter(keys)
+	--PrintTable(keys)
+	
+	return true
+end
+
+function your_gamemode_name:RuneSpawnFilter(keys)
+	--PrintTable(keys)
+
+	return true
+end
+
+function your_gamemode_name:HealingFilter(keys)
+	--PrintTable(keys)
 	
 	return true
 end

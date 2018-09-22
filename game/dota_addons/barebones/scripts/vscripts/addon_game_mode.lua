@@ -3,6 +3,8 @@
 -- Creating a global gamemode variable;
 if your_gamemode_name == nil then
 	_G.your_gamemode_name = class({})
+else
+	DebugPrint("[BAREBONES] your_gamemode_name class name is occupied, change the name!")
 end
 
 require('util')
@@ -51,6 +53,7 @@ end
 
 -- Create the game mode when we activate
 function Activate()
+	DebugPrint("[BAREBONES] Activating ...")
 	print("your_gamemode_name activated.")
 	your_gamemode_name:InitGameMode()
 end

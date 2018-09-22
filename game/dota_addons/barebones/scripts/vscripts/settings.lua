@@ -1,57 +1,59 @@
 -- In this file you can set up all the properties and settings for your game mode.
+USE_DEBUG = false						-- Should we print statements on almost every function/event call? For debugging.
 
-ENABLE_HERO_RESPAWN = true              -- Should the heroes automatically respawn on a timer or stay dead until manually respawned
-UNIVERSAL_SHOP_MODE = true             	-- Should the shops contain all items?
-ALLOW_SAME_HERO_SELECTION = true        -- Should we let people select the same hero as each other
+ENABLE_HERO_RESPAWN = true				-- Should the heroes automatically respawn on a timer or stay dead until manually respawned
+UNIVERSAL_SHOP_MODE = true				-- Should the shops contain all items?
+ALLOW_SAME_HERO_SELECTION = true		-- Should we let people select the same hero as each other
 
 CUSTOM_GAME_SETUP_TIME = 25.0			-- How long should custom game setup last - the screen where players pick a team?
-HERO_SELECTION_TIME = 30.0              -- How long should we let people select their hero? Should be at least 5 seconds.
-STRATEGY_TIME = 10.0					-- How long should strategy time last? Bug: You can buy items during strategy time and it will not be spent!
+HERO_SELECTION_TIME = 30.0				-- How long should we let people select their hero? Should be at least 5 seconds.
+STRATEGY_TIME = 20.0					-- How long should strategy time last? Bug: You can buy items during strategy time and it will not be spent!
 SHOWCASE_TIME = 5.0						-- How long should show case time be?
-PRE_GAME_TIME = 90.0                    -- How long after people select their heroes should the horn blow and the game start?
-POST_GAME_TIME = 60.0                   -- How long should we let people look at the scoreboard before closing the server automatically?
-TREE_REGROW_TIME = 60.0                 -- How long should it take individual trees to respawn after being cut down/destroyed?
+PRE_GAME_TIME = 90.0					-- How long after people select their heroes should the horn blow and the game start?
+POST_GAME_TIME = 60.0					-- How long should we let people stay around before closing the server automatically?
+TREE_REGROW_TIME = 60.0					-- How long should it take individual trees to respawn after being cut down/destroyed?
 
-GOLD_PER_TICK = 100                     -- How much gold should players get per tick?
-GOLD_TICK_TIME = 5.0                    -- How long should we wait in seconds between gold ticks?
+GOLD_PER_TICK = 100						-- How much gold should players get per tick?
+GOLD_TICK_TIME = 5.0					-- How long should we wait in seconds between gold ticks?
 NORMAL_START_GOLD = 600					-- Starting Gold if picked normally
 RANDOM_START_GOLD = 800					-- Starting Gold if randomed
 
-RECOMMENDED_BUILDS_DISABLED = false     -- Should we disable the recommended builds for heroes
-CAMERA_DISTANCE_OVERRIDE = 1134.0       -- How far out should we allow the camera to go? 1134 is the default in Dota
+RECOMMENDED_BUILDS_DISABLED = false		-- Should we disable the recommended builds for heroes
+CAMERA_DISTANCE_OVERRIDE = 1134.0		-- How far out should we allow the camera to go? 1134 is the default in Dota
 
-MINIMAP_ICON_SIZE = 1                   -- What icon size should we use for our heroes?
-MINIMAP_CREEP_ICON_SIZE = 1             -- What icon size should we use for creeps?
-MINIMAP_RUNE_ICON_SIZE = 1              -- What icon size should we use for runes?
+MINIMAP_ICON_SIZE = 1					-- What icon size should we use for our heroes?
+MINIMAP_CREEP_ICON_SIZE = 1				-- What icon size should we use for creeps?
+MINIMAP_RUNE_ICON_SIZE = 1				-- What icon size should we use for runes?
 
-CUSTOM_BUYBACK_COST_ENABLED = true      -- Should we use a custom buyback cost setting?
-CUSTOM_BUYBACK_COOLDOWN_ENABLED = true  -- Should we use a custom buyback time?
-BUYBACK_ENABLED = true                 	-- Should we allow people to buyback when they die?
-BUYBACK_COOLDOWN_TIME = 0.0				-- Custom buyback cooldown time.
+CUSTOM_BUYBACK_COST_ENABLED = true		-- Should we use a custom buyback cost setting?
+CUSTOM_BUYBACK_COOLDOWN_ENABLED = true	-- Should we use a custom buyback time?
+BUYBACK_ENABLED = true					-- Should we allow people to buyback when they die?
+BUYBACK_COOLDOWN_TIME = 0.0				-- Custom buyback cooldown time (needed if CUSTOM_BUYBACK_COOLDOWN_ENABLED is true).
+BUYBACK_FIXED_GOLD_COST = 500			-- Fixed custom buyback gold cost (needed if CUSTOM_BUYBACK_COST_ENABLED is true).
 
-DISABLE_FOG_OF_WAR_ENTIRELY = false     -- Should we disable fog of war entirely for both teams?
-USE_UNSEEN_FOG_OF_WAR = false           -- Should we make unseen and fogged areas of the map completely black until uncovered by each team? 
+DISABLE_FOG_OF_WAR_ENTIRELY = false		-- Should we disable fog of war entirely for both teams?
+USE_UNSEEN_FOG_OF_WAR = false			-- Should we make unseen and fogged areas of the map completely black until uncovered by each team? 
 -- Note: DISABLE_FOG_OF_WAR_ENTIRELY must be false for USE_UNSEEN_FOG_OF_WAR to work
-USE_STANDARD_DOTA_BOT_THINKING = false  -- Should we have bots act like they would in Dota? (This requires 3 lanes, normal items, etc)
-USE_STANDARD_HERO_GOLD_BOUNTY = true    -- Should we give gold for hero kills the same as in Dota, or allow those values to be changed?
+USE_STANDARD_DOTA_BOT_THINKING = false	-- Should we have bots act like they would in Dota? (This requires 3 lanes, normal items, etc)
+USE_STANDARD_HERO_GOLD_BOUNTY = true	-- Should we give gold for hero kills the same as in Dota, or allow those values to be changed?
 
 HERO_KILL_GOLD_BASE = 110				-- Hero gold bounty base value
 HERO_KILL_GOLD_PER_LEVEL = 10			-- Hero gold bounty increase per level
 
-USE_CUSTOM_TOP_BAR_VALUES = true        -- Should we do customized top bar values or use the default kill count per team?
-TOP_BAR_VISIBLE = true                  -- Should we display the top bar score/count at all?
-SHOW_KILLS_ON_TOPBAR = true             -- Should we display kills only on the top bar? (No denies, suicides, kills by neutrals)  Requires USE_CUSTOM_TOP_BAR_VALUES
+USE_CUSTOM_TOP_BAR_VALUES = true		-- Should we do customized top bar values or use the default kill count per team?
+TOP_BAR_VISIBLE = true					-- Should we display the top bar score/count at all?
+SHOW_KILLS_ON_TOPBAR = true				-- Should we display kills only on the top bar? (No denies, suicides, kills by neutrals)  Requires USE_CUSTOM_TOP_BAR_VALUES
 
 ENABLE_TOWER_BACKDOOR_PROTECTION = true	-- Should we enable backdoor protection for our towers?
-REMOVE_ILLUSIONS_ON_DEATH = false       -- Should we remove all illusions if the main hero dies?
-DISABLE_GOLD_SOUNDS = false             -- Should we disable the gold sound when players get gold?
+REMOVE_ILLUSIONS_ON_DEATH = false		-- Should we remove all illusions if the main hero dies?
+DISABLE_GOLD_SOUNDS = false				-- Should we disable the gold sound when players get gold?
 
-END_GAME_ON_KILLS = false               -- Should the game end after a certain number of kills?
-KILLS_TO_END_GAME_FOR_TEAM = 50         -- How many kills for a team should signify an end of game?
+END_GAME_ON_KILLS = false				-- Should the game end after a certain number of kills?
+KILLS_TO_END_GAME_FOR_TEAM = 50			-- How many kills for a team should signify an end of game?
 
-USE_CUSTOM_HERO_LEVELS = true           -- Should we allow heroes to have custom levels?
-MAX_LEVEL = 50                          -- What level should we let heroes get to?
-USE_CUSTOM_XP_VALUES = true             -- Should we use custom XP values to level up heroes, or the default Dota numbers?
+USE_CUSTOM_HERO_LEVELS = true			-- Should we allow heroes to have custom levels?
+MAX_LEVEL = 50							-- What level should we let heroes get to?
+USE_CUSTOM_XP_VALUES = true				-- Should we use custom XP values to level up heroes, or the default Dota numbers?
 
 -- Fill this table up with the required XP per level if you want to change it
 XP_PER_LEVEL_TABLE = {}
@@ -60,7 +62,7 @@ for i=2,MAX_LEVEL do
   XP_PER_LEVEL_TABLE[i] = XP_PER_LEVEL_TABLE[i-1] + i*100
 end
 
-ENABLE_FIRST_BLOOD = true               -- Should we enable first blood for the first kill in this game?
+ENABLE_FIRST_BLOOD = true				-- Should we enable first blood for the first kill in this game?
 HIDE_KILL_BANNERS = false               -- Should we hide the kill banners that show when a player is killed?
 LOSE_GOLD_ON_DEATH = false              -- Should we have players lose the normal amount of dota gold on death?
 SHOW_ONLY_PLAYER_INVENTORY = false      -- Should we only allow players to see their own inventory even when selecting other units?
