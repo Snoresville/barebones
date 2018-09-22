@@ -69,6 +69,7 @@ SHOW_ONLY_PLAYER_INVENTORY = false      -- Should we only allow players to see t
 DISABLE_STASH_PURCHASING = false        -- Should we prevent players from being able to buy items into their stash when not at a shop?
 DISABLE_ANNOUNCER = false               -- Should we disable the announcer from working in the game?
 FORCE_PICKED_HERO = nil                 -- What hero should we force all players to spawn as? (e.g. "npc_dota_hero_axe").  Use nil to allow players to pick their own hero.
+TELEPORT_SCROLL_ON_START = false		-- Should we have the teleport scroll in the hero's inventory right at the start of the game?
 
 FIXED_RESPAWN_TIME = -1                 -- What time should we use for a fixed respawn timer?  Use -1 to keep the default dota behavior.
 MAX_RESPAWN_TIME = 40.0					-- Default Dota doesn't have a limit. Fast game modes have 20.0 seconds.

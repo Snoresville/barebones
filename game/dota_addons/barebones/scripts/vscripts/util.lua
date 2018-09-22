@@ -1,5 +1,5 @@
 function DebugPrint(...)
-	if USE_DEBUG == true then
+	if USE_DEBUG then
 		print(...)
 	end
 end
@@ -53,6 +53,7 @@ function TableContains(table1, element)
     return false
 end
 
+-- Return length of the table even if nil or empty
 function TableLength(table1)
     if table1 == nil or table1 == {} then
         return 0
@@ -62,6 +63,16 @@ function TableLength(table1)
         length = length + 1
     end
     return length
+end
+
+function GetRandomTableElement(table1)
+    -- iterate over whole table to get all keys
+    local keyset = {}
+    for k in pairs(table1) do
+        table.insert(keyset, k)
+    end
+    -- now you can reliably return a random key
+    return table1[keyset[RandomInt(1, #keyset)]]
 end
 
 -- Colors
@@ -82,7 +93,6 @@ COLOR_PURPLE = '\x1A'
 COLOR_ORANGE = '\x1B'
 COLOR_LRED = '\x1C'
 COLOR_GOLD = '\x1D'
-
 
 function DebugAllCalls()
     if not GameRules.DebugCalls then
@@ -142,39 +152,21 @@ function SwapWearable(unit, target_model, new_model)
 end
 
 -- This function checks if a given unit is Roshan, returns boolean value;
-function IsRoshan(unit)
-	if unit:IsAncient() and unit:GetName() == "npc_dota_roshan" then
+function CDOTA_BaseNPC:IsRoshan()
+	if self:IsAncient() and self:GetUnitName() == "npc_dota_roshan" then
 		return true
 	end
 	
 	return false
 end
 
--- This function checks if this unit/entity is a fountain or not; returns boolean value;
-function IsFountain(unit)
-	if unit:GetName() == "ent_dota_fountain_bad" or unit:GetName() == "ent_dota_fountain_good" then
+-- This function checks if this entity is a fountain or not; returns boolean value;
+function CEntityInstance:IsFountain()
+	if self:GetName() == "ent_dota_fountain_bad" or self:GetName() == "ent_dota_fountain_good" then
 		return true
 	end
 	
 	return false
-end
-
--- Initializes heroes' innate abilities
-function InitializeInnateAbilities(hero)
-
-	-- List of innate abilities
-	local innate_abilities = {
-		"innate_ability1",
-		"innate_ability2"
-	}
-
-	-- Cycle through any innate abilities found, then set their level to 1
-	for i = 1, #innate_abilities do
-		local current_ability = hero:FindAbilityByName(innate_abilities[i])
-		if current_ability then
-			current_ability:SetLevel(1)
-		end
-	end
 end
 
 -- Author: Noya

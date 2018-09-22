@@ -1,7 +1,7 @@
 -- This is the primary barebones gamemode script and should be used to assist in initializing your game mode
-BAREBONES_VERSION = "0.30"
+BAREBONES_VERSION = "0.31"
 
--- Timers library allow for easily delayed/timed actions
+-- Timers library allow for easily delayed/timed actions - DON'T REMOVE IF YOU INTEND TO USE MOST OF THE STUFF HERE!
 require('libraries/timers')
 -- Physics library can be used for advanced physics/motion/collision of units.  See PhysicsReadme.txt for more information.
 require('libraries/physics')
@@ -22,6 +22,8 @@ require('libraries/player')
 require('settings')
 -- events.lua is where you can specify the actions to be taken when any event occurs and is one of the core barebones files.
 require('events')
+-- filters.lua
+require('filters')
 
 --[[
   This function should be used to set up Async precache calls at the beginning of the gameplay.
@@ -71,16 +73,16 @@ end
   The hero parameter is the hero entity that just spawned in
 ]]
 function your_gamemode_name:OnHeroInGame(hero)
-	DebugPrint("[BAREBONES] Hero spawned in game for the first time -- " .. hero:GetUnitName())
 
 	-- Innate abilities (this is applied to custom created heroes/illusions too)
 	InitializeInnateAbilities(hero)
-	
+
 	Timers:CreateTimer(0.5, function()
 		local playerID = hero:GetPlayerID()	-- never nil (-1 by default), needs delay 1 or more frames
 		
 		if PlayerResource:IsFakeClient(playerID) then
 			-- This is happening only for bots
+			DebugPrint("[BAREBONES] Bot hero "..hero:GetUnitName().." (re)spawned in the game.")
 			-- Set starting gold for bots
 			hero:SetGold(NORMAL_START_GOLD, false)
 		else
@@ -90,11 +92,12 @@ function your_gamemode_name:OnHeroInGame(hero)
 				-- Custom Illusion spells
 			else
 				-- This is happening for players when their primary hero spawns for the first time
-				
+				DebugPrint("[BAREBONES] Hero "..hero:GetUnitName().." spawned in the game for the first time for player with ID "..playerID)
+
 				-- Make heroes briefly visible on spawn (to prevent bad fog interactions)
 				hero:MakeVisibleToTeam(DOTA_TEAM_GOODGUYS, 0.5)
 				hero:MakeVisibleToTeam(DOTA_TEAM_BADGUYS, 0.5)
-				
+
 				-- Set the starting gold for the player's hero
 				if PlayerResource:HasRandomed(playerID) then
 					PlayerResource:ModifyGold(playerID, RANDOM_START_GOLD-600, false, 0)
@@ -102,11 +105,23 @@ function your_gamemode_name:OnHeroInGame(hero)
 					-- If the NORMAL_START_GOLD is smaller then 600, don't use this line:
 					PlayerResource:ModifyGold(playerID, NORMAL_START_GOLD-600, false, 0)
 				end
-				
+
+				-- Removing teleport scolls from heroes when they spawn (optional)
+				if not TELEPORT_SCROLL_ON_START then
+					for i=DOTA_ITEM_SLOT_1, DOTA_ITEM_SLOT_9 do
+						local item = hero:GetItemInSlot(i)
+						if item then
+							if item:GetName() == "item_tpscroll" then
+								hero:RemoveItem(item)
+							end
+						end
+					end
+				end
+
 				-- These lines will create an item and add it to the player, effectively ensuring they start with the item
 				local item = CreateItem("item_example_item", hero, hero)
 				hero:AddItem(item)
-				
+
 				-- This lines ensure that this will not happen again if some other hero spawns for the first time during the game
 				PlayerResource.PlayerData[playerID].already_set_hero = true
 				print("Hero "..hero:GetUnitName().." set for player with ID "..playerID)
@@ -311,119 +326,20 @@ function your_gamemode_name:CaptureGameMode()
 	self:OnFirstPlayerLoaded()
 end
 
-function your_gamemode_name:OrderFilter(event)
-	--PrintTable(event)
-	
-	local order = event.order_type
-	local units = event.units
-	
-	-- If the order is an ability
-	if order == DOTA_UNIT_ORDER_CAST_POSITION or order == DOTA_UNIT_ORDER_CAST_TARGET or order == DOTA_UNIT_ORDER_CAST_NO_TARGET or order == DOTA_UNIT_ORDER_CAST_TOGGLE or order == DOTA_UNIT_ORDER_CAST_TOGGLE_AUTO then
-		local ability_index = event.entindex_ability
-		local ability = EntIndexToHScript(ability_index)
-		local caster = EntIndexToHScript(units["0"])
+-- Initializes heroes' innate abilities (abilities that a hero has leveled up on the start of the game)
+function InitializeInnateAbilities(hero)
+
+	-- List of all innate abilities
+	local innate_abilities = {
+		"innate_ability1",
+		"innate_ability2"
+	}
+
+	-- Cycle through any innate abilities found, then set their level to 1
+	for i = 1, #innate_abilities do
+		local current_ability = hero:FindAbilityByName(innate_abilities[i])
+		if current_ability then
+			current_ability:SetLevel(1)
+		end
 	end
-	
-	-- If the order is a simple move command
-	if order == DOTA_UNIT_ORDER_MOVE_TO_POSITION then
-		local unit_with_order = EntIndexToHScript(units["0"])
-		local destination_x = event.position_x
-		local destination_y = event.position_y
-    end
-	
-	return true
-	
-end
-
--- Damage filter function
-function your_gamemode_name:DamageFilter(keys)
-	--PrintTable(keys)
-	
-	local attacker
-	local victim
-	if keys.entindex_attacker_const and keys.entindex_victim_const then
-		attacker = EntIndexToHScript(keys.entindex_attacker_const)
-		victim = EntIndexToHScript(keys.entindex_victim_const)
-	else
-		return false
-	end
-	
-	local damage_type = keys.damagetype_const
-	local inflictor = keys.entindex_inflictor_const	-- keys.entindex_inflictor_const is nil if damage is not caused by an ability
-	local damage_after_reductions = keys.damage 	-- keys.damage is damage after reductions without spell amplifications
-	
-	local damaging_ability
-	if inflictor then
-		damaging_ability = EntIndexToHScript(inflictor)
-	else
-		damaging_ability = nil
-	end
-	
-	-- Lack of entities handling (illusions error fix)
-	if attacker:IsNull() or victim:IsNull() then
-		return false
-	end
-		
-	return true
-end
-
--- Modifier (buffs, debuffs) filter function
-function your_gamemode_name:ModifierFilter(keys)
-	--PrintTable(keys)
-	
-	local unit_with_modifier = EntIndexToHScript(keys.entindex_parent_const)
-	local modifier_name = keys.name_const
-	local modifier_duration = keys.duration
-	local modifier_caster
-	if keys.entindex_caster_const then
-		modifier_caster = EntIndexToHScript(keys.entindex_caster_const)
-	else
-		modifier_caster = nil
-	end
-	
-	return true
-end
-
--- Experience filter function
-function your_gamemode_name:ExperienceFilter(keys)
-	--PrintTable(keys)
-	local experience = keys.experience
-	local playerID = keys.player_id_const
-	local reason = keys.reason_const
-	
-	return true
-end
-
--- Tracking Projectile (attack and spell projectiles) filter function
-function your_gamemode_name:ProjectileFilter(keys)
-	--PrintTable(keys)
-	
-	local can_be_dodged = keys.dodgeable				-- values: 1 or 0
-	local ability_index = keys.entindex_ability_const	-- value if not ability: -1
-	local source_index = keys.entindex_source_const
-	local target_index = keys.entindex_target_const
-	local expire_time = keys.expire_time
-	local is_an_attack_projectile = keys.is_attack		-- values: 1 or 0
-	local max_impact_time = keys.max_impact_time
-	local projectile_speed = keys.move_speed
-	
-	return true
-end
-
-function your_gamemode_name:BountyRuneFilter(keys)
-	--PrintTable(keys)
-	
-	return true
-end
-
-function your_gamemode_name:RuneSpawnFilter(keys)
-	--PrintTable(keys)
-
-	return true
-end
-
-function your_gamemode_name:HealingFilter(keys)
-	--PrintTable(keys)
-	
-	return true
 end

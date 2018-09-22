@@ -250,9 +250,9 @@ function your_gamemode_name:OnRuneActivated(keys)
   local player = PlayerResource:GetPlayer(keys.PlayerID)
   local rune = keys.rune
   
-  -- For Bounty Runes use BountyRunePickupFilter
-  -- For other runes use RuneSpawnFilter
-  -- This event can be used for adding more effects to existing runes, but that can be done with filters too.
+  -- For Bounty Runes use BountyRuneFilter
+  -- For modifying which runes spawn or not use RuneSpawnFilter
+  -- This event can be used for adding more effects to existing runes.
 end
 
 -- A player took damage from a tower
@@ -359,7 +359,7 @@ function your_gamemode_name:OnEntityKilled(keys)
 		end
 		
 		-- Killer is not a hero but it killed a hero
-		if killer_unit:IsTower() or killer_unit:IsCreep() or IsFountain(killer_unit) then
+		if killer_unit:IsTower() or killer_unit:IsCreep() or killer_unit:IsFountain() then
 
 		end
 		
