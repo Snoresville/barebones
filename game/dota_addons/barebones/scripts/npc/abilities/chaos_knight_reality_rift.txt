@@ -39,22 +39,26 @@
 				"var_type"					"FIELD_INTEGER"
 				"armor_reduction"			"-1 -3 -5 -7"
 				"LinkedSpecialBonus"		"special_bonus_unique_chaos_knight_2"
-			}		
+			}
+
 			"02"
 			{
 				"var_type"					"FIELD_FLOAT"
 				"reduction_duration"		"8.0"
 			}
+
 			"03"
 			{
 				"var_type"					"FIELD_INTEGER"
 				"illusion_search_radius"	"1375"
 			}
+
 			"04" 	// 30% of the distance between
 			{
 				"var_type"					"FIELD_FLOAT"
 				"min_range"					"0.3"
 			}
+
 			"05"	// 80% of the distance between
 			{
 				"var_type"					"FIELD_FLOAT"

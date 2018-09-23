@@ -1,19 +1,19 @@
-if chaos_knight_reality_rift_custom == nil then
-	chaos_knight_reality_rift_custom = class({})
+if chaos_knight_reality_rift_barebones == nil then
+	chaos_knight_reality_rift_barebones = class({})
 end
 
 LinkLuaModifier("modifier_chaos_knight_reality_rift_custom", "ability_example/modifier_chaos_knight_reality_rift_custom.lua", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_reality_rift_talent_2", "ability_example/modifier_reality_rift_talent_2.lua", LUA_MODIFIER_MOTION_NONE)
 
-function chaos_knight_reality_rift_custom:IsStealable()
+function chaos_knight_reality_rift_barebones:IsStealable()
 	return true
 end
 
-function chaos_knight_reality_rift_custom:IsHiddenWhenStolen()
+function chaos_knight_reality_rift_barebones:IsHiddenWhenStolen()
 	return false
 end
 
-function chaos_knight_reality_rift_custom:CastFilterResultTarget(target)
+function chaos_knight_reality_rift_barebones:CastFilterResultTarget(target)
 	if IsServer() then
 		local caster = self:GetCaster()
 		
@@ -37,7 +37,7 @@ function chaos_knight_reality_rift_custom:CastFilterResultTarget(target)
 	return UF_SUCCESS
 end
 
-function chaos_knight_reality_rift_custom:OnAbilityPhaseStart()
+function chaos_knight_reality_rift_barebones:OnAbilityPhaseStart()
 	local caster = self:GetCaster()
 	local target = self:GetCursorTarget()
 	
@@ -85,7 +85,7 @@ function chaos_knight_reality_rift_custom:OnAbilityPhaseStart()
 	return true
 end
 
-function chaos_knight_reality_rift_custom:OnAbilityPhaseInterrupted()
+function chaos_knight_reality_rift_barebones:OnAbilityPhaseInterrupted()
 	local caster = self:GetCaster()
 	for _, fx in ipairs(self.FX) do
 		ParticleManager:DestroyParticle(fx, false)
@@ -100,7 +100,7 @@ function chaos_knight_reality_rift_custom:OnAbilityPhaseInterrupted()
 	caster:StopSound("Hero_ChaosKnight.RealityRift")
 end
 
-function chaos_knight_reality_rift_custom:OnSpellStart()
+function chaos_knight_reality_rift_barebones:OnSpellStart()
 	if IsServer() then
 		local caster = self:GetCaster()
 		local target = self:GetCursorTarget()
@@ -138,6 +138,6 @@ function chaos_knight_reality_rift_custom:OnSpellStart()
 	end
 end
 
-function chaos_knight_reality_rift_custom:ProcsMagicStick()
+function chaos_knight_reality_rift_barebones:ProcsMagicStick()
 	return true
 end

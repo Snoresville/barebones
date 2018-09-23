@@ -28,7 +28,6 @@ This is the entry-point to your game mode and should be used primarily to precac
 #### gamemode.lua
 This is the primary barebones gamemode script and should be used to assist in initializing your game mode.
 This file contains helpful pseudo-event functions prepared for you for frequently needed initialization actions.
-This file also contains filters.
 
 #### events.lua
 This file contains a hooked version of almost every event that is currently known to fire in the DotA 2 Lua vscript code.
