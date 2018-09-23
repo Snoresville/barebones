@@ -21,7 +21,7 @@ function modifier_chaos_knight_reality_rift_custom:OnCreated()
 	
 	-- Talent that increases armor reduction
 	if caster:HasModifier("modifier_reality_rift_talent_2") then
-		armor_reduction = armor_reduction - caster.reality_rift_talent_2_value
+		armor_reduction = armor_reduction - math.abs(caster.reality_rift_talent_2_value)
 	end
 	
 	self.armor_reduction = armor_reduction

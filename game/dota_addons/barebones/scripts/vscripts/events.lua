@@ -160,10 +160,9 @@ function your_gamemode_name:OnPlayerLearnedAbility(keys)
 	local hero = PlayerResource:GetAssignedHero(playerID)
 	
 	-- Handling talents without custom net tables
-	-- Example: If "special_bonus_unique_hero_name_1" is "special_bonus_unique_chaos_knight_2" then
-	-- "modifier_ability_name_talent_name_1" can be named "modifier_reality_rift_armor_reduction_talent" or "modifier_reality_rift_talent_2" or whatever
 	local talents = {
-		--{"special_bonus_unique_chaos_knight_2", "modifier_reality_rift_talent_2"},
+		{"special_bonus_unique_chaos_knight", "modifier_reality_rift_talent_1"},
+		{"special_bonus_unique_chaos_knight_2", "modifier_reality_rift_talent_2"},
 		{"special_bonus_unique_hero_name_1", "modifier_ability_name_talent_name_1"},
 		{"special_bonus_unique_hero_name_2", "modifier_ability_name_talent_name_2"},
 		{"special_bonus_unique_hero_name_3", "modifier_ability_name_talent_name_3"}

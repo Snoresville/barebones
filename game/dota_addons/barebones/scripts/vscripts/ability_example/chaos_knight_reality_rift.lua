@@ -3,6 +3,7 @@ if chaos_knight_reality_rift_barebones == nil then
 end
 
 LinkLuaModifier("modifier_chaos_knight_reality_rift_custom", "ability_example/modifier_chaos_knight_reality_rift_custom.lua", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_reality_rift_talent_1", "ability_example/modifier_reality_rift_talent_1.lua", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_reality_rift_talent_2", "ability_example/modifier_reality_rift_talent_2.lua", LUA_MODIFIER_MOTION_NONE)
 
 function chaos_knight_reality_rift_barebones:IsStealable()
@@ -13,28 +14,19 @@ function chaos_knight_reality_rift_barebones:IsHiddenWhenStolen()
 	return false
 end
 
+-- CastFilterResultTarget runs on client side first
 function chaos_knight_reality_rift_barebones:CastFilterResultTarget(target)
-	if IsServer() then
+	local default_result = self.BaseClass.CastFilterResultTarget(self, target)
+
+	if default_result == UF_FAIL_MAGIC_IMMUNE_ENEMY then
 		local caster = self:GetCaster()
-		
-		if target ~= nil and target:IsMagicImmune() then
-
-			-- Talent that allows Reality Rift to target Spell Immune units
-			local talent = caster:FindAbilityByName("special_bonus_unique_chaos_knight")
-			if talent then
-				if talent:GetLevel() ~= 0 then
-					return UF_SUCCESS
-				end
-			end
-			
-			return UF_FAIL_MAGIC_IMMUNE_ENEMY
+		-- Talent that allows Reality Rift to target Spell Immune units
+		if caster:HasModifier("modifier_reality_rift_talent_1") then
+			return UF_SUCCESS
 		end
-
-		local allowed = UnitFilter(target, self:GetAbilityTargetTeam(), self:GetAbilityTargetType(), self:GetAbilityTargetFlags(), caster:GetTeamNumber())
-		return allowed
 	end
 
-	return UF_SUCCESS
+	return default_result
 end
 
 function chaos_knight_reality_rift_barebones:OnAbilityPhaseStart()

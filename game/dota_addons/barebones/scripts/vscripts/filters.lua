@@ -13,7 +13,7 @@ function your_gamemode_name:OrderFilter(event)
 	end
 
 	-- If the order is a simple move command
-	if order == DOTA_UNIT_ORDER_MOVE_TO_POSITION then
+	if order == DOTA_UNIT_ORDER_MOVE_TO_POSITION and units["0"] then
 		local unit_with_order = EntIndexToHScript(units["0"])
 		local destination_x = event.position_x
 		local destination_y = event.position_y
