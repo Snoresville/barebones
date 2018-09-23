@@ -69,7 +69,9 @@ SHOW_ONLY_PLAYER_INVENTORY = false      -- Should we only allow players to see t
 DISABLE_STASH_PURCHASING = false        -- Should we prevent players from being able to buy items into their stash when not at a shop?
 DISABLE_ANNOUNCER = false               -- Should we disable the announcer from working in the game?
 FORCE_PICKED_HERO = nil                 -- What hero should we force all players to spawn as? (e.g. "npc_dota_hero_axe").  Use nil to allow players to pick their own hero.
-TELEPORT_SCROLL_ON_START = false		-- Should we have the teleport scroll in the hero's inventory right at the start of the game?
+TELEPORT_SCROLL_ON_START = false		-- Should heroes have the teleport scroll in their inventory right at the start of the game? They will still appear during strategy time.
+SKILL_POINTS_AT_EVERY_LEVEL = false		-- Should we allow heroes to gain skill points even on levels 17, 19, 21, 22, 23 and 24?
+-- NOTE: If SKILL_POINTS_AT_EVERY_LEVEL is true, there will be a strange behavior for heroes like Invoker and Meepo.
 
 FIXED_RESPAWN_TIME = -1                 -- What time should we use for a fixed respawn timer?  Use -1 to keep the default dota behavior.
 MAX_RESPAWN_TIME = 40.0					-- Default Dota doesn't have a limit. Fast game modes have 20.0 seconds.

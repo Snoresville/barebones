@@ -1,6 +1,8 @@
-
 // NOTE: This isn't for creating new heroes, this is for taking a currently existing hero as a template and overriding
 // the specified key-value combinations.  Use override_hero <hero_to_override> for this.
+// https://moddota.com/forums/discussion/1415/combining-kv-files-using-base
+#base "heroes/chaos_knight.txt"
+
 "DOTAHeroes"
 {
 	"npc_dota_hero_ancient_apparition_barebones"

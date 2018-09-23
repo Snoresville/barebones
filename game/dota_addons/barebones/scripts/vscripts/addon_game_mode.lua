@@ -31,8 +31,8 @@ function Precache(context)
 	-- Models can also be precached by folder or individually
 	-- PrecacheModel should generally used over PrecacheResource for individual models
 	PrecacheResource("model_folder", "particles/heroes/antimage", context)
-	PrecacheResource("model", "particles/heroes/viper/viper.vmdl", context)
-	PrecacheModel("models/heroes/viper/viper.vmdl", context)
+	--PrecacheResource("model", "particles/heroes/viper/viper.vmdl", context)
+	--PrecacheModel("models/heroes/viper/viper.vmdl", context)
 	--PrecacheModel("models/props_gameplay/treasure_chest001.vmdl", context)
 	--PrecacheModel("models/props_debris/merchant_debris_chest001.vmdl", context)
 	--PrecacheModel("models/props_debris/merchant_debris_chest002.vmdl", context)

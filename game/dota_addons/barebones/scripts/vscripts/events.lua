@@ -213,6 +213,16 @@ function your_gamemode_name:OnPlayerLevelUp(keys)
 
 	hero:SetMinimumGoldBounty(gold_bounty)
 	
+	if SKILL_POINTS_AT_EVERY_LEVEL then
+		local levels_without_ability_point = {17, 19, 21, 22, 23, 24}	-- on this levels you should get a skill point
+		for i = 1, #levels_without_ability_point do
+			if level == levels_without_ability_point[i] then
+				local unspent_ability_points = hero:GetAbilityPoints()
+				hero:SetAbilityPoints(unspent_ability_points+1)
+			end
+		end
+	end
+	
 	-- If you want to remove skill points when a hero levels up then uncomment the following line:
 	--hero:SetAbilityPoints(0)
 end
