@@ -1,5 +1,5 @@
 -- This is the primary barebones gamemode script and should be used to assist in initializing your game mode
-BAREBONES_VERSION = "0.32"
+BAREBONES_VERSION = "0.33"
 
 -- Timers library allow for easily delayed/timed actions - DON'T REMOVE IF YOU INTEND TO USE MOST OF THE STUFF HERE!
 require('libraries/timers')
@@ -106,7 +106,7 @@ function your_gamemode_name:OnHeroInGame(hero)
 					PlayerResource:ModifyGold(playerID, NORMAL_START_GOLD-600, false, 0)
 				end
 
-				-- Removing teleport scolls from heroes when they spawn (optional)
+				-- Removing teleport scolls from heroes when they spawn
 				if not TELEPORT_SCROLL_ON_START then
 					for i=DOTA_ITEM_SLOT_1, DOTA_ITEM_SLOT_9 do
 						local item = hero:GetItemInSlot(i)
@@ -122,7 +122,7 @@ function your_gamemode_name:OnHeroInGame(hero)
 				local item = CreateItem("item_example_item", hero, hero)
 				hero:AddItem(item)
 
-				-- This lines ensure that this will not happen again if some other hero spawns for the first time during the game
+				-- This lines ensure that everything above will not happen again for the same player if some other hero spawns for the first time during the game
 				PlayerResource.PlayerData[playerID].already_set_hero = true
 				print("Hero "..hero:GetUnitName().." set for player with ID "..playerID)
 			end
@@ -153,17 +153,19 @@ function your_gamemode_name:InitGameMode()
 	GameRules:SetShowcaseTime(SHOWCASE_TIME)
 	GameRules:SetStrategyTime(STRATEGY_TIME)
 	GameRules:SetTreeRegrowTime(TREE_REGROW_TIME)
-	GameRules:SetUseCustomHeroXPValues(USE_CUSTOM_XP_VALUES)
+	if USE_CUSTOM_HERO_LEVELS then
+		GameRules:SetUseCustomHeroXPValues(true)
+	end
 	GameRules:SetGoldPerTick(GOLD_PER_TICK)
 	GameRules:SetGoldTickTime(GOLD_TICK_TIME)
-	GameRules:SetUseBaseGoldBountyOnHeroes(USE_STANDARD_HERO_GOLD_BOUNTY)
+	if USE_CUSTOM_HERO_GOLD_BOUNTY then
+		GameRules:SetUseBaseGoldBountyOnHeroes(false)
+	end
 	GameRules:SetHeroMinimapIconScale(MINIMAP_ICON_SIZE)
 	GameRules:SetCreepMinimapIconScale(MINIMAP_CREEP_ICON_SIZE)
 	GameRules:SetRuneMinimapIconScale(MINIMAP_RUNE_ICON_SIZE)
 	GameRules:SetFirstBloodActive(ENABLE_FIRST_BLOOD)
 	GameRules:SetHideKillMessageHeaders(HIDE_KILL_BANNERS)
-	
-	--GameRules:SetRuneSpawnTime(RUNE_SPAWN_TIME) Doesn't work?
 	
 	-- This is multi-team configuration stuff
 	if USE_AUTOMATIC_PLAYERS_PER_TEAM then
@@ -259,6 +261,9 @@ function your_gamemode_name:InitGameMode()
 	-- Setting the Healing filter
 	gamemode:SetHealingFilter(Dynamic_Wrap(your_gamemode_name, "HealingFilter"), self)
 	
+	-- Setting the Gold Filter
+	gamemode:SetModifyGoldFilter(Dynamic_Wrap(your_gamemode_name, "GoldFilter"), self)
+	
 	DebugPrint("[BAREBONES] Filters set")
   
 	-- Global Lua Modifiers
@@ -285,8 +290,11 @@ function your_gamemode_name:CaptureGameMode()
 	gamemode:SetBuybackEnabled(BUYBACK_ENABLED)
 	gamemode:SetTopBarTeamValuesOverride(USE_CUSTOM_TOP_BAR_VALUES)
 	gamemode:SetTopBarTeamValuesVisible(TOP_BAR_VISIBLE)
-	gamemode:SetUseCustomHeroLevels(USE_CUSTOM_HERO_LEVELS)
-	gamemode:SetCustomXPRequiredToReachNextLevel(XP_PER_LEVEL_TABLE)
+
+	if USE_CUSTOM_XP_VALUES then
+		gamemode:SetUseCustomHeroLevels(USE_CUSTOM_XP_VALUES)
+		gamemode:SetCustomXPRequiredToReachNextLevel(XP_PER_LEVEL_TABLE)
+	end
 
 	gamemode:SetBotThinkingEnabled(USE_STANDARD_DOTA_BOT_THINKING)
 	gamemode:SetTowerBackdoorProtectionEnabled(ENABLE_TOWER_BACKDOOR_PROTECTION)
@@ -316,6 +324,8 @@ function your_gamemode_name:CaptureGameMode()
 		for rune, spawn in pairs(ENABLED_RUNES) do
 			gamemode:SetRuneEnabled(rune, spawn)
 		end
+		gamemode:SetBountyRuneSpawnInterval(BOUNTY_RUNE_SPAWN_INTERVAL)
+		gamemode:SetPowerRuneSpawnInterval(POWER_RUNE_SPAWN_INTERVAL)
 	end
 
 	gamemode:SetUnseenFogOfWarEnabled(USE_UNSEEN_FOG_OF_WAR)

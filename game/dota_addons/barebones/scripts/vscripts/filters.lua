@@ -104,15 +104,34 @@ function your_gamemode_name:BountyRuneFilter(keys)
 	return true
 end
 
--- Rune filter, can be used to modify what runes spawn and don't spawn
+-- Rune filter, can be used to modify what runes spawn and don't spawn, can be used to replace runes
 function your_gamemode_name:RuneSpawnFilter(keys)
 	--PrintTable(keys)
 
 	return true
 end
 
+-- Healing Filter, can be used to modify how much regen and healing a unit is gaining
 function your_gamemode_name:HealingFilter(keys)
 	--PrintTable(keys)
+
+	return true
+end
+
+-- Gold filter, can be used to modify how much gold player gains/loses
+function your_gamemode_name:GoldFilter(keys)
+	--PrintTable(keys)
+	
+	local gold = keys.gold
+    local playerID = keys.player_id_const
+    local reason = keys.reason_const
+
+	-- Disable all hero kill gold
+	if DISABLE_ALL_GOLD_FROM_HERO_KILLS then
+		if reason == DOTA_ModifyGold_HeroKill then
+			return false
+		end
+	end
 
 	return true
 end

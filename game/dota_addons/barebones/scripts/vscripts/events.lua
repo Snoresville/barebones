@@ -202,15 +202,17 @@ function your_gamemode_name:OnPlayerLevelUp(keys)
 	local hero_level = hero:GetLevel()
 	local hero_streak = hero:GetStreak()
 	
-	-- Update minimum hero gold bounty when a hero gains a level
-	local gold_bounty
-	if hero_streak > 2 then
-		gold_bounty = HERO_KILL_GOLD_BASE + hero_level*HERO_KILL_GOLD_PER_LEVEL + (hero_streak-2)*60
-	else
-		gold_bounty = HERO_KILL_GOLD_BASE + hero_level*HERO_KILL_GOLD_PER_LEVEL
-	end
+	if USE_CUSTOM_HERO_GOLD_BOUNTY then
+		-- Update minimum hero gold bounty when a hero gains a level
+		local gold_bounty
+		if hero_streak > 2 then
+			gold_bounty = HERO_KILL_GOLD_BASE + hero_level*HERO_KILL_GOLD_PER_LEVEL + (hero_streak-2)*HERO_KILL_GOLD_PER_STREAK
+		else
+			gold_bounty = HERO_KILL_GOLD_BASE + hero_level*HERO_KILL_GOLD_PER_LEVEL
+		end
 
-	hero:SetMinimumGoldBounty(gold_bounty)
+		hero:SetMinimumGoldBounty(gold_bounty)
+	end
 	
 	if SKILL_POINTS_AT_EVERY_LEVEL then
 		local levels_without_ability_point = {17, 19, 21, 22, 23, 24}	-- on this levels you should get a skill point
@@ -338,23 +340,66 @@ function your_gamemode_name:OnEntityKilled(keys)
 		-- Get his level
 		local hero_level = killed_unit:GetLevel()
 	
-		-- Adjust Minimum Gold bounty
-		local gold_bounty
-		if hero_streak > 2 then
-			gold_bounty = HERO_KILL_GOLD_BASE + hero_level*HERO_KILL_GOLD_PER_LEVEL + (hero_streak-2)*60
-		else
-			gold_bounty = HERO_KILL_GOLD_BASE + hero_level*HERO_KILL_GOLD_PER_LEVEL
-		end
-		killed_unit:SetMinimumGoldBounty(gold_bounty)
-		
-		-- Maximum Respawn Time
-		if ENABLE_HERO_RESPAWN then
-			local respawnTime = killed_unit:GetRespawnTime()
-			if respawnTime > MAX_RESPAWN_TIME then
-				--print("Hero has a long respawn time")
-				respawnTime = MAX_RESPAWN_TIME
-				killed_unit:SetTimeUntilRespawn(respawnTime)
+		if USE_CUSTOM_HERO_GOLD_BOUNTY then
+			-- Adjust Minimum Gold bounty
+			local gold_bounty
+			if hero_streak > 2 then
+				gold_bounty = HERO_KILL_GOLD_BASE + hero_level*HERO_KILL_GOLD_PER_LEVEL + (hero_streak-2)*HERO_KILL_GOLD_PER_STREAK
+			else
+				gold_bounty = HERO_KILL_GOLD_BASE + hero_level*HERO_KILL_GOLD_PER_LEVEL
 			end
+
+			killed_unit:SetMinimumGoldBounty(gold_bounty)
+		end
+		
+		-- Hero Respawn time configuration
+		if ENABLE_HERO_RESPAWN then
+			local killed_unit_level = killed_unit:GetLevel()
+			local respawn_time_after_25 = 100 + (killed_unit_level-25)*5
+			-- Respawn time without buyback penalty (+25 sec) and without Reaper's Scythe increase (+15/30/45 sec)
+			local respawn_time
+			if USE_CUSTOM_RESPAWN_TIMES then
+				-- Get respawn time from the table that we defined
+				respawn_time = CUSTOM_RESPAWN_TIME[killed_unit_level]
+				-- Bloodstone reduction
+				for i=DOTA_ITEM_SLOT_1, DOTA_ITEM_SLOT_6 do
+					local item = killed_unit:GetItemInSlot(i)
+					if item then
+						if item:GetName() == "item_bloodstone" then
+							local current_charges = item:GetCurrentCharges()
+							local charges_before_death = math.ceil(current_charges*1.5)
+							local respawn_reduction = charges_before_death*3
+							respawn_time = math.max(1, respawn_time-respawn_reduction)
+						end
+					end
+				end
+			else
+				-- Get dota default respawn time
+				respawn_time = killed_unit:GetRespawnTime()
+				if killed_unit_level > 25 and respawn_time < respawn_time_after_25	then
+					respawn_time = respawn_time_after_25
+					-- Bloodstone reduction
+					for i=DOTA_ITEM_SLOT_1, DOTA_ITEM_SLOT_6 do
+						local item = killed_unit:GetItemInSlot(i)
+						if item then
+							if item:GetName() == "item_bloodstone" then
+								local current_charges = item:GetCurrentCharges()
+								local charges_before_death = math.ceil(current_charges*1.5)
+								local respawn_reduction = charges_before_death*3
+								respawn_time = math.max(1, respawn_time-respawn_reduction)
+							end
+						end
+					end
+				end
+			end
+
+			-- Maximum Respawn Time
+			if respawn_time > MAX_RESPAWN_TIME then
+				DebugPrint("Reducing respawn time of "..killed_unit:GetUnitName().." because it was too long.")
+				respawn_time = MAX_RESPAWN_TIME
+			end
+			
+			killed_unit:SetTimeUntilRespawn(respawn_time)
 		end
 		
 		-- Buyback Cooldown

@@ -77,10 +77,8 @@ This library extends PlayerResource. It's not complete. Work in Progress.
 - Add a library for constructing buildings - building_helper by Noya
 - Finish player library
 - Fix attachments library.
-- Add rune timings config.
 - Expand rune filters.
 - Expand healing filters.
-- Add Gold filter.
 - Add innate ability example.
 - Add CreateIllusion
 
