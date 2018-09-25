@@ -143,7 +143,7 @@ function SwapWearable(unit, target_model, new_model)
     while wearable ~= nil do
         if wearable:GetClassname() == "dota_item_wearable" then
             if wearable:GetModelName() == target_model then
-                wearable:SetModel( new_model )
+                wearable:SetModel(new_model)
                 return
             end
         end
@@ -161,7 +161,7 @@ function CDOTA_BaseNPC:IsRoshan()
 end
 
 -- This function checks if this entity is a fountain or not; returns boolean value;
-function CEntityInstance:IsFountain()
+function CBaseEntity:IsFountain()
 	if self:GetName() == "ent_dota_fountain_bad" or self:GetName() == "ent_dota_fountain_good" then
 		return true
 	end
@@ -171,7 +171,7 @@ end
 
 -- Creates illusion out of CDOTA_BaseNPC (hero, unit...) for the caster, returns a handle of created illusion
 -- Required arguments: caster, ability and duration; Other arguments are optional;
--- Method 2 is more optimized but creates illusions in T-pose -> WIP
+-- Method 2 has more bugs -> WIP
 function CDOTA_BaseNPC:CreateIllusion(caster, ability, duration, position, damage_dealt, damage_taken, controllable, method)
 	if caster == nil or ability == nil or duration == nil then
 		print("caster, ability and duration need to be defined!")
@@ -207,15 +207,24 @@ function CDOTA_BaseNPC:CreateIllusion(caster, ability, duration, position, damag
 	}
 	
 	-- Modifiers that cause bugs
-	local modifier_ignore_list ={
+	local modifier_ignore_list = {
 	"modifier_terrorblade_metamorphosis_transform_aura",
 	"modifier_terrorblade_metamorphosis_transform_aura_applier",
 	"modifier_meepo_divided_we_stand"
+	}
+	
+	-- Abilities that cause bugs
+	local ability_ignore_list = {
+	"meepo_divided_we_stand",
+	"skeleton_king_reincarnation",
+	"special_bonus_reincarnation_200",
+	"roshan_spell_block"
 	}
 
 	local illusion
 	if method == 1 then
 		if self:IsHero() then
+			-- CDOTA_BaseNPC is a hero or illusion of a hero
 			local unit_level = self:GetLevel()
 			local unit_ability_count = self:GetAbilityCount()
 
@@ -242,7 +251,15 @@ function CDOTA_BaseNPC:CreateIllusion(caster, ability, duration, position, damag
 					local current_ability_name = current_ability:GetAbilityName()
 					local illusion_ability = illusion:FindAbilityByName(current_ability_name)
 					if illusion_ability then
-						illusion_ability:SetLevel(current_ability_level)
+						local skip = false
+						for i=1, #ability_ignore_list do
+							if current_ability_name == ability_ignore_list[i] then
+								skip = true
+							end
+						end
+						if not skip then
+							illusion_ability:SetLevel(current_ability_level)
+						end
 					end
 				end
 			end
@@ -266,6 +283,9 @@ function CDOTA_BaseNPC:CreateIllusion(caster, ability, duration, position, damag
 					new_item:SetPurchaser(nil)
 					if new_item:RequiresCharges() then
 						new_item:SetCurrentCharges(item:GetCurrentCharges())
+					end
+					if new_item:IsToggle() and item:GetToggleState() then
+						new_item:ToggleAbility()
 					end
 				end
 			end
@@ -320,7 +340,19 @@ function CDOTA_BaseNPC:CreateIllusion(caster, ability, duration, position, damag
 					local current_ability_level = current_ability:GetLevel()
 					local current_ability_name = current_ability:GetAbilityName()
 					local illusion_ability = illusion:FindAbilityByName(current_ability_name)
-					illusion_ability:SetLevel(current_ability_level)
+					if illusion_ability then
+						local skip = false
+						for i=1, #ability_ignore_list do
+							if current_ability_name == ability_ignore_list[i] then
+								skip = true
+							end
+						end
+						if not skip then
+							illusion_ability:SetLevel(current_ability_level)
+						else
+							illusion:RemoveAbility(illusion_ability:GetAbilityName())
+						end
+					end
 				end
 			end
 
@@ -439,6 +471,9 @@ function CDOTA_BaseNPC:CreateIllusion(caster, ability, duration, position, damag
 				new_item:SetPurchaser(nil)
 				if new_item:RequiresCharges() then
 					new_item:SetCurrentCharges(item:GetCurrentCharges())
+				end
+				if new_item:IsToggle() and item:GetToggleState() then
+					new_item:ToggleAbility()
 				end
 			end
 		end

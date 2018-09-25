@@ -4,7 +4,7 @@ Original BMDdota's Barebones can be found [here](https://github.com/bmddota/bare
 
 BMDdota made most libraries. His email: bmddota@gmail.com
 
-### Version 0.34
+### Version 0.35
 
 ## Introduction
 Barebones is meant to be a jumping off point for creating a mod with all the basic stuff taken care of for you.

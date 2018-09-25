@@ -5,8 +5,8 @@
 	//=================================================================================
 	"npc_dota_custom_illusion_base"
 	{
-		"BaseClass"     			"npc_dota_creature"
-		"Model"						"models/development/invisiblebox.vmdl"
+		"BaseClass"					"npc_dota_creature"
+		"Model"						"models/heroes/chaos_knight/chaos_knight.vmdl"
 		"IsSummoned"				"1"
 		"MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_GROUND"
 		"AttackCapabilities"		"DOTA_UNIT_CAP_MELEE_ATTACK"
@@ -14,14 +14,14 @@
 		"HasInventory"				"1"
 		"AttackRange"				"150"
 		"AttackAnimationPoint"		"0.3"
-		"AttackAcquisitionRange"	"9999"
+		"AttackAcquisitionRange"	"800"
 		"ProjectileSpeed"			"0"
 
-		"Ability1"          		""
+		"AbilityTalentStart"		"10"
 
 		"ArmorPhysical"       		"0"
 		"MagicalResistance"       	"0"
-		
+
 		"AttackDamageMin"     		"1"
 		"AttackDamageMax"     		"1"
 		"AttackRate"        		"1.7"
@@ -45,9 +45,7 @@
 		"CombatClassAttack"     	"DOTA_COMBAT_CLASS_ATTACK_HERO"
 		"CombatClassDefend"     	"DOTA_COMBAT_CLASS_DEFEND_HERO"
 		"UnitRelationshipClass"   	"DOTA_NPC_UNIT_RELATIONSHIP_TYPE_HERO"
-		
-		// Vision
-		//----------------------------------------------------------------
+
 		"VisionDaytimeRange"    	"1800"
 		"VisionNighttimeRange"    	"800"
 	}

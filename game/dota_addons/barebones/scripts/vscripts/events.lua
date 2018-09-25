@@ -203,7 +203,7 @@ function your_gamemode_name:OnPlayerLevelUp(keys)
 	local hero_streak = hero:GetStreak()
 	
 	if USE_CUSTOM_HERO_GOLD_BOUNTY then
-		-- Update minimum hero gold bounty when a hero gains a level
+		-- Update hero gold bounty when a hero gains a level
 		local gold_bounty
 		if hero_streak > 2 then
 			gold_bounty = HERO_KILL_GOLD_BASE + hero_level*HERO_KILL_GOLD_PER_LEVEL + (hero_streak-2)*HERO_KILL_GOLD_PER_STREAK
@@ -212,6 +212,7 @@ function your_gamemode_name:OnPlayerLevelUp(keys)
 		end
 
 		hero:SetMinimumGoldBounty(gold_bounty)
+		hero:SetMaximumGoldBounty(gold_bounty)
 	end
 	
 	if SKILL_POINTS_AT_EVERY_LEVEL then
@@ -332,64 +333,75 @@ function your_gamemode_name:OnEntityKilled(keys)
 		killing_ability = EntIndexToHScript(keys.entindex_inflictor)
 	end
 	
+	if killed_unit:IsClone() then
+		if killed_unit:GetCloneSource() then
+			killed_unit = killed_unit:GetCloneSource()
+		end
+	end
+	
 	-- Killed Unit is a hero (not an illusion) and he is not reincarnating
 	if killed_unit:IsRealHero() and (not killed_unit:IsReincarnating()) then
-		
-		-- Get his killing streak
-		local hero_streak = killed_unit:GetStreak()
-		-- Get his level
-		local hero_level = killed_unit:GetLevel()
-	
+		-- Hero gold bounty update for the killer
 		if USE_CUSTOM_HERO_GOLD_BOUNTY then
-			-- Adjust Minimum Gold bounty
-			local gold_bounty
-			if hero_streak > 2 then
-				gold_bounty = HERO_KILL_GOLD_BASE + hero_level*HERO_KILL_GOLD_PER_LEVEL + (hero_streak-2)*HERO_KILL_GOLD_PER_STREAK
-			else
-				gold_bounty = HERO_KILL_GOLD_BASE + hero_level*HERO_KILL_GOLD_PER_LEVEL
-			end
+			if killer_unit:IsRealHero() then
+				-- Get his killing streak
+				local hero_streak = killer_unit:GetStreak()
+				-- Get his level
+				local hero_level = killer_unit:GetLevel()
+				-- Adjust Gold bounty
+				local gold_bounty
+				if hero_streak > 2 then
+					gold_bounty = HERO_KILL_GOLD_BASE + hero_level*HERO_KILL_GOLD_PER_LEVEL + (hero_streak-2)*HERO_KILL_GOLD_PER_STREAK
+				else
+					gold_bounty = HERO_KILL_GOLD_BASE + hero_level*HERO_KILL_GOLD_PER_LEVEL
+				end
 
-			killed_unit:SetMinimumGoldBounty(gold_bounty)
+				killer_unit:SetMinimumGoldBounty(gold_bounty)
+				killer_unit:SetMaximumGoldBounty(gold_bounty)
+			end
 		end
 		
 		-- Hero Respawn time configuration
 		if ENABLE_HERO_RESPAWN then
 			local killed_unit_level = killed_unit:GetLevel()
-			local respawn_time_after_25 = 100 + (killed_unit_level-25)*5
-			-- Respawn time without buyback penalty (+25 sec) and without Reaper's Scythe increase (+15/30/45 sec)
-			local respawn_time
+
+			-- Respawn time without buyback penalty (+25 sec)
+			local respawn_time = 1
 			if USE_CUSTOM_RESPAWN_TIMES then
 				-- Get respawn time from the table that we defined
 				respawn_time = CUSTOM_RESPAWN_TIME[killed_unit_level]
-				-- Bloodstone reduction
-				for i=DOTA_ITEM_SLOT_1, DOTA_ITEM_SLOT_6 do
-					local item = killed_unit:GetItemInSlot(i)
-					if item then
-						if item:GetName() == "item_bloodstone" then
-							local current_charges = item:GetCurrentCharges()
-							local charges_before_death = math.ceil(current_charges*1.5)
-							local respawn_reduction = charges_before_death*3
-							respawn_time = math.max(1, respawn_time-respawn_reduction)
-						end
-					end
-				end
 			else
 				-- Get dota default respawn time
 				respawn_time = killed_unit:GetRespawnTime()
-				if killed_unit_level > 25 and respawn_time < respawn_time_after_25	then
-					respawn_time = respawn_time_after_25
-					-- Bloodstone reduction
-					for i=DOTA_ITEM_SLOT_1, DOTA_ITEM_SLOT_6 do
-						local item = killed_unit:GetItemInSlot(i)
-						if item then
-							if item:GetName() == "item_bloodstone" then
-								local current_charges = item:GetCurrentCharges()
-								local charges_before_death = math.ceil(current_charges*1.5)
-								local respawn_reduction = charges_before_death*3
-								respawn_time = math.max(1, respawn_time-respawn_reduction)
-							end
-						end
+			end
+
+			-- Fixing respawn time after level 25
+			local respawn_time_after_25 = 100 + (killed_unit_level-25)*5
+			if killed_unit_level > 25 and respawn_time < respawn_time_after_25	then
+				respawn_time = respawn_time_after_25
+			end
+
+			-- Bloodstone reduction (bloodstone can't be in backpack)
+			for i=DOTA_ITEM_SLOT_1, DOTA_ITEM_SLOT_6 do
+				local item = killed_unit:GetItemInSlot(i)
+				if item then
+					if item:GetName() == "item_bloodstone" then
+						local current_charges = item:GetCurrentCharges()
+						local charges_before_death = math.ceil(current_charges*1.5)
+						local reduction_per_charge = item:GetLevelSpecialValueFor("respawn_time_reduction", item:GetLevel() - 1)
+						local respawn_reduction = charges_before_death*reduction_per_charge
+						respawn_time = math.max(1, respawn_time-respawn_reduction)
+						break -- to prevent multiple bloodstones granting respawn reduction
 					end
+				end
+			end
+			
+			-- Reaper's Scythe respawn time increase
+			if killing_ability then
+				if killing_ability:GetAbilityName() == "necrolyte_reapers_scythe" then
+					DebugPrint("Killed by Necro Ultimate.")
+					local respawn_extra_time = killing_ability:GetLevelSpecialValueFor("respawn_constant", killing_ability:GetLevel() - 1)
+					respawn_time = respawn_time + respawn_extra_time
 				end
 			end
 

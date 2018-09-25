@@ -51,6 +51,26 @@ function your_gamemode_name:DamageFilter(keys)
 		return false
 	end
 	
+	-- Update the gold bounty of the hero he dies
+	if USE_CUSTOM_HERO_GOLD_BOUNTY then
+		if attacker:IsControllableByAnyPlayer() and victim:IsRealHero() and damage_after_reductions >= victim:GetHealth() then
+			-- Get his killing streak
+			local hero_streak = victim:GetStreak()
+			-- Get his level
+			local hero_level = victim:GetLevel()
+			-- Adjust Gold bounty
+			local gold_bounty
+			if hero_streak > 2 then
+				gold_bounty = HERO_KILL_GOLD_BASE + hero_level*HERO_KILL_GOLD_PER_LEVEL + (hero_streak-2)*HERO_KILL_GOLD_PER_STREAK
+			else
+				gold_bounty = HERO_KILL_GOLD_BASE + hero_level*HERO_KILL_GOLD_PER_LEVEL
+			end
+
+			victim:SetMinimumGoldBounty(gold_bounty)
+			victim:SetMaximumGoldBounty(gold_bounty)
+		end
+	end
+	
 	return true
 end
 

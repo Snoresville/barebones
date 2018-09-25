@@ -1,5 +1,5 @@
 -- This is the primary barebones gamemode script and should be used to assist in initializing your game mode
-BAREBONES_VERSION = "0.34"
+BAREBONES_VERSION = "0.35"
 
 -- Timers library allow for easily delayed/timed actions - DON'T REMOVE IF YOU INTEND TO USE MOST OF THE STUFF HERE!
 require('libraries/timers')
