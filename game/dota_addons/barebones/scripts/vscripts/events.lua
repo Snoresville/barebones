@@ -315,30 +315,31 @@ end
 function your_gamemode_name:OnEntityKilled(keys)
 	DebugPrint("[BAREBONES] An entity was killed")
 	--PrintTable(keys)
-	
+
 	-- The Unit that was Killed
 	local killed_unit = EntIndexToHScript(keys.entindex_killed)
-	
+
 	-- The Killing entity
 	local killer_unit = nil
 
 	if keys.entindex_attacker ~= nil then
 		killer_unit = EntIndexToHScript(keys.entindex_attacker)
 	end
-	
+
 	-- The ability/item used to kill, or nil if not killed by an item/ability
 	local killing_ability = nil
 
 	if keys.entindex_inflictor ~= nil then
 		killing_ability = EntIndexToHScript(keys.entindex_inflictor)
 	end
-	
+
+	-- For meepo clones
 	if killed_unit:IsClone() then
 		if killed_unit:GetCloneSource() then
 			killed_unit = killed_unit:GetCloneSource()
 		end
 	end
-	
+
 	-- Killed Unit is a hero (not an illusion) and he is not reincarnating
 	if killed_unit:IsRealHero() and (not killed_unit:IsReincarnating()) then
 		-- Hero gold bounty update for the killer
@@ -360,7 +361,7 @@ function your_gamemode_name:OnEntityKilled(keys)
 				killer_unit:SetMaximumGoldBounty(gold_bounty)
 			end
 		end
-		
+
 		-- Hero Respawn time configuration
 		if ENABLE_HERO_RESPAWN then
 			local killed_unit_level = killed_unit:GetLevel()
@@ -395,7 +396,7 @@ function your_gamemode_name:OnEntityKilled(keys)
 					end
 				end
 			end
-			
+
 			-- Reaper's Scythe respawn time increase
 			if killing_ability then
 				if killing_ability:GetAbilityName() == "necrolyte_reapers_scythe" then
@@ -410,45 +411,47 @@ function your_gamemode_name:OnEntityKilled(keys)
 				DebugPrint("Reducing respawn time of "..killed_unit:GetUnitName().." because it was too long.")
 				respawn_time = MAX_RESPAWN_TIME
 			end
-			
-			killed_unit:SetTimeUntilRespawn(respawn_time)
+
+			if not killed_unit:IsReincarnating() then
+				killed_unit:SetTimeUntilRespawn(respawn_time)
+			end
 		end
-		
+
 		-- Buyback Cooldown
 		if CUSTOM_BUYBACK_COOLDOWN_ENABLED then
 			PlayerResource:SetCustomBuybackCooldown(killed_unit:GetPlayerID(), BUYBACK_COOLDOWN_TIME)
 		end
-		
+
 		-- Buyback Cost
 		if CUSTOM_BUYBACK_COST_ENABLED then
 			PlayerResource:SetCustomBuybackCost(killed_unit:GetPlayerID(), BUYBACK_FIXED_GOLD_COST)
 		end
-		
+
 		-- Killer is not a hero but it killed a hero
 		if killer_unit:IsTower() or killer_unit:IsCreep() or killer_unit:IsFountain() then
-
-		end
 		
+		end
+
 		-- When team hero kill limit is reached
 		if END_GAME_ON_KILLS and GetTeamHeroKills(killer_unit:GetTeam()) >= KILLS_TO_END_GAME_FOR_TEAM then
 			GameRules:SetGameWinner(killer_unit:GetTeam())
 		end
-		
+
 		if SHOW_KILLS_ON_TOPBAR then
 			GameRules:GetGameModeEntity():SetTopBarTeamValue(DOTA_TEAM_BADGUYS, GetTeamHeroKills(DOTA_TEAM_BADGUYS))
 			GameRules:GetGameModeEntity():SetTopBarTeamValue(DOTA_TEAM_GOODGUYS, GetTeamHeroKills(DOTA_TEAM_GOODGUYS))
 		end
 	end
-	
+
 	-- Ancient destruction detection (if the map doesn't have ancients with this names, this will never happen)
 	if killed_unit:GetUnitName() == "npc_dota_badguys_fort" then
 		GameRules:SetGameWinner(DOTA_TEAM_GOODGUYS)
 	elseif killed_unit:GetUnitName() == "npc_dota_goodguys_fort" then
 		GameRules:SetGameWinner(DOTA_TEAM_BADGUYS)
 	end
-	
+
 	-- Remove dead non-hero units from selection -> bugged ability/cast bar
-	if killed_unit:IsIllusion() or (killed_unit:IsControllableByAnyPlayer() and (not killed_unit:IsHero()) and (not killed_unit:IsCourier())) then
+	if killed_unit:IsIllusion() or (killed_unit:IsControllableByAnyPlayer() and (not killed_unit:IsRealHero()) and (not killed_unit:IsCourier())) then
 		local player = killed_unit:GetPlayerOwner()
 		local playerID
 		if player == nil then
@@ -458,6 +461,7 @@ function your_gamemode_name:OnEntityKilled(keys)
 		end
 		PlayerResource:RemoveFromSelection(playerID, killed_unit)
 	end
+
 end
 
 -- This function is called 1 to 2 times as the player connects initially but before they have completely connected

@@ -218,7 +218,11 @@ function CDOTA_BaseNPC:CreateIllusion(caster, ability, duration, position, damag
 	"meepo_divided_we_stand",
 	"skeleton_king_reincarnation",
 	"special_bonus_reincarnation_200",
-	"roshan_spell_block"
+	"roshan_spell_block",
+	"roshan_bash",
+	"roshan_slam",
+	"roshan_inherent_buffs",
+	"roshan_devotion"
 	}
 
 	local illusion
@@ -227,6 +231,10 @@ function CDOTA_BaseNPC:CreateIllusion(caster, ability, duration, position, damag
 			-- CDOTA_BaseNPC is a hero or illusion of a hero
 			local unit_level = self:GetLevel()
 			local unit_ability_count = self:GetAbilityCount()
+			
+			if unit_ability_count < 17 then
+				unit_ability_count = 17
+			end
 
 			-- handle_UnitOwner needs to be nil, else it will crash the game.
 			illusion = CreateUnitByName(unit_name, origin, true, caster, nil, caster:GetTeamNumber())
@@ -343,7 +351,7 @@ function CDOTA_BaseNPC:CreateIllusion(caster, ability, duration, position, damag
 					if illusion_ability then
 						local skip = false
 						for i=1, #ability_ignore_list do
-							if current_ability_name == ability_ignore_list[i] then
+							if illusion_ability:GetAbilityName() == ability_ignore_list[i] then
 								skip = true
 							end
 						end
