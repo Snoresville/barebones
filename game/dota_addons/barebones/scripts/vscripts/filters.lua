@@ -135,3 +135,9 @@ function your_gamemode_name:GoldFilter(keys)
 
 	return true
 end
+
+function your_gamemode_name:InventoryFilter(keys)
+	--PrintTable(keys)
+	
+	return true
+end

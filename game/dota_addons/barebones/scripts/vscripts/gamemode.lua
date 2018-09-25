@@ -1,5 +1,5 @@
 -- This is the primary barebones gamemode script and should be used to assist in initializing your game mode
-BAREBONES_VERSION = "0.33"
+BAREBONES_VERSION = "0.34"
 
 -- Timers library allow for easily delayed/timed actions - DON'T REMOVE IF YOU INTEND TO USE MOST OF THE STUFF HERE!
 require('libraries/timers')
@@ -79,7 +79,7 @@ function your_gamemode_name:OnHeroInGame(hero)
 
 	Timers:CreateTimer(0.5, function()
 		local playerID = hero:GetPlayerID()	-- never nil (-1 by default), needs delay 1 or more frames
-		
+
 		if PlayerResource:IsFakeClient(playerID) then
 			-- This is happening only for bots
 			DebugPrint("[BAREBONES] Bot hero "..hero:GetUnitName().." (re)spawned in the game.")
@@ -166,7 +166,7 @@ function your_gamemode_name:InitGameMode()
 	GameRules:SetRuneMinimapIconScale(MINIMAP_RUNE_ICON_SIZE)
 	GameRules:SetFirstBloodActive(ENABLE_FIRST_BLOOD)
 	GameRules:SetHideKillMessageHeaders(HIDE_KILL_BANNERS)
-	
+
 	-- This is multi-team configuration stuff
 	if USE_AUTOMATIC_PLAYERS_PER_TEAM then
 		local num = math.floor(10/MAX_NUMBER_OF_TEAMS)
@@ -196,9 +196,9 @@ function your_gamemode_name:InitGameMode()
 			SetTeamCustomHealthbarColor(team, color[1], color[2], color[3])
 		end
 	end
-	
+
 	DebugPrint("[BAREBONES] GameRules set")
-	
+
 	-- Event Hooks / Listeners
 	ListenToGameEvent('dota_player_gained_level', Dynamic_Wrap(your_gamemode_name, 'OnPlayerLevelUp'), self)
 	ListenToGameEvent('dota_ability_channel_finished', Dynamic_Wrap(your_gamemode_name, 'OnAbilityChannelFinished'), self)
@@ -230,7 +230,7 @@ function your_gamemode_name:InitGameMode()
 	ListenToGameEvent("dota_tower_kill", Dynamic_Wrap(your_gamemode_name, 'OnTowerKill'), self)
 	ListenToGameEvent("dota_player_selected_custom_team", Dynamic_Wrap(your_gamemode_name, 'OnPlayerSelectedCustomTeam'), self)
 	ListenToGameEvent("dota_npc_goal_reached", Dynamic_Wrap(your_gamemode_name, 'OnNPCGoalReached'), self)
-	
+
 	-- Change random seed for math.random function
 	local timeTxt = string.gsub(string.gsub(GetSystemTime(), ':', ''), '0','')
 	math.randomseed(tonumber(timeTxt))
@@ -238,37 +238,40 @@ function your_gamemode_name:InitGameMode()
 	DebugPrint("[BAREBONES] Setting filters")
 
 	local gamemode = GameRules:GetGameModeEntity()
-	
+
 	-- Setting the Order filter 
 	gamemode:SetExecuteOrderFilter(Dynamic_Wrap(your_gamemode_name, "OrderFilter"), self)
-  
+
 	-- Setting the Damage filter
 	gamemode:SetDamageFilter(Dynamic_Wrap(your_gamemode_name, "DamageFilter"), self)
-	
+
 	-- Setting the Modifier filter
 	gamemode:SetModifierGainedFilter(Dynamic_Wrap(your_gamemode_name, "ModifierFilter"), self)
-	
+
 	-- Setting the Experience filter
 	gamemode:SetModifyExperienceFilter(Dynamic_Wrap(your_gamemode_name, "ExperienceFilter"), self)
-	
+
 	-- Setting the Tracking Projectile filter
 	gamemode:SetTrackingProjectileFilter(Dynamic_Wrap(your_gamemode_name, "ProjectileFilter"), self)
-	
+
 	-- Setting the rune filters
 	gamemode:SetBountyRunePickupFilter(Dynamic_Wrap(your_gamemode_name, "BountyRuneFilter"), self)
 	gamemode:SetRuneSpawnFilter(Dynamic_Wrap(your_gamemode_name, "RuneSpawnFilter"), self)
-	
+
 	-- Setting the Healing filter
 	gamemode:SetHealingFilter(Dynamic_Wrap(your_gamemode_name, "HealingFilter"), self)
-	
+
 	-- Setting the Gold Filter
 	gamemode:SetModifyGoldFilter(Dynamic_Wrap(your_gamemode_name, "GoldFilter"), self)
-	
+
+	-- Setting the Inventory filter
+	gamemode:SetItemAddedToInventoryFilter(Dynamic_Wrap(your_gamemode_name, "InventoryFilter"), self)
+
 	DebugPrint("[BAREBONES] Filters set")
-  
+
 	-- Global Lua Modifiers
 	LinkLuaModifier("modifier_custom_invulnerable", "modifiers/modifier_custom_invulnerable", LUA_MODIFIER_MOTION_NONE)
-	
+
 	-- Talent modifiers (this can be done in ability scripts, but it can be done here as well)
 	LinkLuaModifier("modifier_ability_name_talent_name_1", "modifiers/talents/modifier_ability_name_talent_name_1", LUA_MODIFIER_MOTION_NONE)
 	LinkLuaModifier("modifier_ability_name_talent_name_2", "modifiers/talents/modifier_ability_name_talent_name_2", LUA_MODIFIER_MOTION_NONE)
@@ -341,7 +344,7 @@ function InitializeInnateAbilities(hero)
 
 	-- List of all innate abilities
 	local innate_abilities = {
-		"innate_ability1",
+		"detonator_conjure_image",
 		"innate_ability2"
 	}
 

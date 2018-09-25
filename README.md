@@ -4,7 +4,7 @@ Original BMDdota's Barebones can be found [here](https://github.com/bmddota/bare
 
 BMDdota made most libraries. His email: bmddota@gmail.com
 
-### Version 0.32
+### Version 0.34
 
 ## Introduction
 Barebones is meant to be a jumping off point for creating a mod with all the basic stuff taken care of for you.
@@ -74,12 +74,9 @@ This library extends PlayerResource. It's not complete. Work in Progress.
 ## TO DO:
 - Add attributes library.
 - Add buildings library for handling dota buildings and custom buildings.
-- Add a library for constructing buildings - building_helper by Noya
 - Finish player library
 - Fix attachments library.
 - Expand rune filters.
 - Expand healing filters.
-- Add innate ability example.
-- Add CreateIllusion
 
 If you have any questions or concerns, contact me.
