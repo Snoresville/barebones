@@ -1,4 +1,8 @@
 <root> 
+	<scripts>
+		<include src="file://{resources}/scripts/playertables/playertables_base.js"/>
+	</scripts>
+
 	<script>
 		function UpdateHeroSelection() {
 			var dotaHud = $.GetContextPanel().GetParent().GetParent();

@@ -2,7 +2,7 @@
 
 -- Cleanup a player when they leave
 function your_gamemode_name:OnDisconnect(keys)
-	DebugPrint("[BAREBONES] Player Disconnected ".. tostring(keys.userid))
+	DebugPrint("[BAREBONES] A Player has disconnected ".. tostring(keys.userid))
 	--PrintTable(keys)
 
 	local name = keys.name
@@ -13,46 +13,59 @@ end
 
 -- The overall game state has changed
 function your_gamemode_name:OnGameRulesStateChange(keys)
-	DebugPrint("[BAREBONES] GameRules State Changed")
 	--PrintTable(keys)
 	
 	local new_state = GameRules:State_Get()
 	
 	if new_state == DOTA_GAMERULES_STATE_INIT then
+		DebugPrint("[BAREBONES] Game State changed to: DOTA_GAMERULES_STATE_INIT")
 
 	elseif new_state == DOTA_GAMERULES_STATE_WAIT_FOR_PLAYERS_TO_LOAD then
+		DebugPrint("[BAREBONES] Game State changed to: DOTA_GAMERULES_STATE_WAIT_FOR_PLAYERS_TO_LOAD")
 
 	elseif new_state == DOTA_GAMERULES_STATE_CUSTOM_GAME_SETUP then
+		DebugPrint("[BAREBONES] Game State changed to: DOTA_GAMERULES_STATE_CUSTOM_GAME_SETUP")
 		GameRules:SetCustomGameSetupAutoLaunchDelay(CUSTOM_GAME_SETUP_TIME)
+
 	elseif new_state == DOTA_GAMERULES_STATE_HERO_SELECTION then
+		DebugPrint("[BAREBONES] Game State changed to: DOTA_GAMERULES_STATE_HERO_SELECTION")
 		your_gamemode_name:PostLoadPrecache()
 		your_gamemode_name:OnAllPlayersLoaded()
 		Timers:CreateTimer(HERO_SELECTION_TIME - 1.1, function()
 			for playerID = 0, 19 do
 				if PlayerResource:IsValidPlayerID(playerID) then
 					-- If this player still hasn't picked a hero, random one
-					if not PlayerResource:HasSelectedHero(playerID) then
+					if not PlayerResource:HasSelectedHero(playerID) and PlayerResource:IsConnected(playerID) then
 						PlayerResource:GetPlayer(playerID):MakeRandomHeroSelection()
 						PlayerResource:SetHasRandomed(playerID)
 						PlayerResource:SetCanRepick(playerID, false)
-						print("Randomed a hero for a player number "..playerID)
+						DebugPrint("[BAREBONES] Randomed a hero for a player number "..playerID)
 					end
 				end
 			end
 		end)
+
 	elseif new_state == DOTA_GAMERULES_STATE_STRATEGY_TIME then
+		DebugPrint("[BAREBONES] Game State changed to: DOTA_GAMERULES_STATE_STRATEGY_TIME")
 
 	elseif new_state == DOTA_GAMERULES_STATE_TEAM_SHOWCASE then
+		DebugPrint("[BAREBONES] Game State changed to: DOTA_GAMERULES_STATE_TEAM_SHOWCASE")
 
 	elseif new_state == DOTA_GAMERULES_STATE_WAIT_FOR_MAP_TO_LOAD then
+		DebugPrint("[BAREBONES] Game State changed to: DOTA_GAMERULES_STATE_WAIT_FOR_MAP_TO_LOAD")
 
 	elseif new_state == DOTA_GAMERULES_STATE_PRE_GAME then
+		DebugPrint("[BAREBONES] Game State changed to: DOTA_GAMERULES_STATE_PRE_GAME")
 
 	elseif new_state == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
+		DebugPrint("[BAREBONES] Game State changed to: DOTA_GAMERULES_STATE_GAME_IN_PROGRESS")
 		your_gamemode_name:OnGameInProgress()
+
 	elseif new_state == DOTA_GAMERULES_STATE_POST_GAME then
+		DebugPrint("[BAREBONES] Game State changed to: DOTA_GAMERULES_STATE_POST_GAME")
 
 	elseif new_state == DOTA_GAMERULES_STATE_DISCONNECT then
+		DebugPrint("[BAREBONES] Game State changed to: DOTA_GAMERULES_STATE_DISCONNECT")
 
 	end
 end
@@ -74,11 +87,15 @@ function your_gamemode_name:OnNPCSpawned(keys)
 	end
 end
 
--- An entity somewhere has been hurt.  This event fires very often with many units so don't do too many expensive
+-- An entity somewhere has been hurt. This event fires very often with many units so don't do too many expensive
 -- operations here
 function your_gamemode_name:OnEntityHurt(keys)
 	--PrintTable(keys)
-	-- Don't use this unless you know what are you doing
+
+	-- Don't use this unless you know what are you doing. 
+	-- If you need to detect when a unit is damaged, use Damage Filter.
+	local attacker_entity = EntIndexToHScript(keys.entindex_attacker)
+    local victim_entity = EntIndexToHScript(keys.entindex_killed)
 end
 
 -- An item was picked up off the ground
@@ -101,7 +118,24 @@ end
 -- A player has reconnected to the game.  This function can be used to repaint Player-based particles or change
 -- state as necessary
 function your_gamemode_name:OnPlayerReconnect(keys)
-	--PrintTable(keys) 
+	DebugPrint("[BAREBONES] A Player has reconnected.")
+	--PrintTable(keys)
+
+	local new_state = GameRules:State_Get()
+	if new_state > DOTA_GAMERULES_STATE_HERO_SELECTION then
+		local playerID = keys.PlayerID
+
+		if PlayerResource:HasSelectedHero(playerID) or PlayerResource:HasRandomed(playerID) then
+			-- This playerID already had a hero before disconnect
+		else
+			if PlayerResource:IsConnected(playerID) then
+				PlayerResource:GetPlayer(playerID):MakeRandomHeroSelection()
+				PlayerResource:SetHasRandomed(playerID)
+				PlayerResource:SetCanRepick(playerID, false)
+				DebugPrint("[BAREBONES] Randomed a hero for a player number "..playerID.." that reconnected.")
+			end
+		end
+	end
 end
 
 -- An item was purchased by a player
@@ -132,12 +166,12 @@ function your_gamemode_name:OnAbilityUsed(keys)
 	-- If you need to adjust abilities on their cast, use Order Filter, not this
 end
 
--- A non-player entity (necro-book, chen creep, etc) used an ability
+-- A non-player entity (necronomicon unit, chen creep, etc) used an ability
 function your_gamemode_name:OnNonPlayerUsedAbility(keys)
 	--PrintTable(keys)
 
 	local ability_name = keys.abilityname
-	
+
 	-- If you need to adjust abilities on their cast, use Order Filter, not this
 end
 
@@ -156,25 +190,28 @@ function your_gamemode_name:OnPlayerLearnedAbility(keys)
 
 	local player = EntIndexToHScript(keys.player)
 	local ability_name = keys.abilityname
-	local playerID = player:GetPlayerID()
-	local hero = PlayerResource:GetAssignedHero(playerID)
-	
-	-- Handling talents without custom net tables
-	local talents = {
-		{"special_bonus_unique_chaos_knight", "modifier_reality_rift_talent_1"},
-		{"special_bonus_unique_chaos_knight_2", "modifier_reality_rift_talent_2"},
-		{"special_bonus_unique_hero_name_1", "modifier_ability_name_talent_name_1"},
-		{"special_bonus_unique_hero_name_2", "modifier_ability_name_talent_name_2"},
-		{"special_bonus_unique_hero_name_3", "modifier_ability_name_talent_name_3"}
-	}
-	
-	for i = 1, #talents do
-		local talent = talents[i]
-		if ability_name == talent[1] then
-			local talent_ability = hero:FindAbilityByName(ability_name)
-			if talent_ability then
-				local talent_modifier = talent[2]
-				hero:AddNewModifier(hero, talent_ability, talent_modifier, {})
+
+	if player then
+		local playerID = player:GetPlayerID()
+		local hero = PlayerResource:GetAssignedHero(playerID)
+		
+		-- Handling talents without custom net tables
+		local talents = {
+			{"special_bonus_unique_chaos_knight", "modifier_reality_rift_talent_1"},
+			{"special_bonus_unique_chaos_knight_2", "modifier_reality_rift_talent_2"},
+			{"special_bonus_unique_hero_name_1", "modifier_ability_name_talent_name_1"},
+			{"special_bonus_unique_hero_name_2", "modifier_ability_name_talent_name_2"},
+			{"special_bonus_unique_hero_name_3", "modifier_ability_name_talent_name_3"}
+		}
+		
+		for i = 1, #talents do
+			local talent = talents[i]
+			if ability_name == talent[1] then
+				local talent_ability = hero:FindAbilityByName(ability_name)
+				if talent_ability then
+					local talent_modifier = talent[2]
+					hero:AddNewModifier(hero, talent_ability, talent_modifier, {})
+				end
 			end
 		end
 	end
@@ -201,9 +238,9 @@ function your_gamemode_name:OnPlayerLevelUp(keys)
 	local hero = PlayerResource:GetAssignedHero(playerID)
 	local hero_level = hero:GetLevel()
 	local hero_streak = hero:GetStreak()
-	
+
+	-- Update hero gold bounty when a hero gains a level
 	if USE_CUSTOM_HERO_GOLD_BOUNTY then
-		-- Update hero gold bounty when a hero gains a level
 		local gold_bounty
 		if hero_streak > 2 then
 			gold_bounty = HERO_KILL_GOLD_BASE + hero_level*HERO_KILL_GOLD_PER_LEVEL + (hero_streak-2)*HERO_KILL_GOLD_PER_STREAK
@@ -215,6 +252,7 @@ function your_gamemode_name:OnPlayerLevelUp(keys)
 		hero:SetMaximumGoldBounty(gold_bounty)
 	end
 	
+	-- Add a skill point when a hero levels up
 	if SKILL_POINTS_AT_EVERY_LEVEL then
 		local levels_without_ability_point = {17, 19, 21, 22, 23, 24}	-- on this levels you should get a skill point
 		for i = 1, #levels_without_ability_point do
@@ -263,7 +301,7 @@ function your_gamemode_name:OnRuneActivated(keys)
   local rune = keys.rune
   
   -- For Bounty Runes use BountyRuneFilter
-  -- For modifying which runes spawn or not use RuneSpawnFilter
+  -- For modifying which runes spawn use RuneSpawnFilter
   -- This event can be used for adding more effects to existing runes.
 end
 
@@ -313,7 +351,7 @@ end
 
 -- An entity died
 function your_gamemode_name:OnEntityKilled(keys)
-	DebugPrint("[BAREBONES] An entity was killed")
+	DebugPrint("[BAREBONES] An entity was killed.")
 	--PrintTable(keys)
 
 	-- The Unit that was Killed
@@ -333,7 +371,7 @@ function your_gamemode_name:OnEntityKilled(keys)
 		killing_ability = EntIndexToHScript(keys.entindex_inflictor)
 	end
 
-	-- For meepo clones
+	-- For Meepo clones, find the original
 	if killed_unit:IsClone() then
 		if killed_unit:GetCloneSource() then
 			killed_unit = killed_unit:GetCloneSource()
@@ -422,28 +460,30 @@ function your_gamemode_name:OnEntityKilled(keys)
 			PlayerResource:SetCustomBuybackCooldown(killed_unit:GetPlayerID(), BUYBACK_COOLDOWN_TIME)
 		end
 
-		-- Buyback Cost
+		-- Buyback Gold Cost
 		if CUSTOM_BUYBACK_COST_ENABLED then
 			PlayerResource:SetCustomBuybackCost(killed_unit:GetPlayerID(), BUYBACK_FIXED_GOLD_COST)
 		end
 
-		-- Killer is not a hero but it killed a hero
+		-- Killer is not a real hero but it killed a hero
 		if killer_unit:IsTower() or killer_unit:IsCreep() or killer_unit:IsFountain() then
-		
+			-- Put stuff here that you want to happen if a hero is killed by a creep, tower or fountain.
+			-- Respawn time can be modified here if a hero is killed by a neutral creep
 		end
 
-		-- When team hero kill limit is reached
+		-- When team hero kill limit is reached declare the winner
 		if END_GAME_ON_KILLS and GetTeamHeroKills(killer_unit:GetTeam()) >= KILLS_TO_END_GAME_FOR_TEAM then
 			GameRules:SetGameWinner(killer_unit:GetTeam())
 		end
 
+		-- Setting top bar values
 		if SHOW_KILLS_ON_TOPBAR then
 			GameRules:GetGameModeEntity():SetTopBarTeamValue(DOTA_TEAM_BADGUYS, GetTeamHeroKills(DOTA_TEAM_BADGUYS))
 			GameRules:GetGameModeEntity():SetTopBarTeamValue(DOTA_TEAM_GOODGUYS, GetTeamHeroKills(DOTA_TEAM_GOODGUYS))
 		end
 	end
 
-	-- Ancient destruction detection (if the map doesn't have ancients with this names, this will never happen)
+	-- Ancient destruction detection (if the map doesn't have ancients with these names, this will never happen)
 	if killed_unit:GetUnitName() == "npc_dota_badguys_fort" then
 		GameRules:SetGameWinner(DOTA_TEAM_GOODGUYS)
 	elseif killed_unit:GetUnitName() == "npc_dota_goodguys_fort" then
@@ -451,7 +491,7 @@ function your_gamemode_name:OnEntityKilled(keys)
 	end
 
 	-- Remove dead non-hero units from selection -> bugged ability/cast bar
-	if killed_unit:IsIllusion() or (killed_unit:IsControllableByAnyPlayer() and (not killed_unit:IsRealHero()) and (not killed_unit:IsCourier())) then
+	if killed_unit:IsIllusion() or (killed_unit:IsControllableByAnyPlayer() and (not killed_unit:IsRealHero()) and (not killed_unit:IsCourier()) and (not killed_unit:IsClone())) then
 		local player = killed_unit:GetPlayerOwner()
 		local playerID
 		if player == nil then
@@ -461,7 +501,6 @@ function your_gamemode_name:OnEntityKilled(keys)
 		end
 		PlayerResource:RemoveFromSelection(playerID, killed_unit)
 	end
-
 end
 
 -- This function is called 1 to 2 times as the player connects initially but before they have completely connected
@@ -471,7 +510,7 @@ end
 
 -- This function is called once when the player fully connects and becomes "Ready" during Loading
 function your_gamemode_name:OnConnectFull(keys)
-	DebugPrint("[BAREBONES] OnConnectFull")
+	DebugPrint("[BAREBONES] A Player fully connected.")
 	--PrintTable(keys)
   
 	your_gamemode_name:CaptureGameMode()
@@ -496,7 +535,7 @@ function your_gamemode_name:OnItemCombined(keys)
 	DebugPrint("[BAREBONES] OnItemCombined")
 	--PrintTable(keys)
 
-	-- The playerID of the hero who is buying something
+	-- The playerID of the hero that combined an item
 	local playerID = keys.PlayerID
 	if not playerID then
 		return 
@@ -521,7 +560,7 @@ function your_gamemode_name:OnAbilityCastBegins(keys)
 	-- If you need to adjust abilities on their cast, use Order Filter, not this
 end
 
--- This function is called whenever a tower is killed
+-- This function is called whenever a tower is destroyed
 function your_gamemode_name:OnTowerKill(keys)
 	DebugPrint("[BAREBONES] OnTowerKill")
 	--PrintTable(keys)
@@ -531,7 +570,7 @@ function your_gamemode_name:OnTowerKill(keys)
 	local team = keys.teamnumber
 end
 
--- This function is called whenever a player changes there custom team selection during Game Setup 
+-- This function is called whenever a player changes their custom team selection during Custom Game Setup 
 function your_gamemode_name:OnPlayerSelectedCustomTeam(keys)
 	DebugPrint("[BAREBONES] OnPlayerSelectedCustomTeam")
 	--PrintTable(keys)
@@ -541,7 +580,7 @@ function your_gamemode_name:OnPlayerSelectedCustomTeam(keys)
 	local team = keys.team_id
 end
 
--- This function is called whenever an NPC reaches its goal position/target
+-- This function is called whenever an NPC reaches its goal position/target (npc can be a lane creep)
 function your_gamemode_name:OnNPCGoalReached(keys)
 	DebugPrint("[BAREBONES] OnNPCGoalReached")
 	--PrintTable(keys)
@@ -551,7 +590,7 @@ function your_gamemode_name:OnNPCGoalReached(keys)
 	local npc = EntIndexToHScript(keys.npc_entindex)
 end
 
--- This function is called whenever any player sends a chat message to team or All
+-- This function is called whenever any player sends a chat message to team or to All
 function your_gamemode_name:OnPlayerChat(keys)
 	DebugPrint("[BAREBONES] Player used the chat")
 	--PrintTable(keys)

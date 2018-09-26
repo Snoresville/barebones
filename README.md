@@ -4,7 +4,7 @@ Original BMDdota's Barebones can be found [here](https://github.com/bmddota/bare
 
 BMDdota made most libraries. His email: bmddota@gmail.com
 
-### Version 0.35
+### Version 0.36
 
 ## Introduction
 Barebones is meant to be a jumping off point for creating a mod with all the basic stuff taken care of for you.
@@ -59,12 +59,15 @@ See [libraries/animations.lua](https://github.com/bmddota/barebones/blob/source2
 This library can be used to set up and put in place 'Frankenstein' attachments for attaching props to units.  
 See [libraries/attachments.lua](https://github.com/bmddota/barebones/blob/source2/game/dota_addons/barebones/scripts/vscripts/libraries/attachments.lua) for usage details and examples.
 
-#### selection.lua [By Noya](https://github.com/MNoya)
+#### selection.lua [by Noya](https://github.com/MNoya)
 This library allows for querying and managing the selection status of players from the server-side lua script.  It also allows for automatic redirection and selection event handling.
 See [libraries/selection.lua](https://github.com/bmddota/barebones/blob/source2/game/dota_addons/barebones/scripts/vscripts/libraries/selection.lua) for usage details and examples.  
 
-#### player.lua
-This library extends PlayerResource. It's not complete. Work in Progress.
+#### playertables.lua [by BMDdota](https://github.com/bmddota)
+This library sets up tables that are shared between server (lua) and client (javascript) between specific (but changeable) clients. Similar to nettables.
+
+#### playerresource.lua
+This library extends PlayerResource. It adds functions and handles that are important for detecting disconnected/abandoned players and for assigning heroes to players.
 
 ## Additional Information
 - Barebones also comes with a sample loading screen implementation in panorama which you can view and edit via the content panorama directory.
@@ -74,9 +77,8 @@ This library extends PlayerResource. It's not complete. Work in Progress.
 ## TO DO:
 - Add attributes library.
 - Add buildings library for handling dota buildings and custom buildings.
-- Finish player library
 - Fix attachments library.
 - Expand rune filters.
-- Expand healing filters.
+- Expand healing filter.
 
 If you have any questions or concerns, contact me.

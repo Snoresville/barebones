@@ -1,5 +1,5 @@
 -- This is the primary barebones gamemode script and should be used to assist in initializing your game mode
-BAREBONES_VERSION = "0.35"
+BAREBONES_VERSION = "0.36"
 
 -- Timers library allow for easily delayed/timed actions - DON'T REMOVE IF YOU INTEND TO USE MOST OF THE STUFF HERE!
 require('libraries/timers')
@@ -13,10 +13,12 @@ require('libraries/notifications')
 require('libraries/animations')
 -- Attachments library can be used for performing "Frankenstein" attachments on units
 --require('libraries/attachments')
+-- PlayerTables library can be used to synchronize client-server data via player/client-specific net tables
+require('libraries/playertables')
 -- Selection library (by Noya) provides player selection inspection and management from server lua
 require('libraries/selection')
--- Player library extending PlayerResource - DON'T REMOVE IF YOU INTEND TO USE MOST OF THE STUFF HERE!
-require('libraries/player')
+-- PlayerResource library extends PlayerResource, adds useful functions - DON'T REMOVE IF YOU INTEND TO USE MOST OF THE STUFF HERE!
+require('libraries/playerresource')
 
 -- settings.lua is where you can specify many different properties for your game mode and is one of the core barebones files.
 require('settings')
@@ -41,7 +43,7 @@ require('filters')
   This function should generally only be used if the Precache() function in addon_game_mode.lua is not working.
 ]]
 function your_gamemode_name:PostLoadPrecache()
-	DebugPrint("[BAREBONES] Performing Post-Load precache")
+	DebugPrint("[BAREBONES] Performing Post-Load precache.")
 	--PrecacheItemByNameAsync("item_example_item", function(...) end)
 	--PrecacheItemByNameAsync("example_ability", function(...) end)
 
@@ -54,7 +56,8 @@ end
   It can be used to initialize state that isn't initializeable in InitGameMode() but needs to be done before everyone loads in.
 ]]
 function your_gamemode_name:OnFirstPlayerLoaded()
-	DebugPrint("[BAREBONES] First Player has loaded")
+	DebugPrint("[BAREBONES] First Player has loaded.")
+
 end
 
 --[[
@@ -62,7 +65,8 @@ end
   It can be used to initialize non-hero player state or adjust the hero selection (i.e. force random etc)
 ]]
 function your_gamemode_name:OnAllPlayersLoaded()
-	DebugPrint("[BAREBONES] All Players have loaded into the game")
+	DebugPrint("[BAREBONES] All Players have loaded into the game.")
+
 end
 
 --[[
@@ -74,7 +78,7 @@ end
 ]]
 function your_gamemode_name:OnHeroInGame(hero)
 
-	-- Innate abilities (this is applied to custom created heroes/illusions too)
+	-- Innate abilities (this is applied to bots and custom created heroes/illusions too)
 	InitializeInnateAbilities(hero)
 
 	Timers:CreateTimer(0.5, function()
@@ -92,7 +96,7 @@ function your_gamemode_name:OnHeroInGame(hero)
 				-- Custom Illusion spells
 			else
 				-- This is happening for players when their primary hero spawns for the first time
-				DebugPrint("[BAREBONES] Hero "..hero:GetUnitName().." spawned in the game for the first time for player with ID "..playerID)
+				DebugPrint("[BAREBONES] Hero "..hero:GetUnitName().." spawned in the game for the first time for the player with ID "..playerID)
 
 				-- Make heroes briefly visible on spawn (to prevent bad fog interactions)
 				hero:MakeVisibleToTeam(DOTA_TEAM_GOODGUYS, 0.5)
@@ -106,7 +110,7 @@ function your_gamemode_name:OnHeroInGame(hero)
 					PlayerResource:ModifyGold(playerID, NORMAL_START_GOLD-600, false, 0)
 				end
 
-				-- Removing teleport scolls from heroes when they spawn
+				-- Remove a teleport scoll from the player when they spawn
 				if not TELEPORT_SCROLL_ON_START then
 					for i=DOTA_ITEM_SLOT_1, DOTA_ITEM_SLOT_9 do
 						local item = hero:GetItemInSlot(i)
@@ -118,13 +122,14 @@ function your_gamemode_name:OnHeroInGame(hero)
 					end
 				end
 
-				-- These lines will create an item and add it to the player, effectively ensuring they start with the item
+				-- Create an item and add it to the player, effectively ensuring they start with the item
 				local item = CreateItem("item_example_item", hero, hero)
 				hero:AddItem(item)
 
-				-- This lines ensure that everything above will not happen again for the same player if some other hero spawns for the first time during the game
+				-- Make sure that stuff above will not happen again for the player if some other hero spawns
+				-- for him for the first time during the game 
 				PlayerResource.PlayerData[playerID].already_set_hero = true
-				print("Hero "..hero:GetUnitName().." set for player with ID "..playerID)
+				DebugPrint("[BAREBONES] Hero "..hero:GetUnitName().." set for the player with ID "..playerID)
 			end
 		end
 	end)
@@ -136,7 +141,8 @@ end
   is useful for starting any game logic timers/thinkers, beginning the first round, etc.
 ]]
 function your_gamemode_name:OnGameInProgress()
-	DebugPrint("[BAREBONES] The game has officially begun")
+	DebugPrint("[BAREBONES] The game has officially begun.")
+
 end
 
 -- This function initializes the game mode and is called before anyone loads into the game
@@ -197,7 +203,7 @@ function your_gamemode_name:InitGameMode()
 		end
 	end
 
-	DebugPrint("[BAREBONES] GameRules set")
+	DebugPrint("[BAREBONES] Done with setting Game Rules.")
 
 	-- Event Hooks / Listeners
 	ListenToGameEvent('dota_player_gained_level', Dynamic_Wrap(your_gamemode_name, 'OnPlayerLevelUp'), self)
@@ -235,7 +241,7 @@ function your_gamemode_name:InitGameMode()
 	local timeTxt = string.gsub(string.gsub(GetSystemTime(), ':', ''), '0','')
 	math.randomseed(tonumber(timeTxt))
 
-	DebugPrint("[BAREBONES] Setting filters")
+	DebugPrint("[BAREBONES] Setting filters.")
 
 	local gamemode = GameRules:GetGameModeEntity()
 
@@ -267,7 +273,7 @@ function your_gamemode_name:InitGameMode()
 	-- Setting the Inventory filter
 	gamemode:SetItemAddedToInventoryFilter(Dynamic_Wrap(your_gamemode_name, "InventoryFilter"), self)
 
-	DebugPrint("[BAREBONES] Filters set")
+	DebugPrint("[BAREBONES] Done with setting Filters.")
 
 	-- Global Lua Modifiers
 	LinkLuaModifier("modifier_custom_invulnerable", "modifiers/modifier_custom_invulnerable", LUA_MODIFIER_MOTION_NONE)
@@ -278,7 +284,7 @@ function your_gamemode_name:InitGameMode()
 	LinkLuaModifier("modifier_ability_name_talent_name_3", "modifiers/talents/modifier_ability_name_talent_name_3", LUA_MODIFIER_MOTION_NONE)
 
 	print("your_gamemode_name initialized.")
-	DebugPrint("[BAREBONES] Done loading gamemode!\n\n")
+	DebugPrint("[BAREBONES] Done loading game mode!\n\n")
 end
 
 -- This function is called as the first player loads and sets up the game mode parameters
@@ -339,7 +345,7 @@ function your_gamemode_name:CaptureGameMode()
 	self:OnFirstPlayerLoaded()
 end
 
--- Initializes heroes' innate abilities (abilities that a hero has leveled up on the start of the game)
+-- Initializes heroes' innate abilities (abilities that a hero has auto-leveled up on the start of the game)
 function InitializeInnateAbilities(hero)
 
 	-- List of all innate abilities

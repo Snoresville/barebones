@@ -15,6 +15,8 @@ function CDOTA_PlayerResource:OnPlayerConnect(event)
 	if not self.PlayerData[playerID] then
         self.UserIDToPlayerID[userID] = playerID
         self.PlayerData[playerID] = {}
+		self.PlayerData[playerID].has_abandoned_due_to_long_disconnect = false
+		self.PlayerData[playerID].distribute_gold_to_allies = false
     end
 end
 
@@ -32,7 +34,7 @@ function CDOTA_PlayerResource:AssignHero(playerID, hero_entity)
 	if self:IsRealPlayer(playerID) then
 		self.PlayerData[playerID].hero = hero_entity
 		self.PlayerData[playerID].hero_name = hero_entity:GetUnitName()
-		print("Assigned "..self.PlayerData[playerID].hero_name.." to player with ID "..playerID)
+		DebugPrint("[BAREBONES] Assigned "..self.PlayerData[playerID].hero_name.." to player with ID "..playerID)
 	end
 end
 
@@ -66,10 +68,43 @@ function CDOTA_PlayerResource:GetAssignedHeroName(playerID)
 	return nil
 end
 
+-- DotA Connection states:
+-- DOTA_CONNECTION_STATE_UNKNOWN	0
+-- DOTA_CONNECTION_STATE_NOT_YET_CONNECTED	1	
+-- DOTA_CONNECTION_STATE_CONNECTED	2	
+-- DOTA_CONNECTION_STATE_DISCONNECTED	3	
+-- DOTA_CONNECTION_STATE_ABANDONED	4	
+-- DOTA_CONNECTION_STATE_LOADING	5	
+-- DOTA_CONNECTION_STATE_FAILED	6
+
+-- Is a player with this playerID connected?
+function CDOTA_PlayerResource:IsConnected(playerID)
+	if self:GetConnectionState(playerID) == DOTA_CONNECTION_STATE_CONNECTED then
+		return true
+	end
+	if IsInToolsMode() and self:GetConnectionState(playerID) == DOTA_CONNECTION_STATE_NOT_YET_CONNECTED then
+		return true
+	end
+	return false
+end
+
+-- Find how many players didn't abandon
+function CDOTA_PlayerResource:GetPlayerCountWithoutLeavers()
+    local count = 0
+     for playerID = 0, 19 do
+        if self:IsValidPlayerID(playerID) then
+			if self:GetConnectionState(playerID) ~= DOTA_CONNECTION_STATE_ABANDONED then
+				count = count + 1
+			end
+        end
+    end
+    return count
+end
+
 -- Set a player's abandonment due to long disconnect status
 function CDOTA_PlayerResource:SetHasAbandonedDueToLongDisconnect(playerID, state)
 	if self:IsRealPlayer(playerID) then
-		self.PlayerData[playerID]["has_abandoned_due_to_long_disconnect"] = state
+		self.PlayerData[playerID].has_abandoned_due_to_long_disconnect = state
 		print("Set player "..playerID.." 's abandon due to long disconnect state as "..tostring(state))
 	end
 end
@@ -77,35 +112,9 @@ end
 -- Fetch a player's abandonment due to long disconnect status
 function CDOTA_PlayerResource:GetHasAbandonedDueToLongDisconnect(playerID)
 	if self:IsRealPlayer(playerID) then
-		return self.PlayerData[playerID]["has_abandoned_due_to_long_disconnect"]
+		return self.PlayerData[playerID].has_abandoned_due_to_long_disconnect
 	else
 		return false
-	end
-end
-
--- Increase a player's team's player count
-function CDOTA_PlayerResource:IncrementTeamPlayerCount(playerID)
-	if self:IsRealPlayer(playerID) then
-		if self:GetTeam(playerID) == DOTA_TEAM_GOODGUYS then
-			REMAINING_GOODGUYS = REMAINING_GOODGUYS + 1
-			print("Radiant now has "..REMAINING_GOODGUYS.." players remaining")
-		else
-			REMAINING_BADGUYS = REMAINING_BADGUYS + 1
-			print("Dire now has "..REMAINING_BADGUYS.." players remaining")
-		end
-	end
-end
-
--- Decrease a player's team's player count
-function CDOTA_PlayerResource:DecrementTeamPlayerCount(playerID)
-	if self:IsRealPlayer(playerID) then
-		if self:GetTeam(playerID) == DOTA_TEAM_GOODGUYS then
-			REMAINING_GOODGUYS = REMAINING_GOODGUYS - 1
-			print("Radiant now has "..REMAINING_GOODGUYS.." players remaining")
-		else
-			REMAINING_BADGUYS = REMAINING_BADGUYS - 1
-			print("Dire now has "..REMAINING_BADGUYS.." players remaining")
-		end
 	end
 end
 
@@ -113,7 +122,7 @@ end
 function CDOTA_PlayerResource:StartAbandonGoldRedistribution(playerID)
 
 	-- Set redistribution as active
-	self.PlayerData[playerID]["distribute_gold_to_allies"] = true
+	self.PlayerData[playerID].distribute_gold_to_allies = true
 	print("player "..playerID.." is now redistributing gold to its allies.")
 
 	-- Fetch this player's team
@@ -125,7 +134,7 @@ function CDOTA_PlayerResource:StartAbandonGoldRedistribution(playerID)
 
 	-- Distribute initial gold
 	for id = 0, 19 do
-		if self:IsRealPlayer(id) and (not self.PlayerData[id]["distribute_gold_to_allies"]) and self:GetTeam(id) == player_team then
+		if self:IsRealPlayer(id) and (not self.PlayerData[id].distribute_gold_to_allies) and self:GetTeam(id) == player_team then
 			current_allies[#current_allies + 1] = id
 		end
 	end
@@ -154,7 +163,7 @@ function CDOTA_PlayerResource:StartAbandonGoldRedistribution(playerID)
 
 		-- Update active ally amount
 		for id = 0, 19 do
-			if self:IsRealPlayer(id) and (not self.PlayerData[id]["distribute_gold_to_allies"]) and self:GetTeam(id) == player_team then
+			if self:IsRealPlayer(id) and (not self.PlayerData[id].distribute_gold_to_allies) and self:GetTeam(id) == player_team then
 				current_allies[#current_allies + 1] = id
 			end
 		end
@@ -176,7 +185,7 @@ function CDOTA_PlayerResource:StartAbandonGoldRedistribution(playerID)
 		ally_amount = 0
 
 		-- Keep going, if applicable
-		if self.PlayerData[playerID]["distribute_gold_to_allies"] then
+		if self.PlayerData[playerID].distribute_gold_to_allies then
 			return 3
 		end
 	end)
@@ -184,7 +193,11 @@ end
 
 -- Stops a specific player from redistributing their gold to its allies
 function CDOTA_PlayerResource:StopAbandonGoldRedistribution(playerID)
-	self.PlayerData[playerID]["distribute_gold_to_allies"] = false
+	self.PlayerData[playerID].distribute_gold_to_allies = false
 	self:ModifyGold(playerID, -self:GetGold(playerID), false, DOTA_ModifyGold_AbandonedRedistribute)
 	print("player "..playerID.." is no longer redistributing gold to its allies.")
+end
+
+function CDOTA_PlayerResource:GetRealSteamID(PlayerID)
+	return tostring(PlayerResource:GetSteamID(PlayerID))
 end
