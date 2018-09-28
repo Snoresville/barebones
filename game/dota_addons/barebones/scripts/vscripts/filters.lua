@@ -225,7 +225,10 @@ function your_gamemode_name:InventoryFilter(keys)
 		owner_of_this_item = item:GetPurchaser()
 	end
 
-	local owner_name = owner_of_this_item:GetUnitName()
+	local owner_name
+	if owner_of_this_item then
+		owner_name = owner_of_this_item:GetUnitName()
+	end
 
 	return true
 end
