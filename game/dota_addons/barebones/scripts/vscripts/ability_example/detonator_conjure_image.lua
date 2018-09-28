@@ -26,7 +26,7 @@ function detonator_conjure_image:OnSpellStart()
 			local duration = self:GetSpecialValueFor("duration")
 			local damage_dealt = self:GetSpecialValueFor("illusion_damage_out")
 			local damage_taken = self:GetSpecialValueFor("illusion_damage_in")
-			-- Use function from util.lua
+			-- Use function from custom_illusions.lua
 			local custom_illusion = target:CreateIllusion(caster, self, duration, nil, damage_dealt, damage_taken, true, nil)
 			-- Sound on the target
 			target:EmitSound("Hero_Terrorblade.ConjureImage")

@@ -4,7 +4,7 @@ Original BMDdota's Barebones can be found [here](https://github.com/bmddota/bare
 
 BMDdota made most libraries. His email: bmddota@gmail.com
 
-### Version 0.36
+### Version 0.37
 
 ## Introduction
 Barebones is meant to be a jumping off point for creating a mod with all the basic stuff taken care of for you.
@@ -79,6 +79,5 @@ This library extends PlayerResource. It adds functions and handles that are impo
 - Add buildings library for handling dota buildings and custom buildings.
 - Fix attachments library.
 - Expand rune filters.
-- Expand healing filter.
 
 If you have any questions or concerns, contact me.

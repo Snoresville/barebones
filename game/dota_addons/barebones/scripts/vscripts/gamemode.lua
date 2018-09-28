@@ -1,8 +1,6 @@
 -- This is the primary barebones gamemode script and should be used to assist in initializing your game mode
-BAREBONES_VERSION = "0.36"
+BAREBONES_VERSION = "0.37"
 
--- Timers library allow for easily delayed/timed actions - DON'T REMOVE IF YOU INTEND TO USE MOST OF THE STUFF HERE!
-require('libraries/timers')
 -- Physics library can be used for advanced physics/motion/collision of units.  See PhysicsReadme.txt for more information.
 require('libraries/physics')
 -- Projectiles library can be used for advanced 3D projectile systems.
@@ -17,8 +15,6 @@ require('libraries/animations')
 require('libraries/playertables')
 -- Selection library (by Noya) provides player selection inspection and management from server lua
 require('libraries/selection')
--- PlayerResource library extends PlayerResource, adds useful functions - DON'T REMOVE IF YOU INTEND TO USE MOST OF THE STUFF HERE!
-require('libraries/playerresource')
 
 -- settings.lua is where you can specify many different properties for your game mode and is one of the core barebones files.
 require('settings')
@@ -284,7 +280,7 @@ function your_gamemode_name:InitGameMode()
 	LinkLuaModifier("modifier_ability_name_talent_name_3", "modifiers/talents/modifier_ability_name_talent_name_3", LUA_MODIFIER_MOTION_NONE)
 
 	print("your_gamemode_name initialized.")
-	DebugPrint("[BAREBONES] Done loading game mode!\n\n")
+	DebugPrint("[BAREBONES] Done loading the game mode!\n\n")
 end
 
 -- This function is called as the first player loads and sets up the game mode parameters

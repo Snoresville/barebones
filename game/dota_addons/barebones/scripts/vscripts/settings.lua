@@ -42,7 +42,7 @@ HERO_KILL_GOLD_PER_LEVEL = 10				-- Hero gold bounty increase per level
 HERO_KILL_GOLD_PER_STREAK = 60				-- Hero gold bounty per his streak (Killing Spree: +HERO_KILL_GOLD_PER_STREAK gold; Ultrakill: +2xHERO_KILL_GOLD_PER_STREAK gold ...)
 DISABLE_ALL_GOLD_FROM_HERO_KILLS = false	-- Should we remove gold gain from hero kills? USE_CUSTOM_HERO_GOLD_BOUNTY needs to be true.
 -- NOTE: DISABLE_ALL_GOLD_FROM_HERO_KILLS requires GoldFilter. Use DISABLE_GOLD_SOUNDS too.
-USE_CUSTOM_HERO_LEVELS = false			-- Should we allow heroes on the map to give a specific amount of XP when killed?
+USE_CUSTOM_HERO_LEVELS = false			-- Should the heroes give a custom amount of XP when killed?
 
 USE_CUSTOM_TOP_BAR_VALUES = true		-- Should we do customized top bar values or use the default kill count per team?
 TOP_BAR_VISIBLE = true					-- Should we display the top bar score/count at all?

@@ -4,10 +4,15 @@
 if your_gamemode_name == nil then
 	_G.your_gamemode_name = class({})
 else
-	DebugPrint("[BAREBONES] your_gamemode_name class name is occupied, change the name!")
+	DebugPrint("[BAREBONES] your_gamemode_name class name is already in use, change the name if this is the first time you launch the game!")
+	DebugPrint("[BAREBONES] If this is not your first time, you probably entered script_reload.")
 end
 
 require('util')
+require('custom_illusions')
+-- Essential lua files: (don't remove!)
+require('libraries/timers')
+require('libraries/player_resource')
 require('gamemode')
 
 function Precache(context)

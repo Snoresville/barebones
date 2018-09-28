@@ -35,7 +35,7 @@ function your_gamemode_name:OnGameRulesStateChange(keys)
 			for playerID = 0, 19 do
 				if PlayerResource:IsValidPlayerID(playerID) then
 					-- If this player still hasn't picked a hero, random one
-					if not PlayerResource:HasSelectedHero(playerID) and PlayerResource:IsConnected(playerID) then
+					if not PlayerResource:HasSelectedHero(playerID) and PlayerResource:IsConnected(playerID) and (not PlayerResource:IsBroadcaster(playerID)) then
 						PlayerResource:GetPlayer(playerID):MakeRandomHeroSelection()
 						PlayerResource:SetHasRandomed(playerID)
 						PlayerResource:SetCanRepick(playerID, false)
@@ -128,7 +128,7 @@ function your_gamemode_name:OnPlayerReconnect(keys)
 		if PlayerResource:HasSelectedHero(playerID) or PlayerResource:HasRandomed(playerID) then
 			-- This playerID already had a hero before disconnect
 		else
-			if PlayerResource:IsConnected(playerID) then
+			if PlayerResource:IsConnected(playerID) and (not PlayerResource:IsBroadcaster(playerID)) then
 				PlayerResource:GetPlayer(playerID):MakeRandomHeroSelection()
 				PlayerResource:SetHasRandomed(playerID)
 				PlayerResource:SetCanRepick(playerID, false)
@@ -160,7 +160,8 @@ end
 function your_gamemode_name:OnAbilityUsed(keys)
 	--PrintTable(keys)
 
-	local player = PlayerResource:GetPlayer(keys.PlayerID)
+	local playerID = keys.PlayerID
+	local player = PlayerResource:GetPlayer(playerID)
 	local ability_name = keys.abilityname
 	
 	-- If you need to adjust abilities on their cast, use Order Filter, not this
@@ -233,38 +234,45 @@ function your_gamemode_name:OnPlayerLevelUp(keys)
 
 	local player = EntIndexToHScript(keys.player)
 	local level = keys.level
-	local playerID = player:GetPlayerID()
-	
-	local hero = PlayerResource:GetAssignedHero(playerID)
-	local hero_level = hero:GetLevel()
-	local hero_streak = hero:GetStreak()
 
-	-- Update hero gold bounty when a hero gains a level
-	if USE_CUSTOM_HERO_GOLD_BOUNTY then
-		local gold_bounty
-		if hero_streak > 2 then
-			gold_bounty = HERO_KILL_GOLD_BASE + hero_level*HERO_KILL_GOLD_PER_LEVEL + (hero_streak-2)*HERO_KILL_GOLD_PER_STREAK
-		else
-			gold_bounty = HERO_KILL_GOLD_BASE + hero_level*HERO_KILL_GOLD_PER_LEVEL
-		end
-
-		hero:SetMinimumGoldBounty(gold_bounty)
-		hero:SetMaximumGoldBounty(gold_bounty)
+	local playerID
+	local hero
+	if player then
+		playerID = player:GetPlayerID()
+		hero = PlayerResource:GetAssignedHero(playerID)
 	end
-	
-	-- Add a skill point when a hero levels up
-	if SKILL_POINTS_AT_EVERY_LEVEL then
-		local levels_without_ability_point = {17, 19, 21, 22, 23, 24}	-- on this levels you should get a skill point
-		for i = 1, #levels_without_ability_point do
-			if level == levels_without_ability_point[i] then
-				local unspent_ability_points = hero:GetAbilityPoints()
-				hero:SetAbilityPoints(unspent_ability_points+1)
+
+	if hero then
+		-- Update hero gold bounty when a hero gains a level
+		if USE_CUSTOM_HERO_GOLD_BOUNTY then
+			local hero_level = hero:GetLevel() or level
+			local hero_streak = hero:GetStreak()
+
+			local gold_bounty
+			if hero_streak > 2 then
+				gold_bounty = HERO_KILL_GOLD_BASE + hero_level*HERO_KILL_GOLD_PER_LEVEL + (hero_streak-2)*HERO_KILL_GOLD_PER_STREAK
+			else
+				gold_bounty = HERO_KILL_GOLD_BASE + hero_level*HERO_KILL_GOLD_PER_LEVEL
+			end
+
+			hero:SetMinimumGoldBounty(gold_bounty)
+			hero:SetMaximumGoldBounty(gold_bounty)
+		end
+		
+		-- Add a skill point when a hero levels up
+		if SKILL_POINTS_AT_EVERY_LEVEL then
+			local levels_without_ability_point = {17, 19, 21, 22, 23, 24}	-- on this levels you should get a skill point
+			for i = 1, #levels_without_ability_point do
+				if level == levels_without_ability_point[i] then
+					local unspent_ability_points = hero:GetAbilityPoints()
+					hero:SetAbilityPoints(unspent_ability_points+1)
+				end
 			end
 		end
+		
+		-- If you want to remove skill points when a hero levels up then uncomment the following line:
+		--hero:SetAbilityPoints(0)
 	end
-	
-	-- If you want to remove skill points when a hero levels up then uncomment the following line:
-	--hero:SetAbilityPoints(0)
 end
 
 -- A player last hit a creep, a tower, or a hero
@@ -314,7 +322,7 @@ function your_gamemode_name:OnPlayerTakeTowerDamage(keys)
 	local damage = keys.damage
 end
 
--- A player picked a hero
+-- A player picked a hero (this is happening before OnNPCSpawned)
 function your_gamemode_name:OnPlayerPickHero(keys)
 	DebugPrint("[BAREBONES] OnPlayerPickHero")
 	--PrintTable(keys)
@@ -322,7 +330,7 @@ function your_gamemode_name:OnPlayerPickHero(keys)
 	local hero_name = keys.hero
 	local hero_entity = EntIndexToHScript(keys.heroindex)
 	local player = EntIndexToHScript(keys.player)
-	
+
 	Timers:CreateTimer(0.5, function()
 		local playerID = hero_entity:GetPlayerID() -- or player:GetPlayerID()
 		if PlayerResource:IsFakeClient(playerID) then
@@ -349,7 +357,7 @@ function your_gamemode_name:OnTeamKillCredit(keys)
 	local killer_team = keys.teamnumber
 end
 
--- An entity died
+-- An entity died (an entity killed an entity)
 function your_gamemode_name:OnEntityKilled(keys)
 	DebugPrint("[BAREBONES] An entity was killed.")
 	--PrintTable(keys)
@@ -468,7 +476,7 @@ function your_gamemode_name:OnEntityKilled(keys)
 		-- Killer is not a real hero but it killed a hero
 		if killer_unit:IsTower() or killer_unit:IsCreep() or killer_unit:IsFountain() then
 			-- Put stuff here that you want to happen if a hero is killed by a creep, tower or fountain.
-			-- Respawn time can be modified here if a hero is killed by a neutral creep
+			-- If a hero is killed by a neutral creep, respawn time can be modified here
 		end
 
 		-- When team hero kill limit is reached declare the winner

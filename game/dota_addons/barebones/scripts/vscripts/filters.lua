@@ -51,7 +51,7 @@ function your_gamemode_name:DamageFilter(keys)
 		return false
 	end
 	
-	-- Update the gold bounty of the hero he dies
+	-- Update the gold bounty of the hero before he dies
 	if USE_CUSTOM_HERO_GOLD_BOUNTY then
 		if attacker:IsControllableByAnyPlayer() and victim:IsRealHero() and damage_after_reductions >= victim:GetHealth() then
 			-- Get his killing streak
@@ -105,12 +105,12 @@ end
 function your_gamemode_name:ProjectileFilter(keys)
 	--PrintTable(keys)
 
-	local can_be_dodged = keys.dodgeable				-- values: 1 or 0
+	local can_be_dodged = keys.dodgeable				-- values: 1 for yes or 0 for no
 	local ability_index = keys.entindex_ability_const	-- value if not ability: -1
 	local source_index = keys.entindex_source_const
 	local target_index = keys.entindex_target_const
 	local expire_time = keys.expire_time
-	local is_an_attack_projectile = keys.is_attack		-- values: 1 or 0
+	local is_an_attack_projectile = keys.is_attack		-- values: 1 for yes or 0 for no
 	local max_impact_time = keys.max_impact_time
 	local projectile_speed = keys.move_speed
 
@@ -119,21 +119,58 @@ end
 
 -- Bounty Rune Filter, can be used to modify Alchemist's Greevil Greed for example
 function your_gamemode_name:BountyRuneFilter(keys)
-	--PrintTable(keys)
+	print("bounty")
+	PrintTable(keys)
+	print("----------------------")
 
 	return true
 end
 
 -- Rune filter, can be used to modify what runes spawn and don't spawn, can be used to replace runes
 function your_gamemode_name:RuneSpawnFilter(keys)
-	--PrintTable(keys)
+	print("runespawn")
+	PrintTable(keys)
+	print("----------------------")
 
 	return true
 end
 
--- Healing Filter, can be used to modify how much regen and healing a unit is gaining
+-- Healing Filter, can be used to modify how much hp regen and healing a unit is gaining
+-- Triggers every time a unit gains health
 function your_gamemode_name:HealingFilter(keys)
 	--PrintTable(keys)
+
+	local healing_target_index = keys.entindex_target_const
+	local heal_amount = keys.heal -- heal amount of the ability or health restored with hp regen during server tick
+
+	local healer_index
+	if keys.entindex_healer_const then
+		healer_index = keys.entindex_healer_const
+	end
+
+	local healing_ability_index
+	if keys.entindex_inflictor_const then
+		healing_ability_index = keys.entindex_inflictor_const
+	end
+	
+	local healing_target = EntIndexToHScript(healing_target_index)
+	
+	-- Find the source of the heal - the healer
+	local healer
+	if healer_index then
+		healer = EntIndexToHScript(healer_index)
+	else
+		healer = healing_target -- hp regen
+	end
+	
+	-- Find healing ability
+	-- Abilities that give bonus hp regen don't count as healing abilities!!!
+	local healing_ability
+	if healing_ability_index then
+		healing_ability = EntIndexToHScript(healing_ability_index)
+	else
+		healing_ability = nil -- hp regen
+	end
 
 	return true
 end
@@ -141,7 +178,7 @@ end
 -- Gold filter, can be used to modify how much gold player gains/loses
 function your_gamemode_name:GoldFilter(keys)
 	--PrintTable(keys)
-	
+
 	local gold = keys.gold
     local playerID = keys.player_id_const
     local reason = keys.reason_const
@@ -156,8 +193,39 @@ function your_gamemode_name:GoldFilter(keys)
 	return true
 end
 
+-- Inventory filter, triggers every time a unit picks up or buys an item, doesn't trigger when you change item's slot inside inventory
 function your_gamemode_name:InventoryFilter(keys)
 	--PrintTable(keys)
-	
+
+	local unit_with_inventory_index = keys.inventory_parent_entindex_const -- -1 if not defined
+	local item_index = keys.item_entindex_const
+	local owner_index = keys.item_parent_entindex_const -- -1 if not defined
+	local item_slot = keys.suggested_slot -- slot in which the item should be put, usually its -1 meaning put in first free slot
+
+	--Item slots:
+	-- Inventory slots: DOTA_ITEM_SLOT_1 - DOTA_ITEM_SLOT_9
+	-- Backpack slots: DOTA_ITEM_SLOT_7 - DOTA_ITEM_SLOT_9
+	-- Stash slots: DOTA_STASH_SLOT_1 - DOTA_STASH_SLOT_6
+
+	local unit_with_inventory
+	local unit_name
+	if unit_with_inventory_index ~= -1 then
+		unit_with_inventory = EntIndexToHScript(unit_with_inventory_index)
+		unit_name = unit_with_inventory:GetUnitName()
+	end
+
+	local item = EntIndexToHScript(item_index)
+	local item_name = item:GetName()
+
+	local owner_of_this_item
+	if owner_index ~= -1 then
+		-- not reliable
+		owner_of_this_item = EntIndexToHScript(owner_index)
+	else
+		owner_of_this_item = item:GetPurchaser()
+	end
+
+	local owner_name = owner_of_this_item:GetUnitName()
+
 	return true
 end
