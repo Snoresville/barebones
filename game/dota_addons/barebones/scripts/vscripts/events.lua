@@ -184,7 +184,7 @@ function your_gamemode_name:OnPlayerChangedName(keys)
 	local old_name = keys.oldName
 end
 
--- A player leveled up an ability
+-- A player leveled up an ability; Note: it doesn't trigger when you use SetLevel() on the ability!
 function your_gamemode_name:OnPlayerLearnedAbility(keys)
 	DebugPrint("[BAREBONES] OnPlayerLearnedAbility")
 	--PrintTable(keys)
@@ -192,27 +192,28 @@ function your_gamemode_name:OnPlayerLearnedAbility(keys)
 	local player = EntIndexToHScript(keys.player)
 	local ability_name = keys.abilityname
 
+	local playerID
 	if player then
-		local playerID = player:GetPlayerID()
-		local hero = PlayerResource:GetAssignedHero(playerID)
-		
-		-- Handling talents without custom net tables
-		local talents = {
-			{"special_bonus_unique_chaos_knight", "modifier_reality_rift_talent_1"},
-			{"special_bonus_unique_chaos_knight_2", "modifier_reality_rift_talent_2"},
-			{"special_bonus_unique_hero_name_1", "modifier_ability_name_talent_name_1"},
-			{"special_bonus_unique_hero_name_2", "modifier_ability_name_talent_name_2"},
-			{"special_bonus_unique_hero_name_3", "modifier_ability_name_talent_name_3"}
-		}
-		
-		for i = 1, #talents do
-			local talent = talents[i]
-			if ability_name == talent[1] then
-				local talent_ability = hero:FindAbilityByName(ability_name)
-				if talent_ability then
-					local talent_modifier = talent[2]
-					hero:AddNewModifier(hero, talent_ability, talent_modifier, {})
-				end
+		playerID = player:GetPlayerID()
+	else
+		playerID = keys.PlayerID
+	end
+
+	local hero = PlayerResource:GetAssignedHero(playerID)
+
+	-- Handling talents without custom net tables
+	local talents = {
+		{"special_bonus_unique_chaos_knight", "modifier_reality_rift_talent_1"},
+		{"special_bonus_unique_chaos_knight_2", "modifier_reality_rift_talent_2"}
+	}
+
+	for i = 1, #talents do
+		local talent = talents[i]
+		if ability_name == talent[1] then
+			local talent_ability = hero:FindAbilityByName(ability_name)
+			if talent_ability then
+				local talent_modifier = talent[2]
+				hero:AddNewModifier(hero, talent_ability, talent_modifier, {})
 			end
 		end
 	end
@@ -451,6 +452,11 @@ function your_gamemode_name:OnEntityKilled(keys)
 					respawn_time = respawn_time + respawn_extra_time
 				end
 			end
+			
+			-- Killer is a neutral creep
+			if killer_unit:IsNeutralUnitType() then
+				-- If a hero is killed by a neutral creep, respawn time can be modified here
+			end
 
 			-- Maximum Respawn Time
 			if respawn_time > MAX_RESPAWN_TIME then
@@ -476,7 +482,6 @@ function your_gamemode_name:OnEntityKilled(keys)
 		-- Killer is not a real hero but it killed a hero
 		if killer_unit:IsTower() or killer_unit:IsCreep() or killer_unit:IsFountain() then
 			-- Put stuff here that you want to happen if a hero is killed by a creep, tower or fountain.
-			-- If a hero is killed by a neutral creep, respawn time can be modified here
 		end
 
 		-- When team hero kill limit is reached declare the winner
