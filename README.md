@@ -69,14 +69,17 @@ This library sets up tables that are shared between server (lua) and client (jav
 #### playerresource.lua
 This library extends PlayerResource. It adds functions and handles that are important for detecting disconnected/abandoned players and for assigning heroes to players.
 
+## Debugging
+This version of Barebones now only prints out (spams) debugging information when told to by setting the USE_DEBUG in settings.lua to true.
+
 ## Additional Information
 - Barebones also comes with a sample loading screen implementation in panorama which you can view and edit via the content panorama directory.
 - You can change the name of the multiteams used at the Game Setup screen by editing the game/barebones/panorama/localization/addon_english.txt file.
 - You can adjust the number of players allowed on each of your maps by editing addoninfo.txt.
+- For making custom buildings use: https://github.com/MNoya/BuildingHelper
 
 ## TO DO:
 - Add attributes library.
-- Add buildings library for handling dota buildings and custom buildings.
 - Fix attachments library.
 - Expand rune filters.
 
