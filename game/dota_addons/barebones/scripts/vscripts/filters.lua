@@ -119,18 +119,18 @@ end
 
 -- Bounty Rune Filter, can be used to modify Alchemist's Greevil Greed for example
 function your_gamemode_name:BountyRuneFilter(keys)
-	print("bounty")
-	PrintTable(keys)
-	print("----------------------")
+	--print("bounty")
+	--PrintTable(keys)
+	--print("----------------------")
 
 	return true
 end
 
 -- Rune filter, can be used to modify what runes spawn and don't spawn, can be used to replace runes
 function your_gamemode_name:RuneSpawnFilter(keys)
-	print("runespawn")
-	PrintTable(keys)
-	print("----------------------")
+	--print("runespawn")
+	--PrintTable(keys)
+	--print("----------------------")
 
 	return true
 end
