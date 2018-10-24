@@ -97,6 +97,12 @@ function your_gamemode_name:ExperienceFilter(keys)
 	local experience = keys.experience
 	local playerID = keys.player_id_const
 	local reason = keys.reason_const
+	
+	-- Reasons:
+	--DOTA_ModifyXP_CreepKill
+	--DOTA_ModifyXP_HeroKill
+	--DOTA_ModifyXP_RoshanKill
+	--DOTA_ModifyXP_Unspecified
 
 	return true
 end
@@ -119,9 +125,11 @@ end
 
 -- Bounty Rune Filter, can be used to modify Alchemist's Greevil Greed for example
 function your_gamemode_name:BountyRuneFilter(keys)
-	--print("bounty")
 	--PrintTable(keys)
-	--print("----------------------")
+
+	local gold_bounty = keys.gold_bounty
+	local playerID = keys.player_id_const
+	local xp_bounty = keys.xp_bounty		-- 0, cannot be modified currently (7.19d)
 
 	return true
 end
@@ -131,7 +139,7 @@ function your_gamemode_name:RuneSpawnFilter(keys)
 	--print("runespawn")
 	--PrintTable(keys)
 	--print("----------------------")
-
+	-- Doesn't work?
 	return true
 end
 
@@ -152,9 +160,9 @@ function your_gamemode_name:HealingFilter(keys)
 	if keys.entindex_inflictor_const then
 		healing_ability_index = keys.entindex_inflictor_const
 	end
-	
+
 	local healing_target = EntIndexToHScript(healing_target_index)
-	
+
 	-- Find the source of the heal - the healer
 	local healer
 	if healer_index then
@@ -162,7 +170,7 @@ function your_gamemode_name:HealingFilter(keys)
 	else
 		healer = healing_target -- hp regen
 	end
-	
+
 	-- Find healing ability
 	-- Abilities that give bonus hp regen don't count as healing abilities!!!
 	local healing_ability
@@ -182,6 +190,25 @@ function your_gamemode_name:GoldFilter(keys)
 	local gold = keys.gold
     local playerID = keys.player_id_const
     local reason = keys.reason_const
+	
+	-- Reasons:
+	--DOTA_ModifyGold_AbandonedRedistribute
+	--DOTA_ModifyGold_AbilityCost
+	--DOTA_ModifyGold_Building
+	--DOTA_ModifyGold_Buyback
+	--DOTA_ModifyGold_CheatCommand
+	--DOTA_ModifyGold_CourierKill
+	--DOTA_ModifyGold_CreepKill
+	--DOTA_ModifyGold_Death
+	--DOTA_ModifyGold_GameTick
+	--DOTA_ModifyGold_HeroKill
+	--DOTA_ModifyGold_PurchaseConsumable
+	--DOTA_ModifyGold_PurchaseItem
+	--DOTA_ModifyGold_RoshanKill
+	--DOTA_ModifyGold_SelectionPenalty
+	--DOTA_ModifyGold_SellItem
+	--DOTA_ModifyGold_SharedGold
+	--DOTA_ModifyGold_Unspecified
 
 	-- Disable all hero kill gold
 	if DISABLE_ALL_GOLD_FROM_HERO_KILLS then

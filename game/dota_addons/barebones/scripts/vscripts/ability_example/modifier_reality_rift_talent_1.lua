@@ -17,10 +17,3 @@ end
 function modifier_reality_rift_talent_1:RemoveOnDeath()
     return false
 end
-
-function modifier_reality_rift_talent_1:OnCreated()
-	local parent = self:GetParent()
-	local talent = self:GetAbility()
-	--local talent_value = talent:GetSpecialValueFor("value")
-	--parent.reality_rift_talent_1_value = talent_value
-end
