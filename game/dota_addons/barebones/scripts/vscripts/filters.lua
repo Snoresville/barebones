@@ -129,7 +129,7 @@ function your_gamemode_name:BountyRuneFilter(keys)
 
 	local gold_bounty = keys.gold_bounty
 	local playerID = keys.player_id_const
-	local xp_bounty = keys.xp_bounty		-- 0, cannot be modified currently (7.19d)
+	local xp_bounty = keys.xp_bounty		-- value: 0
 
 	return true
 end
@@ -139,7 +139,45 @@ function your_gamemode_name:RuneSpawnFilter(keys)
 	--print("runespawn")
 	--PrintTable(keys)
 	--print("----------------------")
-	-- Doesn't work?
+	local rune = keys.rune_type
+	local spawner_index = keys.spawner_entindex_const
+	
+	-- Runes:
+	--DOTA_RUNE_INVALID			-1
+	--DOTA_RUNE_DOUBLEDAMAGE	0
+	--DOTA_RUNE_HASTE			1
+	--DOTA_RUNE_ILLUSION		2
+	--DOTA_RUNE_INVISIBILITY	3
+	--DOTA_RUNE_REGENERATION	4
+	--DOTA_RUNE_BOUNTY			5
+	--DOTA_RUNE_ARCANE			6
+	
+	-- Old rune enums
+	--DOTA_RUNE_COUNT
+	--DOTA_RUNE_HAUNTED
+	--DOTA_RUNE_SPOOKY
+	--DOTA_RUNE_RAPIER
+	--DOTA_RUNE_TURBO
+	--DOTA_RUNE_MYSTERY
+	--DOTA_HALLOWEEN_RUNE_COUNT
+	
+	-- local number_of_runes = 6
+	-- local random_number =  RandomFloat(0, 100)
+	-- local chance_to_spawn = 100/number_of_runes
+	-- if random_number <= chance_to_spawn then
+		-- keys.rune_type = DOTA_RUNE_DOUBLEDAMAGE
+	-- elseif random_number > chance_to_spawn and random_number <= 2*chance_to_spawn then
+		-- keys.rune_type = DOTA_RUNE_HASTE
+	-- elseif random_number > 2*chance_to_spawn and random_number <= 3*chance_to_spawn then
+		-- keys.rune_type = DOTA_RUNE_ILLUSION
+	-- elseif random_number > 3*chance_to_spawn and random_number <= 4*chance_to_spawn then
+		-- keys.rune_type = DOTA_RUNE_INVISIBILITY
+	-- elseif random_number > 4*chance_to_spawn and random_number <= 5*chance_to_spawn then
+		-- keys.rune_type = DOTA_RUNE_REGENERATION
+	-- else
+		-- keys.rune_type = DOTA_RUNE_ARCANE
+	-- end
+
 	return true
 end
 
