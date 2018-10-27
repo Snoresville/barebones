@@ -1,5 +1,5 @@
 -- This is the primary barebones gamemode script and should be used to assist in initializing your game mode
-BAREBONES_VERSION = "0.38"
+BAREBONES_VERSION = "2.00"
 
 -- Physics library can be used for advanced physics/motion/collision of units.  See PhysicsReadme.txt for more information.
 require('libraries/physics')
@@ -106,7 +106,7 @@ function your_gamemode_name:OnHeroInGame(hero)
 					PlayerResource:ModifyGold(playerID, NORMAL_START_GOLD-600, false, 0)
 				end
 
-				-- Remove a teleport scoll from the player when they spawn
+				-- Remove a teleport scroll from the player when they spawn
 				if not TELEPORT_SCROLL_ON_START then
 					for i=DOTA_ITEM_SLOT_1, DOTA_ITEM_SLOT_9 do
 						local item = hero:GetItemInSlot(i)
@@ -343,7 +343,7 @@ function your_gamemode_name:CaptureGameMode()
 	self:OnFirstPlayerLoaded()
 end
 
--- Initializes heroes' innate abilities (abilities that a hero has auto-leveled up on the start of the game)
+-- Initializes heroes' innate abilities (abilities that a hero has auto-leveled up at the start of the game)
 function InitializeInnateAbilities(hero)
 
 	-- List of all innate abilities
