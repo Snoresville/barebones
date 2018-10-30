@@ -14,9 +14,9 @@ end
 -- The overall game state has changed
 function your_gamemode_name:OnGameRulesStateChange(keys)
 	--PrintTable(keys)
-	
+
 	local new_state = GameRules:State_Get()
-	
+
 	if new_state == DOTA_GAMERULES_STATE_INIT then
 		DebugPrint("[BAREBONES] Game State changed to: DOTA_GAMERULES_STATE_INIT")
 
@@ -74,12 +74,12 @@ end
 function your_gamemode_name:OnNPCSpawned(keys)
 	DebugPrint("[BAREBONES] A unit Spawned")
 	--PrintTable(keys)
-	
+
 	local npc = EntIndexToHScript(keys.entindex)
 	local unit_owner = npc:GetOwner()
-	
+
 	-- Put things here that will happen for every unit or hero when they spawn
-	
+
 	-- OnHeroInGame
 	if npc:IsRealHero() and npc.bFirstSpawned == nil then
 		npc.bFirstSpawned = true
@@ -111,7 +111,7 @@ function your_gamemode_name:OnItemPickedUp(keys)
 	end
 
 	local item_entity = EntIndexToHScript(keys.ItemEntityIndex)
-	local player = PlayerResource:GetPlayer(keys.PlayerID)
+	local playerID = keys.PlayerID
 	local item_name = keys.itemname
 end
 
@@ -120,6 +120,12 @@ end
 function your_gamemode_name:OnPlayerReconnect(keys)
 	DebugPrint("[BAREBONES] A Player has reconnected.")
 	--PrintTable(keys)
+
+	--local name = keys.name
+	--local network_id = keys.networkid
+	--local user_id = keys.userid
+	--local xu_id = keys.xuid
+	--local reason = keys.reason
 
 	local new_state = GameRules:State_Get()
 	if new_state > DOTA_GAMERULES_STATE_HERO_SELECTION then
@@ -150,8 +156,8 @@ function your_gamemode_name:OnItemPurchased(keys)
 	end
 
 	-- The name of the item purchased
-	local item_name = keys.itemname 
-  
+	local item_name = keys.itemname
+
 	-- The cost of the item purchased
 	local item_cost = keys.itemcost
 end
@@ -161,9 +167,8 @@ function your_gamemode_name:OnAbilityUsed(keys)
 	--PrintTable(keys)
 
 	local playerID = keys.PlayerID
-	local player = PlayerResource:GetPlayer(playerID)
 	local ability_name = keys.abilityname
-	
+
 	-- If you need to adjust abilities on their cast, use Order Filter, not this
 end
 
@@ -259,7 +264,7 @@ function your_gamemode_name:OnPlayerLevelUp(keys)
 			hero:SetMinimumGoldBounty(gold_bounty)
 			hero:SetMaximumGoldBounty(gold_bounty)
 		end
-		
+
 		-- Add a skill point when a hero levels up
 		if SKILL_POINTS_AT_EVERY_LEVEL then
 			local levels_without_ability_point = {17, 19, 21, 22, 23, 24}	-- on this levels you should get a skill point
@@ -270,7 +275,7 @@ function your_gamemode_name:OnPlayerLevelUp(keys)
 				end
 			end
 		end
-		
+
 		-- If you want to remove skill points when a hero levels up then uncomment the following line:
 		--hero:SetAbilityPoints(0)
 	end
@@ -284,10 +289,10 @@ function your_gamemode_name:OnLastHit(keys)
 	local IsFirstBlood = keys.FirstBlood == 1
 	local IsHeroKill = keys.HeroKill == 1
 	local IsTowerKill = keys.TowerKill == 1
-	
-	-- Player that got a last hit
-	local player = PlayerResource:GetPlayer(keys.PlayerID)
-	
+
+	-- Player ID that got a last hit
+	local playerID = keys.PlayerID
+
 	-- Killed unit (creep, hero, tower etc.)
 	local killed_entity = EntIndexToHScript(keys.EntKilled)
 end
@@ -296,7 +301,8 @@ end
 function your_gamemode_name:OnTreeCut(keys)
 	DebugPrint("[BAREBONES] OnTreeCut")
 	--PrintTable(keys)
-	
+
+	-- Tree coordinates on the map
 	local treeX = keys.tree_x
 	local treeY = keys.tree_y
 end
@@ -306,9 +312,9 @@ function your_gamemode_name:OnRuneActivated(keys)
 	DebugPrint("[BAREBONES] OnRuneActivated")
 	--PrintTable(keys)
 
-  local player = PlayerResource:GetPlayer(keys.PlayerID)
+  local playerID = keys.PlayerID
   local rune = keys.rune
-  
+
   -- For Bounty Runes use BountyRuneFilter
   -- For modifying which runes spawn use RuneSpawnFilter
   -- This event can be used for adding more effects to existing runes.
@@ -319,7 +325,7 @@ function your_gamemode_name:OnPlayerTakeTowerDamage(keys)
 	DebugPrint("[BAREBONES] OnPlayerTakeTowerDamage")
 	--PrintTable(keys)
 
-	local player = PlayerResource:GetPlayer(keys.PlayerID)
+	local playerID = keys.PlayerID
 	local damage = keys.damage
 end
 
@@ -333,7 +339,7 @@ function your_gamemode_name:OnPlayerPickHero(keys)
 	local player = EntIndexToHScript(keys.player)
 
 	Timers:CreateTimer(0.5, function()
-		local playerID = hero_entity:GetPlayerID() -- or player:GetPlayerID()
+		local playerID = hero_entity:GetPlayerID() -- or player:GetPlayerID() if player is not disconnected
 		if PlayerResource:IsFakeClient(playerID) then
 			-- This is happening only for bots when they spawn for the first time or if they use custom hero-create spells (Custom Illusion spells)
 		else
@@ -352,10 +358,12 @@ function your_gamemode_name:OnTeamKillCredit(keys)
 	DebugPrint("[BAREBONES] OnTeamKillCredit")
 	--PrintTable(keys)
 
-	local killer_player = PlayerResource:GetPlayer(keys.killer_userid)
-	local victim_player = PlayerResource:GetPlayer(keys.victim_userid)
+	--local killer_player = PlayerResource:GetPlayer(keys.killer_userid)
+	--local victim_player = PlayerResource:GetPlayer(keys.victim_userid)
 	local streak = keys.herokills
 	local killer_team = keys.teamnumber
+
+	-- If you want to change assist gold or assist experience on hero death use OnEntityKilled or Damage Filter, not this
 end
 
 -- An entity died (an entity killed an entity)
@@ -447,12 +455,12 @@ function your_gamemode_name:OnEntityKilled(keys)
 			-- Reaper's Scythe respawn time increase
 			if killing_ability then
 				if killing_ability:GetAbilityName() == "necrolyte_reapers_scythe" then
-					DebugPrint("Killed by Necro Ultimate.")
+					DebugPrint("[BAREBONES] A hero was killed by a Necro Ultimate.")
 					local respawn_extra_time = killing_ability:GetLevelSpecialValueFor("respawn_constant", killing_ability:GetLevel() - 1)
 					respawn_time = respawn_time + respawn_extra_time
 				end
 			end
-			
+
 			-- Killer is a neutral creep
 			if killer_unit:IsNeutralUnitType() then
 				-- If a hero is killed by a neutral creep, respawn time can be modified here
@@ -474,7 +482,7 @@ function your_gamemode_name:OnEntityKilled(keys)
 			PlayerResource:SetCustomBuybackCooldown(killed_unit:GetPlayerID(), BUYBACK_COOLDOWN_TIME)
 		end
 
-		-- Buyback Gold Cost
+		-- Buyback Fixed Gold Cost
 		if CUSTOM_BUYBACK_COST_ENABLED then
 			PlayerResource:SetCustomBuybackCost(killed_unit:GetPlayerID(), BUYBACK_FIXED_GOLD_COST)
 		end
@@ -504,7 +512,7 @@ function your_gamemode_name:OnEntityKilled(keys)
 	end
 
 	-- Remove dead non-hero units from selection -> bugged ability/cast bar
-	if killed_unit:IsIllusion() or (killed_unit:IsControllableByAnyPlayer() and (not killed_unit:IsRealHero()) and (not killed_unit:IsCourier()) and (not killed_unit:IsClone())) then
+	if killed_unit:IsIllusion() or (killed_unit:IsControllableByAnyPlayer() and (not killed_unit:IsRealHero()) and (not killed_unit:IsCourier()) and (not killed_unit:IsClone())) and (not killed_unit:IsTempestDouble()) then
 		local player = killed_unit:GetPlayerOwner()
 		local playerID
 		if player == nil then
@@ -525,13 +533,13 @@ end
 function your_gamemode_name:OnConnectFull(keys)
 	DebugPrint("[BAREBONES] A Player fully connected.")
 	--PrintTable(keys)
-  
+
 	your_gamemode_name:CaptureGameMode()
 
 	local index = keys.index
 	local playerID = keys.PlayerID
 	local userID = keys.userid
-	
+
 	PlayerResource:OnPlayerConnect(keys)
 end
 
@@ -553,11 +561,10 @@ function your_gamemode_name:OnItemCombined(keys)
 	if not playerID then
 		return 
 	end
-	local player = PlayerResource:GetPlayer(playerID)
 
 	-- The name of the item that was combined
-	local item_name = keys.itemname 
-  
+	local item_name = keys.itemname
+
 	-- The cost of the item combined
 	local item_cost = keys.itemcost
 end
@@ -567,9 +574,9 @@ function your_gamemode_name:OnAbilityCastBegins(keys)
 	DebugPrint("[BAREBONES] OnAbilityCastBegins")
 	--PrintTable(keys)
 
-	local player = PlayerResource:GetPlayer(keys.PlayerID)
+	local playerID = keys.PlayerID
 	local ability_name = keys.abilityname
-	
+
 	-- If you need to adjust abilities on their cast, use Order Filter, not this
 end
 
@@ -579,7 +586,7 @@ function your_gamemode_name:OnTowerKill(keys)
 	--PrintTable(keys)
 
 	local gold = keys.gold
-	local killer_player = PlayerResource:GetPlayer(keys.killer_userid)
+	local killer_userID = keys.killer_userid
 	local team = keys.teamnumber
 end
 
@@ -588,7 +595,7 @@ function your_gamemode_name:OnPlayerSelectedCustomTeam(keys)
 	DebugPrint("[BAREBONES] OnPlayerSelectedCustomTeam")
 	--PrintTable(keys)
 
-	local player = PlayerResource:GetPlayer(keys.player_id)
+	local playerID = keys.player_id
 	local success = (keys.success == 1)
 	local team = keys.team_id
 end
@@ -607,7 +614,7 @@ end
 function your_gamemode_name:OnPlayerChat(keys)
 	DebugPrint("[BAREBONES] Player used the chat")
 	--PrintTable(keys)
-	
+
 	local team_only = keys.teamonly
 	local userID = keys.userid
 	local text = keys.text
