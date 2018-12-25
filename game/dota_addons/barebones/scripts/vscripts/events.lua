@@ -438,19 +438,19 @@ function your_gamemode_name:OnEntityKilled(keys)
 			end
 
 			-- Bloodstone reduction (bloodstone can't be in backpack)
-			for i=DOTA_ITEM_SLOT_1, DOTA_ITEM_SLOT_6 do
-				local item = killed_unit:GetItemInSlot(i)
-				if item then
-					if item:GetName() == "item_bloodstone" then
-						local current_charges = item:GetCurrentCharges()
-						local charges_before_death = math.ceil(current_charges*1.5)
-						local reduction_per_charge = item:GetLevelSpecialValueFor("respawn_time_reduction", item:GetLevel() - 1)
-						local respawn_reduction = charges_before_death*reduction_per_charge
-						respawn_time = math.max(1, respawn_time-respawn_reduction)
-						break -- to prevent multiple bloodstones granting respawn reduction
-					end
-				end
-			end
+			-- for i=DOTA_ITEM_SLOT_1, DOTA_ITEM_SLOT_6 do
+				-- local item = killed_unit:GetItemInSlot(i)
+				-- if item then
+					-- if item:GetName() == "item_bloodstone" then
+						-- local current_charges = item:GetCurrentCharges()
+						-- local charges_before_death = math.ceil(current_charges*1.5)
+						-- local reduction_per_charge = item:GetLevelSpecialValueFor("respawn_time_reduction", item:GetLevel() - 1)
+						-- local respawn_reduction = charges_before_death*reduction_per_charge
+						-- respawn_time = math.max(1, respawn_time-respawn_reduction)
+						-- break -- to prevent multiple bloodstones granting respawn reduction
+					-- end
+				-- end
+			-- end
 
 			-- Reaper's Scythe respawn time increase
 			if killing_ability then
@@ -520,6 +520,7 @@ function your_gamemode_name:OnEntityKilled(keys)
 		else
 			playerID = player:GetPlayerID()
 		end
+		-- Without Selection library this will return an error
 		PlayerResource:RemoveFromSelection(playerID, killed_unit)
 	end
 end

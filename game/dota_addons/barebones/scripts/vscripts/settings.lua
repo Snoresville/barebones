@@ -2,8 +2,8 @@
 USE_DEBUG = false						-- Should we print statements on almost every function/event call? For debugging.
 
 ENABLE_HERO_RESPAWN = true				-- Should the heroes automatically respawn on a timer or stay dead until manually respawned
-UNIVERSAL_SHOP_MODE = true				-- Should the shops contain all items?
-ALLOW_SAME_HERO_SELECTION = true		-- Should we let people select the same hero as each other
+UNIVERSAL_SHOP_MODE = false				-- Should the shops contain all items?
+ALLOW_SAME_HERO_SELECTION = false		-- Should we let people select the same hero as each other
 
 CUSTOM_GAME_SETUP_TIME = 25.0			-- How long should custom game setup last - the screen where players pick a team?
 HERO_SELECTION_TIME = 60.0				-- How long should we let people select their hero? Should be at least 5 seconds.
@@ -13,8 +13,8 @@ PRE_GAME_TIME = 30.0					-- How long after showcase time should the horn blow an
 POST_GAME_TIME = 60.0					-- How long should we let people stay around before closing the server automatically?
 TREE_REGROW_TIME = 60.0					-- How long should it take individual trees to respawn after being cut down/destroyed?
 
-GOLD_PER_TICK = 1						-- How much gold should players get per tick?
-GOLD_TICK_TIME = 5.0					-- How long should we wait in seconds between gold ticks?
+GOLD_PER_TICK = 2						-- How much gold should players get per tick?
+GOLD_TICK_TIME = 1.0					-- How long should we wait in seconds between gold ticks?
 NORMAL_START_GOLD = 600					-- Starting Gold if picked normally
 RANDOM_START_GOLD = 800					-- Starting Gold if randomed
 
@@ -36,13 +36,13 @@ USE_UNSEEN_FOG_OF_WAR = false			-- Should we make unseen and fogged areas of the
 -- NOTE: DISABLE_FOG_OF_WAR_ENTIRELY must be false for USE_UNSEEN_FOG_OF_WAR to work
 USE_STANDARD_DOTA_BOT_THINKING = false	-- Should we have bots act like they would in Dota? (This requires 3 lanes, normal items, etc)
 
-USE_CUSTOM_HERO_GOLD_BOUNTY = true			-- Should the gold for hero kills be modified (true) or same as in default Dota (false)?
+USE_CUSTOM_HERO_GOLD_BOUNTY = false			-- Should the gold for hero kills be modified (true) or same as in default Dota (false)?
 HERO_KILL_GOLD_BASE = 110					-- Hero gold bounty base value
 HERO_KILL_GOLD_PER_LEVEL = 10				-- Hero gold bounty increase per level
 HERO_KILL_GOLD_PER_STREAK = 60				-- Hero gold bounty per his streak (Killing Spree: +HERO_KILL_GOLD_PER_STREAK gold; Ultrakill: +2xHERO_KILL_GOLD_PER_STREAK gold ...)
 DISABLE_ALL_GOLD_FROM_HERO_KILLS = false	-- Should we remove gold gain from hero kills? USE_CUSTOM_HERO_GOLD_BOUNTY needs to be true.
 -- NOTE: DISABLE_ALL_GOLD_FROM_HERO_KILLS requires GoldFilter. Use DISABLE_GOLD_SOUNDS too.
-USE_CUSTOM_HERO_LEVELS = false			-- Should the heroes give a custom amount of XP when killed?
+USE_CUSTOM_HERO_LEVELS = false			-- Should the heroes give a custom amount of XP when killed? Can malfunction for levels above 25.
 
 USE_CUSTOM_TOP_BAR_VALUES = true		-- Should we do customized top bar values or use the default kill count per team?
 TOP_BAR_VISIBLE = true					-- Should we display the top bar score/count at all?
@@ -55,8 +55,8 @@ DISABLE_GOLD_SOUNDS = false				-- Should we disable the gold sound when players 
 END_GAME_ON_KILLS = false				-- Should the game end after a certain number of kills?
 KILLS_TO_END_GAME_FOR_TEAM = 50			-- How many kills for a team should signify an end of game?
 
-USE_CUSTOM_XP_VALUES = true				-- Should we use custom XP values to level up heroes, or the default Dota numbers?
-MAX_LEVEL = 50							-- What level should we let heroes get to?
+USE_CUSTOM_XP_VALUES = false			-- Should we use custom XP values to level up heroes, or the default Dota numbers?
+MAX_LEVEL = 50							-- What level should we let heroes get to? (USE_CUSTOM_XP_VALUES must be true).
 -- NOTE: MAX_LEVEL and XP_PER_LEVEL_TABLE will not work if USE_CUSTOM_XP_VALUES is false or nil.
 
 -- Fill this table up with the required XP per level if you want to change it
@@ -73,7 +73,8 @@ SHOW_ONLY_PLAYER_INVENTORY = false      -- Should we only allow players to see t
 DISABLE_STASH_PURCHASING = false        -- Should we prevent players from being able to buy items into their stash when not at a shop?
 DISABLE_ANNOUNCER = false               -- Should we disable the announcer from working in the game?
 FORCE_PICKED_HERO = nil                 -- What hero should we force all players to spawn as? (e.g. "npc_dota_hero_axe").  Use nil to allow players to pick their own hero.
-TELEPORT_SCROLL_ON_START = false		-- Should the heroes have a teleport scroll in their inventory right at the start of the game?
+TELEPORT_SCROLL_ON_START = true			-- Should the heroes have a teleport scroll in their inventory right at the start of the game?
+ADD_ITEM_TO_HERO_ON_SPAWN = false		-- Add an example item to the picked hero when he spawns?
 SKILL_POINTS_AT_EVERY_LEVEL = false		-- Should we allow heroes to gain skill points even at levels 17, 19, 21, 22, 23 and 24?
 -- NOTE: If SKILL_POINTS_AT_EVERY_LEVEL is true, there will be strange interactions with heroes like Invoker and Meepo.
 
@@ -119,7 +120,7 @@ end
 FOUNTAIN_CONSTANT_MANA_REGEN = -1       -- What should we use for the constant fountain mana regen?  Use -1 to keep the default dota behavior.
 FOUNTAIN_PERCENTAGE_MANA_REGEN = -1     -- What should we use for the percentage fountain mana regen?  Use -1 to keep the default dota behavior.
 FOUNTAIN_PERCENTAGE_HEALTH_REGEN = -1   -- What should we use for the percentage fountain health regen?  Use -1 to keep the default dota behavior.
-MAXIMUM_ATTACK_SPEED = 600              -- What should we use for the maximum attack speed?
+MAXIMUM_ATTACK_SPEED = 700              -- What should we use for the maximum attack speed?
 MINIMUM_ATTACK_SPEED = 10               -- What should we use for the minimum attack speed?
 
 DISABLE_DAY_NIGHT_CYCLE = false         -- Should we disable the day night cycle from naturally occurring? (Manual adjustment still possible)

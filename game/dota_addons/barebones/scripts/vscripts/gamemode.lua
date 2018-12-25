@@ -1,5 +1,5 @@
 -- This is the primary barebones gamemode script and should be used to assist in initializing your game mode
-BAREBONES_VERSION = "2.00"
+BAREBONES_VERSION = "2.0.1"
 
 -- Physics library can be used for advanced physics/motion/collision of units.  See PhysicsReadme.txt for more information.
 require('libraries/physics')
@@ -119,8 +119,10 @@ function your_gamemode_name:OnHeroInGame(hero)
 				end
 
 				-- Create an item and add it to the player, effectively ensuring they start with the item
-				local item = CreateItem("item_example_item", hero, hero)
-				hero:AddItem(item)
+				if ADD_ITEM_TO_HERO_ON_SPAWN then
+					local item = CreateItem("item_example_item", hero, hero)
+					hero:AddItem(item)
+				end
 
 				-- Make sure that stuff above will not happen again for the player if some other hero spawns
 				-- for him for the first time during the game 
