@@ -479,7 +479,7 @@ function your_gamemode_name:OnEntityKilled(keys)
 
 		-- Buyback Cooldown
 		if CUSTOM_BUYBACK_COOLDOWN_ENABLED then
-			PlayerResource:SetCustomBuybackCooldown(killed_unit:GetPlayerID(), BUYBACK_COOLDOWN_TIME)
+			PlayerResource:SetCustomBuybackCooldown(killed_unit:GetPlayerID(), CUSTOM_BUYBACK_COOLDOWN_TIME)
 		end
 
 		-- Buyback Fixed Gold Cost

@@ -294,9 +294,9 @@ function your_gamemode_name:CaptureGameMode()
 	-- Set GameMode parameters
 	gamemode:SetRecommendedItemsDisabled(RECOMMENDED_BUILDS_DISABLED)
 	gamemode:SetCameraDistanceOverride(CAMERA_DISTANCE_OVERRIDE)
+	gamemode:SetBuybackEnabled(BUYBACK_ENABLED)
 	gamemode:SetCustomBuybackCostEnabled(CUSTOM_BUYBACK_COST_ENABLED)
 	gamemode:SetCustomBuybackCooldownEnabled(CUSTOM_BUYBACK_COOLDOWN_ENABLED)
-	gamemode:SetBuybackEnabled(BUYBACK_ENABLED)
 	gamemode:SetTopBarTeamValuesOverride(USE_CUSTOM_TOP_BAR_VALUES)
 	gamemode:SetTopBarTeamValuesVisible(TOP_BAR_VISIBLE)
 

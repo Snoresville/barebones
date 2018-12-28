@@ -9,9 +9,9 @@ CUSTOM_GAME_SETUP_TIME = 25.0			-- How long should custom game setup last - the 
 HERO_SELECTION_TIME = 60.0				-- How long should we let people select their hero? Should be at least 5 seconds.
 STRATEGY_TIME = 20.0					-- How long should strategy time last? Bug: You can buy items during strategy time and it will not be spent!
 SHOWCASE_TIME = 12.0					-- How long should show case time be?
-PRE_GAME_TIME = 30.0					-- How long after showcase time should the horn blow and the game start?
+PRE_GAME_TIME = 90.0					-- How long after showcase time should the horn blow and the game start?
 POST_GAME_TIME = 60.0					-- How long should we let people stay around before closing the server automatically?
-TREE_REGROW_TIME = 60.0					-- How long should it take individual trees to respawn after being cut down/destroyed?
+TREE_REGROW_TIME = 300.0				-- How long should it take individual trees to respawn after being cut down/destroyed?
 
 GOLD_PER_TICK = 2						-- How much gold should players get per tick?
 GOLD_TICK_TIME = 1.0					-- How long should we wait in seconds between gold ticks?
@@ -25,10 +25,10 @@ MINIMAP_ICON_SIZE = 1					-- What icon size should we use for our heroes?
 MINIMAP_CREEP_ICON_SIZE = 1				-- What icon size should we use for creeps?
 MINIMAP_RUNE_ICON_SIZE = 1				-- What icon size should we use for runes?
 
+BUYBACK_ENABLED = true					-- Should we allow people to buyback when they die?
 CUSTOM_BUYBACK_COST_ENABLED = false		-- Should we use a custom buyback cost setting?
 CUSTOM_BUYBACK_COOLDOWN_ENABLED = false	-- Should we use a custom buyback time?
-BUYBACK_ENABLED = true					-- Should we allow people to buyback when they die?
-BUYBACK_COOLDOWN_TIME = 0.0				-- Custom buyback cooldown time (needed if CUSTOM_BUYBACK_COOLDOWN_ENABLED is true).
+CUSTOM_BUYBACK_COOLDOWN_TIME = 480.0	-- Custom buyback cooldown time (needed if CUSTOM_BUYBACK_COOLDOWN_ENABLED is true).
 BUYBACK_FIXED_GOLD_COST = 500			-- Fixed custom buyback gold cost (needed if CUSTOM_BUYBACK_COST_ENABLED is true).
 
 DISABLE_FOG_OF_WAR_ENTIRELY = false		-- Should we disable fog of war entirely for both teams?
