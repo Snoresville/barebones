@@ -136,7 +136,7 @@ end
 
 -- Rune filter, can be used to modify what runes spawn and don't spawn, can be used to replace runes
 function your_gamemode_name:RuneSpawnFilter(keys)
-	--print("runespawn")
+	--print("rune spawned")
 	--PrintTable(keys)
 	--print("----------------------")
 	local rune = keys.rune_type

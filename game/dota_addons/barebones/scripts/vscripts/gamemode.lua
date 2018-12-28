@@ -107,16 +107,16 @@ function your_gamemode_name:OnHeroInGame(hero)
 				end
 
 				-- Remove a teleport scroll from the player when they spawn
-				if not TELEPORT_SCROLL_ON_START then
-					for i=DOTA_ITEM_SLOT_1, DOTA_ITEM_SLOT_9 do
-						local item = hero:GetItemInSlot(i)
-						if item then
-							if item:GetName() == "item_tpscroll" then
-								hero:RemoveItem(item)
-							end
-						end
-					end
-				end
+				--if not TELEPORT_SCROLL_ON_START then
+					--for i=DOTA_ITEM_SLOT_1, DOTA_ITEM_SLOT_9 do
+						--local item = hero:GetItemInSlot(i)
+						--if item then
+							--if item:GetName() == "item_tpscroll" then
+								--hero:RemoveItem(item)
+							--end
+						--end
+					--end
+				--end
 
 				-- Create an item and add it to the player, effectively ensuring they start with the item
 				if ADD_ITEM_TO_HERO_ON_SPAWN then
