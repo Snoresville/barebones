@@ -294,6 +294,12 @@ function your_gamemode_name:InventoryFilter(keys)
 	if owner_of_this_item then
 		owner_name = owner_of_this_item:GetUnitName()
 	end
+	
+	if not TELEPORT_SCROLL_ON_START then
+		if item:GetAbilityName() == "item_tpscroll" and item:GetPurchaser() == nil then
+			return false
+		end
+	end
 
 	return true
 end
