@@ -5,7 +5,8 @@
 -- The method 1 creates a new hero/unit first and then makes him an illusion. This method is default.
 -- The method 2 literally creates an empty unit and then turns his model and stats to be the same as the target.
 -- Both methods can cause lag. But second method has more bugs.
--- Known issues (for both methods): Morphling interaction, power treads always strength, terrorblade metamorphosis missing attack projectile
+-- Known issues (for both methods): Morphling interaction, power treads always strength, 
+-- terrorblade metamorphosis missing attack projectile
 -- missing talent trees (visually only)
 function CDOTA_BaseNPC:CreateIllusion(caster, ability, duration, position, damage_dealt, damage_taken, controllable, method)
 	if caster == nil or ability == nil or duration == nil then
@@ -109,14 +110,14 @@ function CDOTA_BaseNPC:CreateIllusion(caster, ability, duration, position, damag
 				end
 			end
 			-- Remove teleport scroll
-			for i=DOTA_ITEM_SLOT_1, DOTA_ITEM_SLOT_9 do
-				local item = illusion:GetItemInSlot(i)
-				if item then
-					if item:GetName() == "item_tpscroll" then
-						illusion:RemoveItem(item)
-					end
-				end
-			end
+			--for i=DOTA_ITEM_SLOT_1, DOTA_ITEM_SLOT_9 do
+				--local item = illusion:GetItemInSlot(i)
+				--if item then
+					--if item:GetName() == "item_tpscroll" then
+						--illusion:RemoveItem(item)
+					--end
+				--end
+			--end
 			-- Recreate the items of the CDOTA_BaseNPC to be the same on illusion
 			for item_slot=DOTA_ITEM_SLOT_1, DOTA_ITEM_SLOT_9 do
 				local item = self:GetItemInSlot(item_slot)
@@ -156,7 +157,7 @@ function CDOTA_BaseNPC:CreateIllusion(caster, ability, duration, position, damag
 				end
 			end
 
-			-- Setting health and mana to be the same as the CDOTA_BaseNPC with items and abilities
+			-- Setting health and mana to be the same as the CDOTA_BaseNPC with items, abilities, buffs, debuffs...
 			illusion:SetHealth(unit_HP)
 			illusion:SetMana(unit_MP)
 

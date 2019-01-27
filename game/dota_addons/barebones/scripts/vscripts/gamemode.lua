@@ -102,7 +102,7 @@ function your_gamemode_name:OnHeroInGame(hero)
 				if PlayerResource:HasRandomed(playerID) then
 					PlayerResource:ModifyGold(playerID, RANDOM_START_GOLD-600, false, 0)
 				else
-					-- If the NORMAL_START_GOLD is smaller then 600, don't use this line:
+					-- If the NORMAL_START_GOLD is smaller then 600, remove Strategy Time and use SetGold
 					PlayerResource:ModifyGold(playerID, NORMAL_START_GOLD-600, false, 0)
 				end
 
