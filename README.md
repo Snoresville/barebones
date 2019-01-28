@@ -6,7 +6,7 @@ BMDdota made most libraries. His email: bmddota@gmail.com
 
 If you have some questions for me, contact me on ModDota discord.
 
-### Version 2.0.1.
+### Version 2.0.2.
 
 ## Introduction
 Barebones is meant to be a jumping off point for creating a mod with all the basic stuff taken care of for you.

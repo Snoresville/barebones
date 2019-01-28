@@ -1,5 +1,5 @@
 -- This is the primary barebones gamemode script and should be used to assist in initializing your game mode
-BAREBONES_VERSION = "2.0.1"
+BAREBONES_VERSION = "2.0.2"
 
 -- Physics library can be used for advanced physics/motion/collision of units.  See PhysicsReadme.txt for more information.
 require('libraries/physics')
@@ -170,6 +170,7 @@ function your_gamemode_name:InitGameMode()
 	GameRules:SetRuneMinimapIconScale(MINIMAP_RUNE_ICON_SIZE)
 	GameRules:SetFirstBloodActive(ENABLE_FIRST_BLOOD)
 	GameRules:SetHideKillMessageHeaders(HIDE_KILL_BANNERS)
+	GameRules:LockCustomGameSetupTeamAssignment(LOCK_TEAMS)
 
 	-- This is multi-team configuration stuff
 	if USE_AUTOMATIC_PLAYERS_PER_TEAM then
@@ -341,6 +342,8 @@ function your_gamemode_name:CaptureGameMode()
 	gamemode:SetDaynightCycleDisabled(DISABLE_DAY_NIGHT_CYCLE)
 	gamemode:SetKillingSpreeAnnouncerDisabled(DISABLE_KILLING_SPREE_ANNOUNCER)
 	gamemode:SetStickyItemDisabled(DISABLE_STICKY_ITEM)
+	gamemode:SetPauseEnabled(ENABLE_PAUSING)
+	gamemode:SetCustomScanCooldown(CUSTOM_SCAN_COOLDOWN)
 
 	self:OnFirstPlayerLoaded()
 end

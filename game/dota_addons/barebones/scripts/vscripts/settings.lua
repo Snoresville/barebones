@@ -4,12 +4,13 @@ USE_DEBUG = false						-- Should we print statements on almost every function/ev
 ENABLE_HERO_RESPAWN = true				-- Should the heroes automatically respawn on a timer or stay dead until manually respawned
 UNIVERSAL_SHOP_MODE = false				-- Should the shops contain all items?
 ALLOW_SAME_HERO_SELECTION = false		-- Should we let people select the same hero as each other
+LOCK_TEAMS = false 						-- Should we Lock (true) or unlock (false) team assignemnt. If team assignment is locked players cannot change teams.
 
 CUSTOM_GAME_SETUP_TIME = 25.0			-- How long should custom game setup last - the screen where players pick a team?
 HERO_SELECTION_TIME = 60.0				-- How long should we let people select their hero? Should be at least 5 seconds.
 STRATEGY_TIME = 20.0					-- How long should strategy time last? Bug: You can buy items during strategy time and it will not be spent!
 SHOWCASE_TIME = 12.0					-- How long should show case time be?
-PRE_GAME_TIME = 90.0					-- How long after showcase time should the horn blow and the game start?
+PRE_GAME_TIME = 80.0					-- How long after showcase time should the horn blow and the game start?
 POST_GAME_TIME = 60.0					-- How long should we let people stay around before closing the server automatically?
 TREE_REGROW_TIME = 300.0				-- How long should it take individual trees to respawn after being cut down/destroyed?
 
@@ -30,6 +31,8 @@ CUSTOM_BUYBACK_COST_ENABLED = false		-- Should we use a custom buyback cost sett
 CUSTOM_BUYBACK_COOLDOWN_ENABLED = false	-- Should we use a custom buyback time?
 CUSTOM_BUYBACK_COOLDOWN_TIME = 480.0	-- Custom buyback cooldown time (needed if CUSTOM_BUYBACK_COOLDOWN_ENABLED is true).
 BUYBACK_FIXED_GOLD_COST = 500			-- Fixed custom buyback gold cost (needed if CUSTOM_BUYBACK_COST_ENABLED is true).
+
+CUSTOM_SCAN_COOLDOWN = 210				-- Custom cooldown of Scan in seconds. Doesn't affect Scan's starting cooldown.
 
 DISABLE_FOG_OF_WAR_ENTIRELY = false		-- Should we disable fog of war entirely for both teams?
 USE_UNSEEN_FOG_OF_WAR = false			-- Should we make unseen and fogged areas of the map completely black until uncovered by each team? 
@@ -126,6 +129,7 @@ MINIMUM_ATTACK_SPEED = 10               -- What should we use for the minimum at
 DISABLE_DAY_NIGHT_CYCLE = false         -- Should we disable the day night cycle from naturally occurring? (Manual adjustment still possible)
 DISABLE_KILLING_SPREE_ANNOUNCER = false -- Shuold we disable the killing spree announcer?
 DISABLE_STICKY_ITEM = false             -- Should we disable the sticky item button in the quick buy area?
+ENABLE_PAUSING = true					-- Should we allow players to pause the game?
 
 USE_DEFAULT_RUNE_SYSTEM = true			-- Should we use the default dota rune spawn timings and the same runes as dota have?
 BOUNTY_RUNE_SPAWN_INTERVAL = 300		-- How long in seconds should we wait between bounty rune spawns? BUGGED! WORKS FOR POWERUPS TOO!

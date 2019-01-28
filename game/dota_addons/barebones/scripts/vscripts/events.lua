@@ -507,8 +507,12 @@ function your_gamemode_name:OnEntityKilled(keys)
 	-- Ancient destruction detection (if the map doesn't have ancients with these names, this will never happen)
 	if killed_unit:GetUnitName() == "npc_dota_badguys_fort" then
 		GameRules:SetGameWinner(DOTA_TEAM_GOODGUYS)
+		GameRules:SetCustomVictoryMessage("#dota_post_game_radiant_victory")
+		GameRules:SetCustomVictoryMessageDuration(POST_GAME_TIME)
 	elseif killed_unit:GetUnitName() == "npc_dota_goodguys_fort" then
 		GameRules:SetGameWinner(DOTA_TEAM_BADGUYS)
+		GameRules:SetCustomVictoryMessage("#dota_post_game_dire_victory")
+		GameRules:SetCustomVictoryMessageDuration(POST_GAME_TIME)
 	end
 
 	-- Remove dead non-hero units from selection -> bugged ability/cast bar
