@@ -172,7 +172,7 @@ end
 -- Author: Noya
 -- This function is showing custom Error Messages using notifications library
 function SendErrorMessage(pID, string)
-    Notifications:ClearBottom(pID)
-    Notifications:Bottom(pID, {text=string, style={color='#E62020'}, duration=2})
+    --Notifications:ClearBottom(pID)
+    --Notifications:Bottom(pID, {text=string, style={color='#E62020'}, duration=2})
     EmitSoundOnClient("General.Cancel", PlayerResource:GetPlayer(pID))
 end

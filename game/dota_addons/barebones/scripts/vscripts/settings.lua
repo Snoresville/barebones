@@ -16,6 +16,7 @@ TREE_REGROW_TIME = 300.0				-- How long should it take individual trees to respa
 
 GOLD_PER_TICK = 2						-- How much gold should players get per tick?
 GOLD_TICK_TIME = 1.0					-- How long should we wait in seconds between gold ticks?
+
 NORMAL_START_GOLD = 600					-- Starting Gold if picked normally
 RANDOM_START_GOLD = 800					-- Starting Gold if randomed
 

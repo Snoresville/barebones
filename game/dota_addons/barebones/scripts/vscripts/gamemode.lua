@@ -6,7 +6,7 @@ require('libraries/physics')
 -- Projectiles library can be used for advanced 3D projectile systems.
 require('libraries/projectiles')
 -- Notifications library can be used for sending panorama notifications to the UIs of players/teams/everyone
-require('libraries/notifications')
+--require('libraries/notifications')
 -- Animations library can be used for starting customized animations on units from lua
 require('libraries/animations')
 -- Attachments library can be used for performing "Frankenstein" attachments on units
@@ -147,24 +147,31 @@ end
 -- It can be used to pre-initialize any values/tables that will be needed later
 function your_gamemode_name:InitGameMode()
 	DebugPrint("[BAREBONES] Starting to load Game Rules.")
+
 	-- Setup rules
 	GameRules:SetHeroRespawnEnabled(ENABLE_HERO_RESPAWN)
 	GameRules:SetUseUniversalShopMode(UNIVERSAL_SHOP_MODE)
 	GameRules:SetSameHeroSelectionEnabled(ALLOW_SAME_HERO_SELECTION)
+
 	GameRules:SetHeroSelectionTime(HERO_SELECTION_TIME)
 	GameRules:SetPreGameTime(PRE_GAME_TIME)
 	GameRules:SetPostGameTime(POST_GAME_TIME)
 	GameRules:SetShowcaseTime(SHOWCASE_TIME)
 	GameRules:SetStrategyTime(STRATEGY_TIME)
+
 	GameRules:SetTreeRegrowTime(TREE_REGROW_TIME)
+
 	if USE_CUSTOM_HERO_LEVELS then
 		GameRules:SetUseCustomHeroXPValues(true)
 	end
+
 	GameRules:SetGoldPerTick(GOLD_PER_TICK)
 	GameRules:SetGoldTickTime(GOLD_TICK_TIME)
+
 	if USE_CUSTOM_HERO_GOLD_BOUNTY then
 		GameRules:SetUseBaseGoldBountyOnHeroes(false)
 	end
+
 	GameRules:SetHeroMinimapIconScale(MINIMAP_ICON_SIZE)
 	GameRules:SetCreepMinimapIconScale(MINIMAP_CREEP_ICON_SIZE)
 	GameRules:SetRuneMinimapIconScale(MINIMAP_RUNE_ICON_SIZE)
