@@ -1,12 +1,12 @@
 -- This is the primary barebones gamemode script and should be used to assist in initializing your game mode
-BAREBONES_VERSION = "2.0.2"
+BAREBONES_VERSION = "2.0.3"
 
 -- Physics library can be used for advanced physics/motion/collision of units.  See PhysicsReadme.txt for more information.
 require('libraries/physics')
 -- Projectiles library can be used for advanced 3D projectile systems.
 require('libraries/projectiles')
 -- Notifications library can be used for sending panorama notifications to the UIs of players/teams/everyone
---require('libraries/notifications')
+require('libraries/notifications')
 -- Animations library can be used for starting customized animations on units from lua
 require('libraries/animations')
 -- Attachments library can be used for performing "Frankenstein" attachments on units
@@ -105,18 +105,6 @@ function your_gamemode_name:OnHeroInGame(hero)
 					-- If the NORMAL_START_GOLD is smaller then 600, remove Strategy Time and use SetGold
 					PlayerResource:ModifyGold(playerID, NORMAL_START_GOLD-600, false, 0)
 				end
-
-				-- Remove a teleport scroll from the player when they spawn
-				--if not TELEPORT_SCROLL_ON_START then
-					--for i=DOTA_ITEM_SLOT_1, DOTA_ITEM_SLOT_9 do
-						--local item = hero:GetItemInSlot(i)
-						--if item then
-							--if item:GetName() == "item_tpscroll" then
-								--hero:RemoveItem(item)
-							--end
-						--end
-					--end
-				--end
 
 				-- Create an item and add it to the player, effectively ensuring they start with the item
 				if ADD_ITEM_TO_HERO_ON_SPAWN then
@@ -226,7 +214,7 @@ function your_gamemode_name:InitGameMode()
 	ListenToGameEvent('dota_rune_activated_server', Dynamic_Wrap(your_gamemode_name, 'OnRuneActivated'), self)
 	ListenToGameEvent('dota_player_take_tower_damage', Dynamic_Wrap(your_gamemode_name, 'OnPlayerTakeTowerDamage'), self)
 	ListenToGameEvent('tree_cut', Dynamic_Wrap(your_gamemode_name, 'OnTreeCut'), self)
-	ListenToGameEvent('entity_hurt', Dynamic_Wrap(your_gamemode_name, 'OnEntityHurt'), self)
+
 	ListenToGameEvent('player_connect', Dynamic_Wrap(your_gamemode_name, 'PlayerConnect'), self)
 	ListenToGameEvent('dota_player_used_ability', Dynamic_Wrap(your_gamemode_name, 'OnAbilityUsed'), self)
 	ListenToGameEvent('game_rules_state_change', Dynamic_Wrap(your_gamemode_name, 'OnGameRulesStateChange'), self)

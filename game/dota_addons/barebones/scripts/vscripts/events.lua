@@ -31,7 +31,7 @@ function your_gamemode_name:OnGameRulesStateChange(keys)
 		DebugPrint("[BAREBONES] Game State changed to: DOTA_GAMERULES_STATE_HERO_SELECTION")
 		your_gamemode_name:PostLoadPrecache()
 		your_gamemode_name:OnAllPlayersLoaded()
-		Timers:CreateTimer(HERO_SELECTION_TIME - 1.1, function()
+		Timers:CreateTimer(HERO_SELECTION_TIME+STRATEGY_TIME-1, function()
 			for playerID = 0, 19 do
 				if PlayerResource:IsValidPlayerID(playerID) then
 					-- If this player still hasn't picked a hero, random one
@@ -85,17 +85,6 @@ function your_gamemode_name:OnNPCSpawned(keys)
 		npc.bFirstSpawned = true
 		your_gamemode_name:OnHeroInGame(npc)
 	end
-end
-
--- An entity somewhere has been hurt. This event fires very often with many units so don't do too many expensive
--- operations here
-function your_gamemode_name:OnEntityHurt(keys)
-	--PrintTable(keys)
-
-	-- Don't use this unless you know what are you doing. 
-	-- If you need to detect when a unit is damaged, use Damage Filter.
-	local attacker_entity = EntIndexToHScript(keys.entindex_attacker)
-    local victim_entity = EntIndexToHScript(keys.entindex_killed)
 end
 
 -- An item was picked up off the ground
@@ -447,7 +436,7 @@ function your_gamemode_name:OnEntityKilled(keys)
 						-- local reduction_per_charge = item:GetLevelSpecialValueFor("respawn_time_reduction", item:GetLevel() - 1)
 						-- local respawn_reduction = charges_before_death*reduction_per_charge
 						-- respawn_time = math.max(1, respawn_time-respawn_reduction)
-						-- break -- to prevent multiple bloodstones granting respawn reduction
+						-- break -- break the for loop, to prevent multiple bloodstones granting respawn reduction
 					-- end
 				-- end
 			-- end
