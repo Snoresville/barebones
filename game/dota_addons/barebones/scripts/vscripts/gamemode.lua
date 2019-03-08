@@ -306,7 +306,7 @@ function your_gamemode_name:CaptureGameMode()
 
 	gamemode:SetFogOfWarDisabled(DISABLE_FOG_OF_WAR_ENTIRELY)
 	gamemode:SetGoldSoundDisabled(DISABLE_GOLD_SOUNDS)
-	gamemode:SetRemoveIllusionsOnDeath(REMOVE_ILLUSIONS_ON_DEATH)
+	--gamemode:SetRemoveIllusionsOnDeath(REMOVE_ILLUSIONS_ON_DEATH)
 
 	gamemode:SetAlwaysShowPlayerInventory(SHOW_ONLY_PLAYER_INVENTORY)
 	gamemode:SetAnnouncerDisabled(DISABLE_ANNOUNCER)

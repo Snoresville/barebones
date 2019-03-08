@@ -170,7 +170,7 @@ function Attachments:start()
         Convars:RegisterCommand( "attachment_configure", Dynamic_Wrap(Attachments, 'ActivateAttachmentSetup'), "Activate Attachment Setup", FCVAR_CHEAT )
       end
     else
-		print("haha found you")
+      print("haha found you")
       print("[attachments] RELOADING")
       SendToServerConsole("script_reload_code " .. src:sub(2))
     end

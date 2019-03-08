@@ -1,6 +1,6 @@
 -- This is the entry-point to your game mode and should be used primarily to precache models/particles/sounds/etc
 
--- Creating a global gamemode variable;
+-- Creating a global gamemode class variable;
 if your_gamemode_name == nil then
 	_G.your_gamemode_name = class({})
 else
@@ -10,10 +10,9 @@ end
 
 require('util')
 require('custom_illusions')
--- Essential lua libraries: (don't remove!)
-require('libraries/timers')
-require('libraries/player_resource')
-require('gamemode')
+require('libraries/timers')				-- Core lua library
+require('libraries/player_resource')	-- Core lua library
+require('gamemode')						-- Core barebones file
 
 function Precache(context)
 --[[
@@ -35,7 +34,8 @@ function Precache(context)
 
 	-- Models can also be precached by folder or individually
 	-- PrecacheModel should generally used over PrecacheResource for individual models
-	PrecacheResource("model_folder", "particles/heroes/antimage", context)
+
+	--PrecacheResource("model_folder", "particles/heroes/antimage", context)
 	--PrecacheResource("model", "particles/heroes/viper/viper.vmdl", context)
 	--PrecacheModel("models/heroes/viper/viper.vmdl", context)
 	--PrecacheModel("models/props_gameplay/treasure_chest001.vmdl", context)
@@ -59,6 +59,6 @@ end
 -- Create the game mode when we activate
 function Activate()
 	DebugPrint("[BAREBONES] Activating ...")
-	print("your_gamemode_name activated.")
+	print("your_gamemode_name is activating.")
 	your_gamemode_name:InitGameMode()
 end

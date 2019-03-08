@@ -347,8 +347,8 @@ function your_gamemode_name:OnTeamKillCredit(keys)
 	DebugPrint("[BAREBONES] OnTeamKillCredit")
 	--PrintTable(keys)
 
-	--local killer_player = PlayerResource:GetPlayer(keys.killer_userid)
-	--local victim_player = PlayerResource:GetPlayer(keys.victim_userid)
+	local killer_userID = keys.killer_userid
+	local victim_userID = keys.victim_userid
 	local streak = keys.herokills
 	local killer_team = keys.teamnumber
 

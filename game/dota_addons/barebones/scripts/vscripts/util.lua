@@ -42,10 +42,10 @@ function PrintTable(t, indent, done)
   end
 end
 
--- Given element and table, returns true if element is in the table.
-function TableContains(table1, element)
-    if table1 == nil then return false end
-    for k,v in pairs(table1) do
+-- Requires an element and a table, returns true if element is in the table.
+function TableContains(t, element)
+    if t == nil then return false end
+    for k,v in pairs(t) do
         if k == element then
             return true
         end
@@ -53,26 +53,26 @@ function TableContains(table1, element)
     return false
 end
 
--- Return length of the table even if the table is nil or empty
-function TableLength(table1)
-    if table1 == nil or table1 == {} then
+-- Return length of the table even if the table is nil or empty, counts nil elements
+function TableLength(t)
+    if t == nil or t == {} then
         return 0
     end
     local length = 0
-    for k,v in pairs(table1) do
+    for k,v in pairs(t) do
         length = length + 1
     end
     return length
 end
 
-function GetRandomTableElement(table1)
+function GetRandomTableElement(t)
     -- iterate over whole table to get all keys
     local keyset = {}
-    for k in pairs(table1) do
+    for k in pairs(t) do
         table.insert(keyset, k)
     end
     -- now you can reliably return a random key
-    return table1[keyset[RandomInt(1, #keyset)]]
+    return t[keyset[RandomInt(1, #keyset)]]
 end
 
 -- Colors
