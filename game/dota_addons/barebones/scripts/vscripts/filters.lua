@@ -1,18 +1,57 @@
--- Order Filter; order can be casting an ability, moving, clicking to attack, using radar, glyph etc.
+-- Order Filter; order can be casting an ability, moving, clicking to attack, using scan (radar), glyph etc.
 function your_gamemode_name:OrderFilter(event)
 	--PrintTable(event)
 
 	local order = event.order_type
 	local units = event.units
 
-	-- If the order is an ability
+	-- Order enums:
+	-- DOTA_UNIT_ORDER_NONE = 0
+	-- DOTA_UNIT_ORDER_MOVE_TO_POSITION = 1
+	-- DOTA_UNIT_ORDER_MOVE_TO_TARGET = 2
+	-- DOTA_UNIT_ORDER_ATTACK_MOVE = 3
+	-- DOTA_UNIT_ORDER_ATTACK_TARGET = 4
+	-- DOTA_UNIT_ORDER_CAST_POSITION = 5
+	-- DOTA_UNIT_ORDER_CAST_TARGET = 6
+	-- DOTA_UNIT_ORDER_CAST_TARGET_TREE = 7
+	-- DOTA_UNIT_ORDER_CAST_NO_TARGET = 8
+	-- DOTA_UNIT_ORDER_CAST_TOGGLE = 9
+	-- DOTA_UNIT_ORDER_HOLD_POSITION = 10
+	-- DOTA_UNIT_ORDER_TRAIN_ABILITY = 11
+	-- DOTA_UNIT_ORDER_DROP_ITEM = 12
+	-- DOTA_UNIT_ORDER_GIVE_ITEM = 13
+	-- DOTA_UNIT_ORDER_PICKUP_ITEM = 14
+	-- DOTA_UNIT_ORDER_PICKUP_RUNE = 15
+	-- DOTA_UNIT_ORDER_PURCHASE_ITEM = 16
+	-- DOTA_UNIT_ORDER_SELL_ITEM = 17
+	-- DOTA_UNIT_ORDER_DISASSEMBLE_ITEM = 18
+	-- DOTA_UNIT_ORDER_MOVE_ITEM = 19
+	-- DOTA_UNIT_ORDER_CAST_TOGGLE_AUTO = 20
+	-- DOTA_UNIT_ORDER_STOP = 21
+	-- DOTA_UNIT_ORDER_TAUNT = 22
+	-- DOTA_UNIT_ORDER_BUYBACK = 23
+	-- DOTA_UNIT_ORDER_GLYPH = 24
+	-- DOTA_UNIT_ORDER_EJECT_ITEM_FROM_STASH = 25
+	-- DOTA_UNIT_ORDER_CAST_RUNE = 26
+	-- DOTA_UNIT_ORDER_PING_ABILITY = 27
+	-- DOTA_UNIT_ORDER_MOVE_TO_DIRECTION = 28
+	-- DOTA_UNIT_ORDER_PATROL = 29
+	-- DOTA_UNIT_ORDER_VECTOR_TARGET_POSITION = 30
+	-- DOTA_UNIT_ORDER_RADAR = 31
+	-- DOTA_UNIT_ORDER_SET_ITEM_COMBINE_LOCK = 32
+	-- DOTA_UNIT_ORDER_CONTINUE = 33
+	-- DOTA_UNIT_ORDER_VECTOR_TARGET_CANCELED = 34
+	-- DOTA_UNIT_ORDER_CAST_RIVER_PAINT = 35
+	-- DOTA_UNIT_ORDER_PREGAME_ADJUST_ITEM_ASSIGNMENT = 36
+
+	-- Example 1: If the order is an ability
 	if order == DOTA_UNIT_ORDER_CAST_POSITION or order == DOTA_UNIT_ORDER_CAST_TARGET or order == DOTA_UNIT_ORDER_CAST_NO_TARGET or order == DOTA_UNIT_ORDER_CAST_TOGGLE or order == DOTA_UNIT_ORDER_CAST_TOGGLE_AUTO then
 		local ability_index = event.entindex_ability
 		local ability = EntIndexToHScript(ability_index)
 		local caster = EntIndexToHScript(units["0"])
 	end
 
-	-- If the order is a simple move command
+	-- Example 2: If the order is a simple move command
 	if order == DOTA_UNIT_ORDER_MOVE_TO_POSITION and units["0"] then
 		local unit_with_order = EntIndexToHScript(units["0"])
 		local destination_x = event.position_x
@@ -38,6 +77,14 @@ function your_gamemode_name:DamageFilter(keys)
 	local damage_type = keys.damagetype_const
 	local inflictor = keys.entindex_inflictor_const	-- keys.entindex_inflictor_const is nil if damage is not caused by an ability
 	local damage_after_reductions = keys.damage 	-- keys.damage is damage after reductions without spell amplifications
+
+	-- Damage types:
+	-- DAMAGE_TYPE_NONE = 0
+	-- DAMAGE_TYPE_PHYSICAL = 1
+	-- DAMAGE_TYPE_MAGICAL = 2
+	-- DAMAGE_TYPE_PURE = 4
+	-- DAMAGE_TYPE_ALL = 7
+	-- DAMAGE_TYPE_HP_REMOVAL = 8
 
 	local damaging_ability
 	if inflictor then
@@ -70,7 +117,7 @@ function your_gamemode_name:DamageFilter(keys)
 			victim:SetMaximumGoldBounty(gold_bounty)
 		end
 	end
-	
+
 	return true
 end
 
@@ -97,12 +144,12 @@ function your_gamemode_name:ExperienceFilter(keys)
 	local experience = keys.experience
 	local playerID = keys.player_id_const
 	local reason = keys.reason_const
-	
+
 	-- Reasons:
-	--DOTA_ModifyXP_CreepKill
-	--DOTA_ModifyXP_HeroKill
-	--DOTA_ModifyXP_RoshanKill
-	--DOTA_ModifyXP_Unspecified
+	--DOTA_ModifyXP_Unspecified		0
+	--DOTA_ModifyXP_HeroKill		1
+	--DOTA_ModifyXP_CreepKill		2
+	--DOTA_ModifyXP_RoshanKill		3
 
 	return true
 end
@@ -136,31 +183,21 @@ end
 
 -- Rune filter, can be used to modify what runes spawn and don't spawn, can be used to replace runes
 function your_gamemode_name:RuneSpawnFilter(keys)
-	--print("rune spawned")
 	--PrintTable(keys)
-	--print("----------------------")
+
 	local rune = keys.rune_type
 	local spawner_index = keys.spawner_entindex_const
-	
-	-- Runes:
-	--DOTA_RUNE_INVALID			-1
-	--DOTA_RUNE_DOUBLEDAMAGE	0
-	--DOTA_RUNE_HASTE			1
-	--DOTA_RUNE_ILLUSION		2
-	--DOTA_RUNE_INVISIBILITY	3
-	--DOTA_RUNE_REGENERATION	4
-	--DOTA_RUNE_BOUNTY			5
-	--DOTA_RUNE_ARCANE			6
-	
-	-- Old rune enums
-	--DOTA_RUNE_COUNT
-	--DOTA_RUNE_HAUNTED
-	--DOTA_RUNE_SPOOKY
-	--DOTA_RUNE_RAPIER
-	--DOTA_RUNE_TURBO
-	--DOTA_RUNE_MYSTERY
-	--DOTA_HALLOWEEN_RUNE_COUNT
-	
+
+	-- Rune enums:
+	-- DOTA_RUNE_INVALID		-1
+	-- DOTA_RUNE_DOUBLEDAMAGE	0
+	-- DOTA_RUNE_HASTE			1
+	-- DOTA_RUNE_ILLUSION		2
+	-- DOTA_RUNE_INVISIBILITY	3
+	-- DOTA_RUNE_REGENERATION	4
+	-- DOTA_RUNE_BOUNTY			5
+	-- DOTA_RUNE_ARCANE			6
+
 	-- local number_of_runes = 6
 	-- local random_number =  RandomFloat(0, 100)
 	-- local chance_to_spawn = 100/number_of_runes
@@ -226,27 +263,27 @@ function your_gamemode_name:GoldFilter(keys)
 	--PrintTable(keys)
 
 	local gold = keys.gold
-    local playerID = keys.player_id_const
-    local reason = keys.reason_const
-	
+	local playerID = keys.player_id_const
+	local reason = keys.reason_const
+
 	-- Reasons:
-	--DOTA_ModifyGold_AbandonedRedistribute
-	--DOTA_ModifyGold_AbilityCost
-	--DOTA_ModifyGold_Building
-	--DOTA_ModifyGold_Buyback
-	--DOTA_ModifyGold_CheatCommand
-	--DOTA_ModifyGold_CourierKill
-	--DOTA_ModifyGold_CreepKill
-	--DOTA_ModifyGold_Death
-	--DOTA_ModifyGold_GameTick
-	--DOTA_ModifyGold_HeroKill
-	--DOTA_ModifyGold_PurchaseConsumable
-	--DOTA_ModifyGold_PurchaseItem
-	--DOTA_ModifyGold_RoshanKill
-	--DOTA_ModifyGold_SelectionPenalty
-	--DOTA_ModifyGold_SellItem
-	--DOTA_ModifyGold_SharedGold
-	--DOTA_ModifyGold_Unspecified
+	-- DOTA_ModifyGold_Unspecified = 0
+	-- DOTA_ModifyGold_Death = 1
+	-- DOTA_ModifyGold_Buyback = 2
+	-- DOTA_ModifyGold_PurchaseConsumable = 3
+	-- DOTA_ModifyGold_PurchaseItem = 4
+	-- DOTA_ModifyGold_AbandonedRedistribute = 5
+	-- DOTA_ModifyGold_SellItem = 6
+	-- DOTA_ModifyGold_AbilityCost = 7
+	-- DOTA_ModifyGold_CheatCommand = 8
+	-- DOTA_ModifyGold_SelectionPenalty = 9
+	-- DOTA_ModifyGold_GameTick = 10
+	-- DOTA_ModifyGold_Building = 11
+	-- DOTA_ModifyGold_HeroKill = 12
+	-- DOTA_ModifyGold_CreepKill = 13
+	-- DOTA_ModifyGold_RoshanKill = 14
+	-- DOTA_ModifyGold_CourierKill = 15
+	-- DOTA_ModifyGold_SharedGold = 16
 
 	-- Disable all hero kill gold
 	if DISABLE_ALL_GOLD_FROM_HERO_KILLS then
@@ -265,12 +302,13 @@ function your_gamemode_name:InventoryFilter(keys)
 	local unit_with_inventory_index = keys.inventory_parent_entindex_const -- -1 if not defined
 	local item_index = keys.item_entindex_const
 	local owner_index = keys.item_parent_entindex_const -- -1 if not defined
-	local item_slot = keys.suggested_slot -- slot in which the item should be put, usually its -1 meaning put in first free slot
+	local item_slot = keys.suggested_slot -- slot in which the item should be put, usually its -1 meaning put in the first free slot
 
-	--Item slots:
+	-- Item slots:
 	-- Inventory slots: DOTA_ITEM_SLOT_1 - DOTA_ITEM_SLOT_9
 	-- Backpack slots: DOTA_ITEM_SLOT_7 - DOTA_ITEM_SLOT_9
 	-- Stash slots: DOTA_STASH_SLOT_1 - DOTA_STASH_SLOT_6
+	-- Teleport scroll slot: 15 (no enum)
 
 	local unit_with_inventory
 	local unit_name
@@ -294,7 +332,7 @@ function your_gamemode_name:InventoryFilter(keys)
 	if owner_of_this_item then
 		owner_name = owner_of_this_item:GetUnitName()
 	end
-	
+
 	if not TELEPORT_SCROLL_ON_START then
 		if item:GetAbilityName() == "item_tpscroll" and item:GetPurchaser() == nil then
 			return false

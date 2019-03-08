@@ -82,6 +82,7 @@ This version of Barebones now only prints out (spams) debugging information when
 
 ## TO DO:
 - Add attributes library.
+- Add max movement speed configuration.
 - Fix attachments library.
 
 If you have any questions or concerns, contact me on ModDota discord.
