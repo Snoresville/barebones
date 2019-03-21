@@ -1,9 +1,10 @@
 -- Order Filter; order can be casting an ability, moving, clicking to attack, using scan (radar), glyph etc.
-function your_gamemode_name:OrderFilter(event)
-	--PrintTable(event)
+function your_gamemode_name:OrderFilter(filter_table)
+	--PrintTable(filter_table)
 
-	local order = event.order_type
-	local units = event.units
+	local order = filter_table.order_type
+	local units = filter_table.units
+	local playerID = filter_table.issuer_player_id_const
 
 	-- Order enums:
 	-- DOTA_UNIT_ORDER_NONE = 0
@@ -46,7 +47,7 @@ function your_gamemode_name:OrderFilter(event)
 
 	-- Example 1: If the order is an ability
 	if order == DOTA_UNIT_ORDER_CAST_POSITION or order == DOTA_UNIT_ORDER_CAST_TARGET or order == DOTA_UNIT_ORDER_CAST_NO_TARGET or order == DOTA_UNIT_ORDER_CAST_TOGGLE or order == DOTA_UNIT_ORDER_CAST_TOGGLE_AUTO then
-		local ability_index = event.entindex_ability
+		local ability_index = filter_table.entindex_ability
 		local ability = EntIndexToHScript(ability_index)
 		local caster = EntIndexToHScript(units["0"])
 	end
@@ -54,9 +55,25 @@ function your_gamemode_name:OrderFilter(event)
 	-- Example 2: If the order is a simple move command
 	if order == DOTA_UNIT_ORDER_MOVE_TO_POSITION and units["0"] then
 		local unit_with_order = EntIndexToHScript(units["0"])
-		local destination_x = event.position_x
-		local destination_y = event.position_y
+		local destination_x = filter_table.position_x
+		local destination_y = filter_table.position_y
     end
+	
+	if DISABLE_ITEM_STEALING_FROM_COURIER then
+		if order == DOTA_UNIT_ORDER_DROP_ITEM or order == DOTA_UNIT_ORDER_GIVE_ITEM then
+			local unit_with_order = EntIndexToHScript(units["0"])
+			local ability_index = filter_table.entindex_ability
+			local ability = EntIndexToHScript(ability_index)
+
+			if unit_with_order:IsCourier() and ability and ability:IsItem() then
+				local purchaser = ability:GetPurchaser()
+				if purchaser and purchaser:GetPlayerID() ~= playerID then
+					CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(playerID), "display_custom_error", { message = "#hud_error_courier_cant_order_item" })
+					return false
+				end
+			end
+		end
+	end
 
 	return true
 end
@@ -199,6 +216,8 @@ function your_gamemode_name:RuneSpawnFilter(keys)
 	-- DOTA_RUNE_ARCANE			6
 
 	-- local number_of_runes = 6
+	-- keys.rune_type = RandomInt(0, number_of_runes)
+
 	-- local random_number =  RandomFloat(0, 100)
 	-- local chance_to_spawn = 100/number_of_runes
 	-- if random_number <= chance_to_spawn then

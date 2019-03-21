@@ -3,9 +3,10 @@
 	"TeamCount" 	      	"2"
 	"maps"      			"template_map your_map_name"
 	"IsPlayable"  			"1"
-	"PenaltiesEnabled"  	"0"
-	"CheckAFKPlayers" 		"1" 
+	"PenaltiesEnabled"  	"0"         // For enabling/disabling the leaver penalty
+	"CheckAFKPlayers" 		"1"			// For automatically kicking afk players from the lobby
 	"HeroGuidesSupported" 	"1"
+	"EnablePickRules"		"1"			// For enabling/disabling banning phase
 	
 	"template_map"
 	{

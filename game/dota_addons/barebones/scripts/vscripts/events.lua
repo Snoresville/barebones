@@ -32,7 +32,7 @@ function your_gamemode_name:OnGameRulesStateChange(keys)
 		your_gamemode_name:PostLoadPrecache()
 		your_gamemode_name:OnAllPlayersLoaded()
 		Timers:CreateTimer(HERO_SELECTION_TIME+STRATEGY_TIME-1, function()
-			for playerID = 0, 19 do
+			for playerID = 0, DOTA_MAX_TEAM_PLAYERS-1 do
 				if PlayerResource:IsValidPlayerID(playerID) then
 					-- If this player still hasn't picked a hero, random one
 					if not PlayerResource:HasSelectedHero(playerID) and PlayerResource:IsConnected(playerID) and (not PlayerResource:IsBroadcaster(playerID)) then
@@ -318,7 +318,7 @@ function your_gamemode_name:OnPlayerTakeTowerDamage(keys)
 	local damage = keys.damage
 end
 
--- A player picked a hero (this is happening before OnNPCSpawned)
+-- A player picked or randomed a hero (this is happening before OnNPCSpawned)
 function your_gamemode_name:OnPlayerPickHero(keys)
 	DebugPrint("[BAREBONES] OnPlayerPickHero")
 	--PrintTable(keys)

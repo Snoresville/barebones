@@ -127,10 +127,11 @@ FOUNTAIN_PERCENTAGE_HEALTH_REGEN = -1   -- What should we use for the percentage
 MAXIMUM_ATTACK_SPEED = 700              -- What should we use for the maximum attack speed?
 MINIMUM_ATTACK_SPEED = 10               -- What should we use for the minimum attack speed?
 
-DISABLE_DAY_NIGHT_CYCLE = false         -- Should we disable the day night cycle from naturally occurring? (Manual adjustment still possible)
-DISABLE_KILLING_SPREE_ANNOUNCER = false -- Shuold we disable the killing spree announcer?
-DISABLE_STICKY_ITEM = false             -- Should we disable the sticky item button in the quick buy area?
-ENABLE_PAUSING = true					-- Should we allow players to pause the game?
+DISABLE_DAY_NIGHT_CYCLE = false               -- Should we disable the day night cycle from naturally occurring? (Manual adjustment still possible)
+DISABLE_KILLING_SPREE_ANNOUNCER = false       -- Shuold we disable the killing spree announcer?
+DISABLE_STICKY_ITEM = false                   -- Should we disable the sticky item button in the quick buy area?
+ENABLE_PAUSING = true                         -- Should we allow players to pause the game?
+DISABLE_ITEM_STEALING_FROM_COURIER = false    -- Should we allow players to take items they don't own from the courier?
 
 USE_DEFAULT_RUNE_SYSTEM = true			-- Should we use the default dota rune spawn timings and the same runes as dota have?
 BOUNTY_RUNE_SPAWN_INTERVAL = 300		-- How long in seconds should we wait between bounty rune spawns? BUGGED! WORKS FOR POWERUPS TOO!

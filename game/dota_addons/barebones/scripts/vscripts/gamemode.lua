@@ -1,5 +1,5 @@
 -- This is the primary barebones gamemode script and should be used to assist in initializing your game mode
-BAREBONES_VERSION = "2.0.3"
+BAREBONES_VERSION = "2.0.4"
 
 -- Physics library can be used for advanced physics/motion/collision of units.  See PhysicsReadme.txt for more information.
 require('libraries/physics')
@@ -297,7 +297,7 @@ function your_gamemode_name:CaptureGameMode()
 	gamemode:SetTopBarTeamValuesVisible(TOP_BAR_VISIBLE)
 
 	if USE_CUSTOM_XP_VALUES then
-		gamemode:SetUseCustomHeroLevels(USE_CUSTOM_XP_VALUES)
+		gamemode:SetUseCustomHeroLevels(true)
 		gamemode:SetCustomXPRequiredToReachNextLevel(XP_PER_LEVEL_TABLE)
 	end
 

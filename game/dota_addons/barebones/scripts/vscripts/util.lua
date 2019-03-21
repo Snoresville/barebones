@@ -53,7 +53,7 @@ function TableContains(t, element)
     return false
 end
 
--- Return length of the table even if the table is nil or empty, counts nil elements
+-- Return length of the table even if the table is nil or empty
 function TableLength(t)
     if t == nil or t == {} then
         return 0
