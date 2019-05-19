@@ -35,8 +35,9 @@ function your_gamemode_name:OnGameRulesStateChange(keys)
 			for playerID = 0, DOTA_MAX_TEAM_PLAYERS-1 do
 				if PlayerResource:IsValidPlayerID(playerID) then
 					-- If this player still hasn't picked a hero, random one
+					-- PlayerResource:IsConnected(index) is custom-made; can be found in 'player_resource.lua' library
 					if not PlayerResource:HasSelectedHero(playerID) and PlayerResource:IsConnected(playerID) and (not PlayerResource:IsBroadcaster(playerID)) then
-						PlayerResource:GetPlayer(playerID):MakeRandomHeroSelection()
+						PlayerResource:GetPlayer(playerID):MakeRandomHeroSelection() -- this will cause an error if player is disconnected
 						PlayerResource:SetHasRandomed(playerID)
 						PlayerResource:SetCanRepick(playerID, false)
 						DebugPrint("[BAREBONES] Randomed a hero for a player number "..playerID)
@@ -193,6 +194,7 @@ function your_gamemode_name:OnPlayerLearnedAbility(keys)
 		playerID = keys.PlayerID
 	end
 
+    -- PlayerResource:GetAssignedHero(index) is custom-made;can be found in 'player_resource.lua' library
 	local hero = PlayerResource:GetAssignedHero(playerID)
 
 	-- Handling talents without custom net tables
@@ -318,7 +320,7 @@ function your_gamemode_name:OnPlayerTakeTowerDamage(keys)
 	local damage = keys.damage
 end
 
--- A player picked or randomed a hero (this is happening before OnNPCSpawned)
+-- A player picked or randomed a hero (this is happening before OnNPCSpawned); This never happens when you force the hero pick
 function your_gamemode_name:OnPlayerPickHero(keys)
 	DebugPrint("[BAREBONES] OnPlayerPickHero")
 	--PrintTable(keys)
@@ -332,6 +334,10 @@ function your_gamemode_name:OnPlayerPickHero(keys)
 		if PlayerResource:IsFakeClient(playerID) then
 			-- This is happening only for bots when they spawn for the first time or if they use custom hero-create spells (Custom Illusion spells)
 		else
+			if not PlayerResource.PlayerData[playerID] then
+				PlayerResource.PlayerData[playerID] = {}
+				DebugPrint("[BAREBONES] PlayerResource's PlayerData for playerID "..playerID.." was not properly initialized.")
+			end
 			if PlayerResource.PlayerData[playerID].already_assigned_hero == true then
 				-- This is happening only when players create new heroes with spells (Custom Illusion spells)
 			else
@@ -513,8 +519,11 @@ function your_gamemode_name:OnEntityKilled(keys)
 		else
 			playerID = player:GetPlayerID()
 		end
-		-- Without Selection library this will return an error
-		PlayerResource:RemoveFromSelection(playerID, killed_unit)
+		
+		if Selection then
+			-- Without Selection library this will return an error
+			PlayerResource:RemoveFromSelection(playerID, killed_unit)
+		end
 	end
 end
 
@@ -534,6 +543,7 @@ function your_gamemode_name:OnConnectFull(keys)
 	local playerID = keys.PlayerID
 	local userID = keys.userid
 
+	-- PlayerResource:OnPlayerConnect(event) is custom-made; can be found in 'player_resource.lua' library
 	PlayerResource:OnPlayerConnect(keys)
 end
 

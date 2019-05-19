@@ -10,7 +10,7 @@ end
 -- what about userid?
 function CDOTA_PlayerResource:OnPlayerConnect(event)
     local userID = event.userid
-    local playerID = event.index -- or event.PlayerID
+    local playerID = event.index or event.PlayerID
 
 	if not self.PlayerData[playerID] then
         self.UserIDToPlayerID[userID] = playerID
@@ -56,6 +56,11 @@ function CDOTA_PlayerResource:GetAssignedHero(playerID)
 		-- For bots
 		local player = self:GetPlayer(playerID)
 		return player:GetAssignedHero()
+	else
+		local player = self:GetPlayer(playerID)
+		if player then
+			return player:GetAssignedHero()
+		end
 	end
 	return nil
 end

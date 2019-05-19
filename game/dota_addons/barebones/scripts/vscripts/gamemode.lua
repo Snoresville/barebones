@@ -86,6 +86,10 @@ function your_gamemode_name:OnHeroInGame(hero)
 			-- Set starting gold for bots
 			hero:SetGold(NORMAL_START_GOLD, false)
 		else
+			if not PlayerResource.PlayerData[playerID] then
+				PlayerResource.PlayerData[playerID] = {}
+				DebugPrint("[BAREBONES] PlayerResource's PlayerData for playerID "..playerID.." was not properly initialized.")
+			end
 			-- Set some hero stuff on first spawn or on every spawn (custom or not)
 			if PlayerResource.PlayerData[playerID].already_set_hero == true then
 				-- This is happening only when players create new heroes with custom hero-create spells:
@@ -155,6 +159,7 @@ function your_gamemode_name:InitGameMode()
 
 	GameRules:SetGoldPerTick(GOLD_PER_TICK)
 	GameRules:SetGoldTickTime(GOLD_TICK_TIME)
+	GameRules:SetStartingGold(NORMAL_START_GOLD) -- Not sure if it works
 
 	if USE_CUSTOM_HERO_GOLD_BOUNTY then
 		GameRules:SetUseBaseGoldBountyOnHeroes(false)
