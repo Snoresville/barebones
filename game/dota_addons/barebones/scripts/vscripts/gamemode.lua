@@ -1,5 +1,5 @@
 -- This is the primary barebones gamemode script and should be used to assist in initializing your game mode
-BAREBONES_VERSION = "2.0.4"
+BAREBONES_VERSION = "2.0.5"
 
 -- Physics library can be used for advanced physics/motion/collision of units.  See PhysicsReadme.txt for more information.
 require('libraries/physics')
@@ -75,7 +75,7 @@ end
 function your_gamemode_name:OnHeroInGame(hero)
 
 	-- Innate abilities (this is applied to bots and custom created heroes/illusions too)
-	InitializeInnateAbilities(hero)
+	your_gamemode_name:InitializeInnateAbilities(hero)
 
 	Timers:CreateTimer(0.5, function()
 		local playerID = hero:GetPlayerID()	-- never nil (-1 by default), needs delay 1 or more frames
@@ -145,7 +145,9 @@ function your_gamemode_name:InitGameMode()
 	GameRules:SetUseUniversalShopMode(UNIVERSAL_SHOP_MODE)
 	GameRules:SetSameHeroSelectionEnabled(ALLOW_SAME_HERO_SELECTION)
 
-	GameRules:SetHeroSelectionTime(HERO_SELECTION_TIME)
+	GameRules:SetHeroSelectionTime(HERO_SELECTION_TIME) --THIS IS IGNORED when "EnablePickRules" is "1" in 'addoninfo.txt' !
+	GameRules:SetHeroSelectPenaltyTime(HERO_SELECTION_PENALTY_TIME)
+	
 	GameRules:SetPreGameTime(PRE_GAME_TIME)
 	GameRules:SetPostGameTime(POST_GAME_TIME)
 	GameRules:SetShowcaseTime(SHOWCASE_TIME)
@@ -220,7 +222,6 @@ function your_gamemode_name:InitGameMode()
 	ListenToGameEvent('dota_player_take_tower_damage', Dynamic_Wrap(your_gamemode_name, 'OnPlayerTakeTowerDamage'), self)
 	ListenToGameEvent('tree_cut', Dynamic_Wrap(your_gamemode_name, 'OnTreeCut'), self)
 
-	ListenToGameEvent('player_connect', Dynamic_Wrap(your_gamemode_name, 'PlayerConnect'), self)
 	ListenToGameEvent('dota_player_used_ability', Dynamic_Wrap(your_gamemode_name, 'OnAbilityUsed'), self)
 	ListenToGameEvent('game_rules_state_change', Dynamic_Wrap(your_gamemode_name, 'OnGameRulesStateChange'), self)
 	ListenToGameEvent('npc_spawned', Dynamic_Wrap(your_gamemode_name, 'OnNPCSpawned'), self)
@@ -286,6 +287,9 @@ function your_gamemode_name:InitGameMode()
 
 	print("your_gamemode_name initialized.")
 	DebugPrint("[BAREBONES] Done loading the game mode!\n\n")
+	
+	-- Increase/decrease maximum item limit per hero
+	Convars:SetInt('dota_max_physical_items_purchase_limit', 64)
 end
 
 -- This function is called as the first player loads and sets up the game mode parameters
@@ -316,7 +320,10 @@ function your_gamemode_name:CaptureGameMode()
 	gamemode:SetAlwaysShowPlayerInventory(SHOW_ONLY_PLAYER_INVENTORY)
 	gamemode:SetAnnouncerDisabled(DISABLE_ANNOUNCER)
 	if FORCE_PICKED_HERO ~= nil then
-		gamemode:SetCustomGameForceHero(FORCE_PICKED_HERO)
+		gamemode:SetCustomGameForceHero(FORCE_PICKED_HERO) -- THIS WILL NOT WORK when "EnablePickRules" is "1" in 'addoninfo.txt' !
+	else
+		gamemode:SetDraftingBanningTimeOverride(BANNING_PHASE_TIME)
+		gamemode:SetDraftingHeroPickSelectTimeOverride(HERO_SELECTION_TIME)
 	end
 	gamemode:SetFixedRespawnTime(FIXED_RESPAWN_TIME)
 	gamemode:SetFountainConstantManaRegen(FOUNTAIN_CONSTANT_MANA_REGEN)
@@ -348,8 +355,8 @@ function your_gamemode_name:CaptureGameMode()
 	self:OnFirstPlayerLoaded()
 end
 
--- Initializes heroes' innate abilities (abilities that a hero has auto-leveled up at the start of the game)
-function InitializeInnateAbilities(hero)
+-- Initializes heroes' innate abilities (abilities that a hero needs to have auto-leveled up at the start of the game)
+function your_gamemode_name:InitializeInnateAbilities(hero)
 
 	-- List of all innate abilities
 	local innate_abilities = {

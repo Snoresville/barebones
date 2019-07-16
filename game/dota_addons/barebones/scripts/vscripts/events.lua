@@ -1,6 +1,7 @@
 -- This file contains all barebones-registered events and has already set up the passed-in parameters for you to use.
+-- You should comment the stuff you don't need
 
--- Cleanup a player when they leave
+-- Handle stuff when a player disconnects
 function your_gamemode_name:OnDisconnect(keys)
 	DebugPrint("[BAREBONES] A Player has disconnected ".. tostring(keys.userid))
 	--PrintTable(keys)
@@ -81,7 +82,7 @@ function your_gamemode_name:OnNPCSpawned(keys)
 
 	-- Put things here that will happen for every unit or hero when they spawn
 
-	-- OnHeroInGame
+	-- OnHeroInGame (can be found in 'gamemode.lua')
 	if npc:IsRealHero() and npc.bFirstSpawned == nil then
 		npc.bFirstSpawned = true
 		your_gamemode_name:OnHeroInGame(npc)
@@ -105,8 +106,7 @@ function your_gamemode_name:OnItemPickedUp(keys)
 	local item_name = keys.itemname
 end
 
--- A player has reconnected to the game.  This function can be used to repaint Player-based particles or change
--- state as necessary
+-- A player has reconnected to the game. This function can be used to repaint Player-based particles or change state as necessary
 function your_gamemode_name:OnPlayerReconnect(keys)
 	DebugPrint("[BAREBONES] A Player has reconnected.")
 	--PrintTable(keys)
@@ -124,6 +124,7 @@ function your_gamemode_name:OnPlayerReconnect(keys)
 		if PlayerResource:HasSelectedHero(playerID) or PlayerResource:HasRandomed(playerID) then
 			-- This playerID already had a hero before disconnect
 		else
+			-- PlayerResource:IsConnected(index) is custom-made; can be found in 'player_resource.lua' library
 			if PlayerResource:IsConnected(playerID) and (not PlayerResource:IsBroadcaster(playerID)) then
 				PlayerResource:GetPlayer(playerID):MakeRandomHeroSelection()
 				PlayerResource:SetHasRandomed(playerID)
@@ -179,7 +180,7 @@ function your_gamemode_name:OnPlayerChangedName(keys)
 	local old_name = keys.oldName
 end
 
--- A player leveled up an ability; Note: it doesn't trigger when you use SetLevel() on the ability!
+-- A player leveled up an ability; Note: IT DOESN'T TRIGGER WHEN YOU USE SetLevel() ON THE ABILITY!
 function your_gamemode_name:OnPlayerLearnedAbility(keys)
 	DebugPrint("[BAREBONES] OnPlayerLearnedAbility")
 	--PrintTable(keys)
@@ -197,7 +198,7 @@ function your_gamemode_name:OnPlayerLearnedAbility(keys)
     -- PlayerResource:GetAssignedHero(index) is custom-made;can be found in 'player_resource.lua' library
 	local hero = PlayerResource:GetAssignedHero(playerID)
 
-	-- Handling talents without custom net tables
+	-- Handling talents without custom net tables, this is just an example
 	local talents = {
 		{"special_bonus_unique_chaos_knight", "modifier_reality_rift_talent_1"},
 		{"special_bonus_unique_chaos_knight_2", "modifier_reality_rift_talent_2"}
@@ -256,7 +257,7 @@ function your_gamemode_name:OnPlayerLevelUp(keys)
 			hero:SetMaximumGoldBounty(gold_bounty)
 		end
 
-		-- Add a skill point when a hero levels up
+		-- Add a skill point when a hero levels
 		if SKILL_POINTS_AT_EVERY_LEVEL then
 			local levels_without_ability_point = {17, 19, 21, 22, 23, 24}	-- on this levels you should get a skill point
 			for i = 1, #levels_without_ability_point do
@@ -320,7 +321,7 @@ function your_gamemode_name:OnPlayerTakeTowerDamage(keys)
 	local damage = keys.damage
 end
 
--- A player picked or randomed a hero (this is happening before OnNPCSpawned); This never happens when you force the hero pick
+-- A player picked or randomed a hero (this is happening before OnNPCSpawned); THIS NEVER HAPPENS WHEN YOU FORCE THE HERO PICK!
 function your_gamemode_name:OnPlayerPickHero(keys)
 	DebugPrint("[BAREBONES] OnPlayerPickHero")
 	--PrintTable(keys)
@@ -426,7 +427,7 @@ function your_gamemode_name:OnEntityKilled(keys)
 				respawn_time = killed_unit:GetRespawnTime()
 			end
 
-			-- Fixing respawn time after level 25
+			-- Fixing respawn time after level 25, this is usually bugged in custom games
 			local respawn_time_after_25 = 100 + (killed_unit_level-25)*5
 			if killed_unit_level > 25 and respawn_time < respawn_time_after_25	then
 				respawn_time = respawn_time_after_25
@@ -450,7 +451,7 @@ function your_gamemode_name:OnEntityKilled(keys)
 			-- Reaper's Scythe respawn time increase
 			if killing_ability then
 				if killing_ability:GetAbilityName() == "necrolyte_reapers_scythe" then
-					DebugPrint("[BAREBONES] A hero was killed by a Necro Ultimate.")
+					DebugPrint("[BAREBONES] A hero was killed by a Necro Reaper's Scythe. Increasing respawn time!")
 					local respawn_extra_time = killing_ability:GetLevelSpecialValueFor("respawn_constant", killing_ability:GetLevel() - 1)
 					respawn_time = respawn_time + respawn_extra_time
 				end
@@ -525,11 +526,6 @@ function your_gamemode_name:OnEntityKilled(keys)
 			PlayerResource:RemoveFromSelection(playerID, killed_unit)
 		end
 	end
-end
-
--- This function is called 1 to 2 times as the player connects initially but before they have completely connected
-function your_gamemode_name:PlayerConnect(keys)
-	--PrintTable(keys)
 end
 
 -- This function is called once when the player fully connects and becomes "Ready" during Loading

@@ -8,6 +8,8 @@ LOCK_TEAMS = false 						-- Should we Lock (true) or unlock (false) team assigne
 
 CUSTOM_GAME_SETUP_TIME = 25.0			-- How long should custom game setup last - the screen where players pick a team?
 HERO_SELECTION_TIME = 60.0				-- How long should we let people select their hero? Should be at least 5 seconds.
+HERO_SELECTION_PENALTY_TIME = 19.0      -- How long should the penalty time for not picking a hero last? During this time player loses gold.
+BANNING_PHASE_TIME = 10.0               -- How long should the banning phase last? This will work only if "EnablePickRules" is "1" in 'addoninfo.txt'
 STRATEGY_TIME = 20.0					-- How long should strategy time last? Bug: You can buy items during strategy time and it will not be spent!
 SHOWCASE_TIME = 12.0					-- How long should show case time be?
 PRE_GAME_TIME = 80.0					-- How long after showcase time should the horn blow and the game start?
@@ -20,20 +22,20 @@ GOLD_TICK_TIME = 1.0					-- How long should we wait in seconds between gold tick
 NORMAL_START_GOLD = 600					-- Starting Gold if picked normally
 RANDOM_START_GOLD = 800					-- Starting Gold if randomed
 
-RECOMMENDED_BUILDS_DISABLED = false		-- Should we disable the recommended builds for heroes
-CAMERA_DISTANCE_OVERRIDE = 1134.0		-- How far out should we allow the camera to go? 1134 is the default in Dota
+RECOMMENDED_BUILDS_DISABLED = false		-- Should we disable the recommended item builds for heroes
+CAMERA_DISTANCE_OVERRIDE = 1134.0		-- How far out should we allow the camera to go? 1134 is the default in Dota.
 
 MINIMAP_ICON_SIZE = 1					-- What icon size should we use for our heroes?
 MINIMAP_CREEP_ICON_SIZE = 1				-- What icon size should we use for creeps?
 MINIMAP_RUNE_ICON_SIZE = 1				-- What icon size should we use for runes?
 
-BUYBACK_ENABLED = true					-- Should we allow people to buyback when they die?
+BUYBACK_ENABLED = true					-- Should we allow players to buyback when they die?
 CUSTOM_BUYBACK_COST_ENABLED = false		-- Should we use a custom buyback cost setting?
 CUSTOM_BUYBACK_COOLDOWN_ENABLED = false	-- Should we use a custom buyback time?
 CUSTOM_BUYBACK_COOLDOWN_TIME = 480.0	-- Custom buyback cooldown time (needed if CUSTOM_BUYBACK_COOLDOWN_ENABLED is true).
 BUYBACK_FIXED_GOLD_COST = 500			-- Fixed custom buyback gold cost (needed if CUSTOM_BUYBACK_COST_ENABLED is true).
 
-CUSTOM_SCAN_COOLDOWN = 210				-- Custom cooldown of Scan in seconds. Doesn't affect Scan's starting cooldown.
+CUSTOM_SCAN_COOLDOWN = 210				-- Custom cooldown of Scan in seconds. Doesn't affect Scan's starting cooldown!
 
 DISABLE_FOG_OF_WAR_ENTIRELY = false		-- Should we disable fog of war entirely for both teams?
 USE_UNSEEN_FOG_OF_WAR = false			-- Should we make unseen and fogged areas of the map completely black until uncovered by each team? 
@@ -43,10 +45,10 @@ USE_STANDARD_DOTA_BOT_THINKING = false	-- Should we have bots act like they woul
 USE_CUSTOM_HERO_GOLD_BOUNTY = false			-- Should the gold for hero kills be modified (true) or same as in default Dota (false)?
 HERO_KILL_GOLD_BASE = 110					-- Hero gold bounty base value
 HERO_KILL_GOLD_PER_LEVEL = 10				-- Hero gold bounty increase per level
-HERO_KILL_GOLD_PER_STREAK = 60				-- Hero gold bounty per his streak (Killing Spree: +HERO_KILL_GOLD_PER_STREAK gold; Ultrakill: +2xHERO_KILL_GOLD_PER_STREAK gold ...)
+HERO_KILL_GOLD_PER_STREAK = 60				-- Hero gold bounty per his kill-streak (Killing Spree: +HERO_KILL_GOLD_PER_STREAK gold; Ultrakill: +2 x HERO_KILL_GOLD_PER_STREAK gold ...)
 DISABLE_ALL_GOLD_FROM_HERO_KILLS = false	-- Should we remove gold gain from hero kills? USE_CUSTOM_HERO_GOLD_BOUNTY needs to be true.
--- NOTE: DISABLE_ALL_GOLD_FROM_HERO_KILLS requires GoldFilter. Use DISABLE_GOLD_SOUNDS too.
-USE_CUSTOM_HERO_LEVELS = false			-- Should the heroes give a custom amount of XP when killed? Can malfunction for levels above 25.
+-- NOTE: DISABLE_ALL_GOLD_FROM_HERO_KILLS requires GoldFilter.
+USE_CUSTOM_HERO_LEVELS = false			-- Should the heroes give a custom amount of XP when killed? Can malfunction for levels above 25!
 
 USE_CUSTOM_TOP_BAR_VALUES = true		-- Should we do customized top bar values or use the default kill count per team?
 TOP_BAR_VISIBLE = true					-- Should we display the top bar score/count at all?
@@ -77,7 +79,8 @@ SHOW_ONLY_PLAYER_INVENTORY = false      -- Should we only allow players to see t
 DISABLE_STASH_PURCHASING = false        -- Should we prevent players from being able to buy items into their stash when not at a shop?
 DISABLE_ANNOUNCER = false               -- Should we disable the announcer from working in the game?
 FORCE_PICKED_HERO = nil                 -- What hero should we force all players to spawn as? (e.g. "npc_dota_hero_axe").  Use nil to allow players to pick their own hero.
-TELEPORT_SCROLL_ON_START = false			-- Should the heroes have a teleport scroll in their inventory right at the start of the game?
+-- This will not work if "EnablePickRules" is "1" in 'addoninfo.txt'!
+TELEPORT_SCROLL_ON_START = true         -- Should the heroes have a teleport scroll in their inventory right at the start of the game?
 ADD_ITEM_TO_HERO_ON_SPAWN = false		-- Add an example item to the picked hero when he spawns?
 SKILL_POINTS_AT_EVERY_LEVEL = false		-- Should we allow heroes to gain skill points even at levels 17, 19, 21, 22, 23 and 24?
 -- NOTE: If SKILL_POINTS_AT_EVERY_LEVEL is true, there will be strange interactions with heroes like Invoker and Meepo.
@@ -85,7 +88,7 @@ SKILL_POINTS_AT_EVERY_LEVEL = false		-- Should we allow heroes to gain skill poi
 FIXED_RESPAWN_TIME = -1                 -- What time should we use for a fixed respawn timer?  Use -1 to keep the default dota behavior.
 -- NOTE: use FIXED_RESPAWN_TIME if you want the same respawn time on every level.
 MAX_RESPAWN_TIME = 125					-- Default Dota doesn't have a limit (it can go above 125). Fast game modes should have 20 seconds.
-USE_CUSTOM_RESPAWN_TIMES = false		-- Should we use custom respawn times or dota default?
+USE_CUSTOM_RESPAWN_TIMES = false		-- Should we use custom respawn times (true) or dota default (false)?
 
 -- Fill this table with respawn times on each level if USE_CUSTOM_RESPAWN_TIMES is true.
 CUSTOM_RESPAWN_TIME = {}
