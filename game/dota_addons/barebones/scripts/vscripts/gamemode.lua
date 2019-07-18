@@ -86,6 +86,7 @@ function your_gamemode_name:OnHeroInGame(hero)
 			-- Set starting gold for bots
 			hero:SetGold(NORMAL_START_GOLD, false)
 		else
+			DebugPrint("[BAREBONES] OnHeroInGame running for a non-bot player!")
 			if not PlayerResource.PlayerData[playerID] then
 				PlayerResource.PlayerData[playerID] = {}
 				DebugPrint("[BAREBONES] PlayerResource's PlayerData for playerID "..playerID.." was not properly initialized.")

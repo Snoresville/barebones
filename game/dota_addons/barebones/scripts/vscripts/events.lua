@@ -321,7 +321,7 @@ function your_gamemode_name:OnPlayerTakeTowerDamage(keys)
 	local damage = keys.damage
 end
 
--- A player picked or randomed a hero (this is happening before OnNPCSpawned); THIS NEVER HAPPENS WHEN YOU FORCE THE HERO PICK!
+-- A player picked or randomed a hero (this is happening before OnHeroInGame before OnHeroInGame has a timers delay).
 function your_gamemode_name:OnPlayerPickHero(keys)
 	DebugPrint("[BAREBONES] OnPlayerPickHero")
 	--PrintTable(keys)
