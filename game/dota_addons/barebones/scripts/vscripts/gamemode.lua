@@ -1,5 +1,5 @@
 -- This is the primary barebones gamemode script and should be used to assist in initializing your game mode
-BAREBONES_VERSION = "2.0.5"
+BAREBONES_VERSION = "2.0.6"
 
 -- Physics library can be used for advanced physics/motion/collision of units.  See PhysicsReadme.txt for more information.
 require('libraries/physics')
@@ -10,7 +10,7 @@ require('libraries/notifications')
 -- Animations library can be used for starting customized animations on units from lua
 require('libraries/animations')
 -- Attachments library can be used for performing "Frankenstein" attachments on units
---require('libraries/attachments')
+require('libraries/attachments')
 -- PlayerTables library can be used to synchronize client-server data via player/client-specific net tables
 require('libraries/playertables')
 -- Selection library (by Noya) provides player selection inspection and management from server lua
@@ -38,7 +38,7 @@ require('filters')
 
   This function should generally only be used if the Precache() function in addon_game_mode.lua is not working.
 ]]
-function your_gamemode_name:PostLoadPrecache()
+function barebones:PostLoadPrecache()
 	DebugPrint("[BAREBONES] Performing Post-Load precache.")
 	--PrecacheItemByNameAsync("item_example_item", function(...) end)
 	--PrecacheItemByNameAsync("example_ability", function(...) end)
@@ -51,7 +51,7 @@ end
   This function is called once and only once as soon as the first player (almost certain to be the server in local lobbies) loads in.
   It can be used to initialize state that isn't initializeable in InitGameMode() but needs to be done before everyone loads in.
 ]]
-function your_gamemode_name:OnFirstPlayerLoaded()
+function barebones:OnFirstPlayerLoaded()
 	DebugPrint("[BAREBONES] First Player has loaded.")
 
 end
@@ -60,7 +60,7 @@ end
   This function is called once and only once after all players have loaded into the game, right as the hero selection time begins.
   It can be used to initialize non-hero player state or adjust the hero selection (i.e. force random etc)
 ]]
-function your_gamemode_name:OnAllPlayersLoaded()
+function barebones:OnAllPlayersLoaded()
 	DebugPrint("[BAREBONES] All Players have loaded into the game.")
 
 end
@@ -72,10 +72,10 @@ end
 
   The hero parameter is the hero entity that just spawned in
 ]]
-function your_gamemode_name:OnHeroInGame(hero)
+function barebones:OnHeroInGame(hero)
 
 	-- Innate abilities (this is applied to bots and custom created heroes/illusions too)
-	your_gamemode_name:InitializeInnateAbilities(hero)
+	self:InitializeInnateAbilities(hero)
 
 	Timers:CreateTimer(0.5, function()
 		local playerID = hero:GetPlayerID()	-- never nil (-1 by default), needs delay 1 or more frames
@@ -131,14 +131,14 @@ end
   gold will begin to go up in ticks if configured, creeps will spawn, towers will become damageable etc.  This function
   is useful for starting any game logic timers/thinkers, beginning the first round, etc.
 ]]
-function your_gamemode_name:OnGameInProgress()
+function barebones:OnGameInProgress()
 	DebugPrint("[BAREBONES] The game has officially begun.")
 
 end
 
 -- This function initializes the game mode and is called before anyone loads into the game
 -- It can be used to pre-initialize any values/tables that will be needed later
-function your_gamemode_name:InitGameMode()
+function barebones:InitGameMode()
 	DebugPrint("[BAREBONES] Starting to load Game Rules.")
 
 	-- Setup rules
@@ -208,35 +208,35 @@ function your_gamemode_name:InitGameMode()
 	DebugPrint("[BAREBONES] Done with setting Game Rules.")
 
 	-- Event Hooks / Listeners
-	ListenToGameEvent('dota_player_gained_level', Dynamic_Wrap(your_gamemode_name, 'OnPlayerLevelUp'), self)
-	ListenToGameEvent('dota_ability_channel_finished', Dynamic_Wrap(your_gamemode_name, 'OnAbilityChannelFinished'), self)
-	ListenToGameEvent('dota_player_learned_ability', Dynamic_Wrap(your_gamemode_name, 'OnPlayerLearnedAbility'), self)
-	ListenToGameEvent('entity_killed', Dynamic_Wrap(your_gamemode_name, 'OnEntityKilled'), self)
-	ListenToGameEvent('player_connect_full', Dynamic_Wrap(your_gamemode_name, 'OnConnectFull'), self)
-	ListenToGameEvent('player_disconnect', Dynamic_Wrap(your_gamemode_name, 'OnDisconnect'), self)
-	ListenToGameEvent('dota_item_purchased', Dynamic_Wrap(your_gamemode_name, 'OnItemPurchased'), self)
-	ListenToGameEvent('dota_item_picked_up', Dynamic_Wrap(your_gamemode_name, 'OnItemPickedUp'), self)
-	ListenToGameEvent('last_hit', Dynamic_Wrap(your_gamemode_name, 'OnLastHit'), self)
-	ListenToGameEvent('dota_non_player_used_ability', Dynamic_Wrap(your_gamemode_name, 'OnNonPlayerUsedAbility'), self)
-	ListenToGameEvent('player_changename', Dynamic_Wrap(your_gamemode_name, 'OnPlayerChangedName'), self)
-	ListenToGameEvent('dota_rune_activated_server', Dynamic_Wrap(your_gamemode_name, 'OnRuneActivated'), self)
-	ListenToGameEvent('dota_player_take_tower_damage', Dynamic_Wrap(your_gamemode_name, 'OnPlayerTakeTowerDamage'), self)
-	ListenToGameEvent('tree_cut', Dynamic_Wrap(your_gamemode_name, 'OnTreeCut'), self)
+	ListenToGameEvent('dota_player_gained_level', Dynamic_Wrap(barebones, 'OnPlayerLevelUp'), self)
+	ListenToGameEvent('dota_ability_channel_finished', Dynamic_Wrap(barebones, 'OnAbilityChannelFinished'), self)
+	ListenToGameEvent('dota_player_learned_ability', Dynamic_Wrap(barebones, 'OnPlayerLearnedAbility'), self)
+	ListenToGameEvent('entity_killed', Dynamic_Wrap(barebones, 'OnEntityKilled'), self)
+	ListenToGameEvent('player_connect_full', Dynamic_Wrap(barebones, 'OnConnectFull'), self)
+	ListenToGameEvent('player_disconnect', Dynamic_Wrap(barebones, 'OnDisconnect'), self)
+	ListenToGameEvent('dota_item_purchased', Dynamic_Wrap(barebones, 'OnItemPurchased'), self)
+	ListenToGameEvent('dota_item_picked_up', Dynamic_Wrap(barebones, 'OnItemPickedUp'), self)
+	ListenToGameEvent('last_hit', Dynamic_Wrap(barebones, 'OnLastHit'), self)
+	ListenToGameEvent('dota_non_player_used_ability', Dynamic_Wrap(barebones, 'OnNonPlayerUsedAbility'), self)
+	ListenToGameEvent('player_changename', Dynamic_Wrap(barebones, 'OnPlayerChangedName'), self)
+	ListenToGameEvent('dota_rune_activated_server', Dynamic_Wrap(barebones, 'OnRuneActivated'), self)
+	ListenToGameEvent('dota_player_take_tower_damage', Dynamic_Wrap(barebones, 'OnPlayerTakeTowerDamage'), self)
+	ListenToGameEvent('tree_cut', Dynamic_Wrap(barebones, 'OnTreeCut'), self)
 
-	ListenToGameEvent('dota_player_used_ability', Dynamic_Wrap(your_gamemode_name, 'OnAbilityUsed'), self)
-	ListenToGameEvent('game_rules_state_change', Dynamic_Wrap(your_gamemode_name, 'OnGameRulesStateChange'), self)
-	ListenToGameEvent('npc_spawned', Dynamic_Wrap(your_gamemode_name, 'OnNPCSpawned'), self)
-	ListenToGameEvent('dota_player_pick_hero', Dynamic_Wrap(your_gamemode_name, 'OnPlayerPickHero'), self)
-	ListenToGameEvent('dota_team_kill_credit', Dynamic_Wrap(your_gamemode_name, 'OnTeamKillCredit'), self)
-	ListenToGameEvent("player_reconnected", Dynamic_Wrap(your_gamemode_name, 'OnPlayerReconnect'), self)
-	ListenToGameEvent("player_chat", Dynamic_Wrap(your_gamemode_name, 'OnPlayerChat'), self)
+	ListenToGameEvent('dota_player_used_ability', Dynamic_Wrap(barebones, 'OnAbilityUsed'), self)
+	ListenToGameEvent('game_rules_state_change', Dynamic_Wrap(barebones, 'OnGameRulesStateChange'), self)
+	ListenToGameEvent('npc_spawned', Dynamic_Wrap(barebones, 'OnNPCSpawned'), self)
+	ListenToGameEvent('dota_player_pick_hero', Dynamic_Wrap(barebones, 'OnPlayerPickHero'), self)
+	ListenToGameEvent('dota_team_kill_credit', Dynamic_Wrap(barebones, 'OnTeamKillCredit'), self)
+	ListenToGameEvent("player_reconnected", Dynamic_Wrap(barebones, 'OnPlayerReconnect'), self)
+	ListenToGameEvent("player_chat", Dynamic_Wrap(barebones, 'OnPlayerChat'), self)
 
-	ListenToGameEvent("dota_illusions_created", Dynamic_Wrap(your_gamemode_name, 'OnIllusionsCreated'), self)
-	ListenToGameEvent("dota_item_combined", Dynamic_Wrap(your_gamemode_name, 'OnItemCombined'), self)
-	ListenToGameEvent("dota_player_begin_cast", Dynamic_Wrap(your_gamemode_name, 'OnAbilityCastBegins'), self)
-	ListenToGameEvent("dota_tower_kill", Dynamic_Wrap(your_gamemode_name, 'OnTowerKill'), self)
-	ListenToGameEvent("dota_player_selected_custom_team", Dynamic_Wrap(your_gamemode_name, 'OnPlayerSelectedCustomTeam'), self)
-	ListenToGameEvent("dota_npc_goal_reached", Dynamic_Wrap(your_gamemode_name, 'OnNPCGoalReached'), self)
+	ListenToGameEvent("dota_illusions_created", Dynamic_Wrap(barebones, 'OnIllusionsCreated'), self)
+	ListenToGameEvent("dota_item_combined", Dynamic_Wrap(barebones, 'OnItemCombined'), self)
+	ListenToGameEvent("dota_player_begin_cast", Dynamic_Wrap(barebones, 'OnAbilityCastBegins'), self)
+	ListenToGameEvent("dota_tower_kill", Dynamic_Wrap(barebones, 'OnTowerKill'), self)
+	ListenToGameEvent("dota_player_selected_custom_team", Dynamic_Wrap(barebones, 'OnPlayerSelectedCustomTeam'), self)
+	ListenToGameEvent("dota_npc_goal_reached", Dynamic_Wrap(barebones, 'OnNPCGoalReached'), self)
 
 	-- Change random seed for math.random function
 	local timeTxt = string.gsub(string.gsub(GetSystemTime(), ':', ''), '0','')
@@ -247,34 +247,34 @@ function your_gamemode_name:InitGameMode()
 	local gamemode = GameRules:GetGameModeEntity()
 
 	-- Setting the Order filter 
-	gamemode:SetExecuteOrderFilter(Dynamic_Wrap(your_gamemode_name, "OrderFilter"), self)
+	gamemode:SetExecuteOrderFilter(Dynamic_Wrap(barebones, "OrderFilter"), self)
 
 	-- Setting the Damage filter
-	gamemode:SetDamageFilter(Dynamic_Wrap(your_gamemode_name, "DamageFilter"), self)
+	gamemode:SetDamageFilter(Dynamic_Wrap(barebones, "DamageFilter"), self)
 
 	-- Setting the Modifier filter
-	gamemode:SetModifierGainedFilter(Dynamic_Wrap(your_gamemode_name, "ModifierFilter"), self)
+	gamemode:SetModifierGainedFilter(Dynamic_Wrap(barebones, "ModifierFilter"), self)
 
 	-- Setting the Experience filter
-	gamemode:SetModifyExperienceFilter(Dynamic_Wrap(your_gamemode_name, "ExperienceFilter"), self)
+	gamemode:SetModifyExperienceFilter(Dynamic_Wrap(barebones, "ExperienceFilter"), self)
 
 	-- Setting the Tracking Projectile filter
-	gamemode:SetTrackingProjectileFilter(Dynamic_Wrap(your_gamemode_name, "ProjectileFilter"), self)
+	gamemode:SetTrackingProjectileFilter(Dynamic_Wrap(barebones, "ProjectileFilter"), self)
 
 	-- Setting the rune spawn filter
-	gamemode:SetRuneSpawnFilter(Dynamic_Wrap(your_gamemode_name, "RuneSpawnFilter"), self)
+	gamemode:SetRuneSpawnFilter(Dynamic_Wrap(barebones, "RuneSpawnFilter"), self)
 
 	-- Setting the bounty rune pickup filter
-	gamemode:SetBountyRunePickupFilter(Dynamic_Wrap(your_gamemode_name, "BountyRuneFilter"), self)
+	gamemode:SetBountyRunePickupFilter(Dynamic_Wrap(barebones, "BountyRuneFilter"), self)
 
 	-- Setting the Healing filter
-	gamemode:SetHealingFilter(Dynamic_Wrap(your_gamemode_name, "HealingFilter"), self)
+	gamemode:SetHealingFilter(Dynamic_Wrap(barebones, "HealingFilter"), self)
 
 	-- Setting the Gold Filter
-	gamemode:SetModifyGoldFilter(Dynamic_Wrap(your_gamemode_name, "GoldFilter"), self)
+	gamemode:SetModifyGoldFilter(Dynamic_Wrap(barebones, "GoldFilter"), self)
 
 	-- Setting the Inventory filter
-	gamemode:SetItemAddedToInventoryFilter(Dynamic_Wrap(your_gamemode_name, "InventoryFilter"), self)
+	gamemode:SetItemAddedToInventoryFilter(Dynamic_Wrap(barebones, "InventoryFilter"), self)
 
 	DebugPrint("[BAREBONES] Done with setting Filters.")
 
@@ -286,7 +286,7 @@ function your_gamemode_name:InitGameMode()
 	LinkLuaModifier("modifier_ability_name_talent_name_2", "modifiers/talents/modifier_ability_name_talent_name_2", LUA_MODIFIER_MOTION_NONE)
 	LinkLuaModifier("modifier_ability_name_talent_name_3", "modifiers/talents/modifier_ability_name_talent_name_3", LUA_MODIFIER_MOTION_NONE)
 
-	print("your_gamemode_name initialized.")
+	print("[BAREBONES] initialized.")
 	DebugPrint("[BAREBONES] Done loading the game mode!\n\n")
 	
 	-- Increase/decrease maximum item limit per hero
@@ -294,7 +294,7 @@ function your_gamemode_name:InitGameMode()
 end
 
 -- This function is called as the first player loads and sets up the game mode parameters
-function your_gamemode_name:CaptureGameMode()
+function barebones:CaptureGameMode()
 	local gamemode = GameRules:GetGameModeEntity()
 	
 	-- Set GameMode parameters
@@ -357,7 +357,7 @@ function your_gamemode_name:CaptureGameMode()
 end
 
 -- Initializes heroes' innate abilities (abilities that a hero needs to have auto-leveled up at the start of the game)
-function your_gamemode_name:InitializeInnateAbilities(hero)
+function barebones:InitializeInnateAbilities(hero)
 
 	-- List of all innate abilities
 	local innate_abilities = {

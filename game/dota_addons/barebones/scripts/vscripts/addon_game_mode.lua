@@ -1,10 +1,10 @@
 -- This is the entry-point to your game mode and should be used primarily to precache models/particles/sounds/etc
 
 -- Creating a global gamemode class variable;
-if your_gamemode_name == nil then
-	_G.your_gamemode_name = class({})
+if barebones == nil then
+	_G.barebones = class({})
 else
-	DebugPrint("[BAREBONES] your_gamemode_name class name is already in use, change the name if this is the first time you launch the game!")
+	DebugPrint("[BAREBONES] barebones class name is already in use, change the name if this is the first time you launch the game!")
 	DebugPrint("[BAREBONES] If this is not your first time, you probably used script_reload in console.")
 end
 
@@ -59,6 +59,6 @@ end
 -- Create the game mode when we activate
 function Activate()
 	DebugPrint("[BAREBONES] Activating ...")
-	print("your_gamemode_name is activating.")
-	your_gamemode_name:InitGameMode()
+	print("Your custom game is activating.")
+	barebones:InitGameMode()
 end

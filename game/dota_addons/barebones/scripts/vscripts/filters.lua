@@ -1,5 +1,5 @@
 -- Order Filter; order can be casting an ability, moving, clicking to attack, using scan (radar), glyph etc.
-function your_gamemode_name:OrderFilter(filter_table)
+function barebones:OrderFilter(filter_table)
 	--PrintTable(filter_table)
 
 	local order = filter_table.order_type
@@ -79,7 +79,7 @@ function your_gamemode_name:OrderFilter(filter_table)
 end
 
 -- Damage filter function
-function your_gamemode_name:DamageFilter(keys)
+function barebones:DamageFilter(keys)
 	--PrintTable(keys)
 
 	local attacker
@@ -139,7 +139,7 @@ function your_gamemode_name:DamageFilter(keys)
 end
 
 -- Modifier (buffs, debuffs) filter function
-function your_gamemode_name:ModifierFilter(keys)
+function barebones:ModifierFilter(keys)
 	--PrintTable(keys)
 
 	local unit_with_modifier = EntIndexToHScript(keys.entindex_parent_const)
@@ -156,7 +156,7 @@ function your_gamemode_name:ModifierFilter(keys)
 end
 
 -- Experience filter function
-function your_gamemode_name:ExperienceFilter(keys)
+function barebones:ExperienceFilter(keys)
 	--PrintTable(keys)
 	local experience = keys.experience
 	local playerID = keys.player_id_const
@@ -172,7 +172,7 @@ function your_gamemode_name:ExperienceFilter(keys)
 end
 
 -- Tracking Projectile (attack and spell projectiles) filter function
-function your_gamemode_name:ProjectileFilter(keys)
+function barebones:ProjectileFilter(keys)
 	--PrintTable(keys)
 
 	local can_be_dodged = keys.dodgeable				-- values: 1 for yes or 0 for no
@@ -188,7 +188,7 @@ function your_gamemode_name:ProjectileFilter(keys)
 end
 
 -- Bounty Rune Filter, can be used to modify Alchemist's Greevil Greed for example
-function your_gamemode_name:BountyRuneFilter(keys)
+function barebones:BountyRuneFilter(keys)
 	--PrintTable(keys)
 
 	local gold_bounty = keys.gold_bounty
@@ -199,7 +199,7 @@ function your_gamemode_name:BountyRuneFilter(keys)
 end
 
 -- Rune filter, can be used to modify what runes spawn and don't spawn, can be used to replace runes
-function your_gamemode_name:RuneSpawnFilter(keys)
+function barebones:RuneSpawnFilter(keys)
 	--PrintTable(keys)
 
 	local rune = keys.rune_type
@@ -239,7 +239,7 @@ end
 
 -- Healing Filter, can be used to modify how much hp regen and healing a unit is gaining
 -- Triggers every time a unit gains health
-function your_gamemode_name:HealingFilter(keys)
+function barebones:HealingFilter(keys)
 	--PrintTable(keys)
 
 	local healing_target_index = keys.entindex_target_const
@@ -278,7 +278,7 @@ function your_gamemode_name:HealingFilter(keys)
 end
 
 -- Gold filter, can be used to modify how much gold player gains/loses
-function your_gamemode_name:GoldFilter(keys)
+function barebones:GoldFilter(keys)
 	--PrintTable(keys)
 
 	local gold = keys.gold
@@ -315,7 +315,7 @@ function your_gamemode_name:GoldFilter(keys)
 end
 
 -- Inventory filter, triggers every time a unit picks up or buys an item, doesn't trigger when you change item's slot inside inventory
-function your_gamemode_name:InventoryFilter(keys)
+function barebones:InventoryFilter(keys)
 	--PrintTable(keys)
 
 	local unit_with_inventory_index = keys.inventory_parent_entindex_const -- -1 if not defined

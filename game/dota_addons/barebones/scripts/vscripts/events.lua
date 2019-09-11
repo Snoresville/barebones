@@ -2,7 +2,7 @@
 -- You should comment the stuff you don't need
 
 -- Handle stuff when a player disconnects
-function your_gamemode_name:OnDisconnect(keys)
+function barebones:OnDisconnect(keys)
 	DebugPrint("[BAREBONES] A Player has disconnected ".. tostring(keys.userid))
 	--PrintTable(keys)
 
@@ -13,7 +13,7 @@ function your_gamemode_name:OnDisconnect(keys)
 end
 
 -- The overall game state has changed
-function your_gamemode_name:OnGameRulesStateChange(keys)
+function barebones:OnGameRulesStateChange(keys)
 	--PrintTable(keys)
 
 	local new_state = GameRules:State_Get()
@@ -30,8 +30,8 @@ function your_gamemode_name:OnGameRulesStateChange(keys)
 
 	elseif new_state == DOTA_GAMERULES_STATE_HERO_SELECTION then
 		DebugPrint("[BAREBONES] Game State changed to: DOTA_GAMERULES_STATE_HERO_SELECTION")
-		your_gamemode_name:PostLoadPrecache()
-		your_gamemode_name:OnAllPlayersLoaded()
+		self:PostLoadPrecache()
+		self:OnAllPlayersLoaded()
 		Timers:CreateTimer(HERO_SELECTION_TIME+STRATEGY_TIME-1, function()
 			for playerID = 0, DOTA_MAX_TEAM_PLAYERS-1 do
 				if PlayerResource:IsValidPlayerID(playerID) then
@@ -61,7 +61,7 @@ function your_gamemode_name:OnGameRulesStateChange(keys)
 
 	elseif new_state == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
 		DebugPrint("[BAREBONES] Game State changed to: DOTA_GAMERULES_STATE_GAME_IN_PROGRESS")
-		your_gamemode_name:OnGameInProgress()
+		self:OnGameInProgress()
 
 	elseif new_state == DOTA_GAMERULES_STATE_POST_GAME then
 		DebugPrint("[BAREBONES] Game State changed to: DOTA_GAMERULES_STATE_POST_GAME")
@@ -73,7 +73,7 @@ function your_gamemode_name:OnGameRulesStateChange(keys)
 end
 
 -- An NPC has spawned somewhere in game.  This includes heroes
-function your_gamemode_name:OnNPCSpawned(keys)
+function barebones:OnNPCSpawned(keys)
 	DebugPrint("[BAREBONES] A unit Spawned")
 	--PrintTable(keys)
 
@@ -85,12 +85,12 @@ function your_gamemode_name:OnNPCSpawned(keys)
 	-- OnHeroInGame (can be found in 'gamemode.lua')
 	if npc:IsRealHero() and npc.bFirstSpawned == nil then
 		npc.bFirstSpawned = true
-		your_gamemode_name:OnHeroInGame(npc)
+		self:OnHeroInGame(npc)
 	end
 end
 
 -- An item was picked up off the ground
-function your_gamemode_name:OnItemPickedUp(keys)
+function barebones:OnItemPickedUp(keys)
 	DebugPrint("[BAREBONES] OnItemPickedUp")
 	--PrintTable(keys)
 
@@ -107,7 +107,7 @@ function your_gamemode_name:OnItemPickedUp(keys)
 end
 
 -- A player has reconnected to the game. This function can be used to repaint Player-based particles or change state as necessary
-function your_gamemode_name:OnPlayerReconnect(keys)
+function barebones:OnPlayerReconnect(keys)
 	DebugPrint("[BAREBONES] A Player has reconnected.")
 	--PrintTable(keys)
 
@@ -136,7 +136,7 @@ function your_gamemode_name:OnPlayerReconnect(keys)
 end
 
 -- An item was purchased by a player
-function your_gamemode_name:OnItemPurchased(keys)
+function barebones:OnItemPurchased(keys)
 	DebugPrint("[BAREBONES] OnItemPurchased")
 	--PrintTable(keys)
 
@@ -154,7 +154,7 @@ function your_gamemode_name:OnItemPurchased(keys)
 end
 
 -- An ability was used by a player
-function your_gamemode_name:OnAbilityUsed(keys)
+function barebones:OnAbilityUsed(keys)
 	--PrintTable(keys)
 
 	local playerID = keys.PlayerID
@@ -164,7 +164,7 @@ function your_gamemode_name:OnAbilityUsed(keys)
 end
 
 -- A non-player entity (necronomicon unit, chen creep, etc) used an ability
-function your_gamemode_name:OnNonPlayerUsedAbility(keys)
+function barebones:OnNonPlayerUsedAbility(keys)
 	--PrintTable(keys)
 
 	local ability_name = keys.abilityname
@@ -173,7 +173,7 @@ function your_gamemode_name:OnNonPlayerUsedAbility(keys)
 end
 
 -- A player changed their name, useless in most cases
-function your_gamemode_name:OnPlayerChangedName(keys)
+function barebones:OnPlayerChangedName(keys)
 	--PrintTable(keys)
 
 	local new_name = keys.newname
@@ -181,7 +181,7 @@ function your_gamemode_name:OnPlayerChangedName(keys)
 end
 
 -- A player leveled up an ability; Note: IT DOESN'T TRIGGER WHEN YOU USE SetLevel() ON THE ABILITY!
-function your_gamemode_name:OnPlayerLearnedAbility(keys)
+function barebones:OnPlayerLearnedAbility(keys)
 	DebugPrint("[BAREBONES] OnPlayerLearnedAbility")
 	--PrintTable(keys)
 
@@ -217,7 +217,7 @@ function your_gamemode_name:OnPlayerLearnedAbility(keys)
 end
 
 -- A channelled ability finished by either completing or being interrupted
-function your_gamemode_name:OnAbilityChannelFinished(keys)
+function barebones:OnAbilityChannelFinished(keys)
 	DebugPrint("[BAREBONES] OnAbilityChannelFinished")
 	--PrintTable(keys)
 
@@ -226,7 +226,7 @@ function your_gamemode_name:OnAbilityChannelFinished(keys)
 end
 
 -- A player leveled up
-function your_gamemode_name:OnPlayerLevelUp(keys)
+function barebones:OnPlayerLevelUp(keys)
 	DebugPrint("[BAREBONES] OnPlayerLevelUp")
 	--PrintTable(keys)
 
@@ -274,7 +274,7 @@ function your_gamemode_name:OnPlayerLevelUp(keys)
 end
 
 -- A player last hit a creep, a tower, or a hero
-function your_gamemode_name:OnLastHit(keys)
+function barebones:OnLastHit(keys)
 	DebugPrint("[BAREBONES] OnLastHit")
 	--PrintTable(keys)
 
@@ -290,7 +290,7 @@ function your_gamemode_name:OnLastHit(keys)
 end
 
 -- A tree was cut down by tango, quelling blade, etc
-function your_gamemode_name:OnTreeCut(keys)
+function barebones:OnTreeCut(keys)
 	DebugPrint("[BAREBONES] OnTreeCut")
 	--PrintTable(keys)
 
@@ -300,7 +300,7 @@ function your_gamemode_name:OnTreeCut(keys)
 end
 
 -- A rune was activated by a player
-function your_gamemode_name:OnRuneActivated(keys)
+function barebones:OnRuneActivated(keys)
 	DebugPrint("[BAREBONES] OnRuneActivated")
 	--PrintTable(keys)
 
@@ -313,7 +313,7 @@ function your_gamemode_name:OnRuneActivated(keys)
 end
 
 -- A player took damage from a tower
-function your_gamemode_name:OnPlayerTakeTowerDamage(keys)
+function barebones:OnPlayerTakeTowerDamage(keys)
 	DebugPrint("[BAREBONES] OnPlayerTakeTowerDamage")
 	--PrintTable(keys)
 
@@ -322,7 +322,7 @@ function your_gamemode_name:OnPlayerTakeTowerDamage(keys)
 end
 
 -- A player picked or randomed a hero (this is happening before OnHeroInGame because OnHeroInGame has a timers delay).
-function your_gamemode_name:OnPlayerPickHero(keys)
+function barebones:OnPlayerPickHero(keys)
 	DebugPrint("[BAREBONES] OnPlayerPickHero")
 	--PrintTable(keys)
 
@@ -350,7 +350,7 @@ function your_gamemode_name:OnPlayerPickHero(keys)
 end
 
 -- A player killed another player in a multi-team context
-function your_gamemode_name:OnTeamKillCredit(keys)
+function barebones:OnTeamKillCredit(keys)
 	DebugPrint("[BAREBONES] OnTeamKillCredit")
 	--PrintTable(keys)
 
@@ -363,7 +363,7 @@ function your_gamemode_name:OnTeamKillCredit(keys)
 end
 
 -- An entity died (an entity killed an entity)
-function your_gamemode_name:OnEntityKilled(keys)
+function barebones:OnEntityKilled(keys)
 	DebugPrint("[BAREBONES] An entity was killed.")
 	--PrintTable(keys)
 
@@ -529,11 +529,11 @@ function your_gamemode_name:OnEntityKilled(keys)
 end
 
 -- This function is called once when the player fully connects and becomes "Ready" during Loading
-function your_gamemode_name:OnConnectFull(keys)
+function barebones:OnConnectFull(keys)
 	DebugPrint("[BAREBONES] A Player fully connected.")
 	--PrintTable(keys)
 
-	your_gamemode_name:CaptureGameMode()
+	self:CaptureGameMode()
 
 	local index = keys.index
 	local playerID = keys.PlayerID
@@ -544,7 +544,7 @@ function your_gamemode_name:OnConnectFull(keys)
 end
 
 -- This function is called whenever illusions are created and tells you which was/is the original entity
-function your_gamemode_name:OnIllusionsCreated(keys)
+function barebones:OnIllusionsCreated(keys)
 	DebugPrint("[BAREBONES] OnIllusionsCreated")
 	--PrintTable(keys)
 
@@ -552,7 +552,7 @@ function your_gamemode_name:OnIllusionsCreated(keys)
 end
 
 -- This function is called whenever an item is combined to create a new item
-function your_gamemode_name:OnItemCombined(keys)
+function barebones:OnItemCombined(keys)
 	DebugPrint("[BAREBONES] OnItemCombined")
 	--PrintTable(keys)
 
@@ -570,7 +570,7 @@ function your_gamemode_name:OnItemCombined(keys)
 end
 
 -- This function is called whenever an ability begins its PhaseStart phase (but before it is actually cast)
-function your_gamemode_name:OnAbilityCastBegins(keys)
+function barebones:OnAbilityCastBegins(keys)
 	DebugPrint("[BAREBONES] OnAbilityCastBegins")
 	--PrintTable(keys)
 
@@ -581,7 +581,7 @@ function your_gamemode_name:OnAbilityCastBegins(keys)
 end
 
 -- This function is called whenever a tower is destroyed
-function your_gamemode_name:OnTowerKill(keys)
+function barebones:OnTowerKill(keys)
 	DebugPrint("[BAREBONES] OnTowerKill")
 	--PrintTable(keys)
 
@@ -591,7 +591,7 @@ function your_gamemode_name:OnTowerKill(keys)
 end
 
 -- This function is called whenever a player changes their custom team selection during Custom Game Setup 
-function your_gamemode_name:OnPlayerSelectedCustomTeam(keys)
+function barebones:OnPlayerSelectedCustomTeam(keys)
 	DebugPrint("[BAREBONES] OnPlayerSelectedCustomTeam")
 	--PrintTable(keys)
 
@@ -601,7 +601,7 @@ function your_gamemode_name:OnPlayerSelectedCustomTeam(keys)
 end
 
 -- This function is called whenever an NPC reaches its goal position/target (npc can be a lane creep)
-function your_gamemode_name:OnNPCGoalReached(keys)
+function barebones:OnNPCGoalReached(keys)
 	DebugPrint("[BAREBONES] OnNPCGoalReached")
 	--PrintTable(keys)
 
@@ -611,7 +611,7 @@ function your_gamemode_name:OnNPCGoalReached(keys)
 end
 
 -- This function is called whenever any player sends a chat message to team or to All
-function your_gamemode_name:OnPlayerChat(keys)
+function barebones:OnPlayerChat(keys)
 	DebugPrint("[BAREBONES] Player used the chat")
 	--PrintTable(keys)
 
