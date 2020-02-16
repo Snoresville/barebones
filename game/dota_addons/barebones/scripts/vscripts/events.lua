@@ -1,5 +1,5 @@
 -- This file contains all barebones-registered events and has already set up the passed-in parameters for you to use.
--- You should comment the stuff you don't need
+-- You should comment or remove the stuff you don't need
 
 -- Handle stuff when a player disconnects
 function barebones:OnDisconnect(keys)
@@ -32,21 +32,6 @@ function barebones:OnGameRulesStateChange(keys)
 		DebugPrint("[BAREBONES] Game State changed to: DOTA_GAMERULES_STATE_HERO_SELECTION")
 		self:PostLoadPrecache()
 		self:OnAllPlayersLoaded()
-		Timers:CreateTimer(HERO_SELECTION_TIME+STRATEGY_TIME-1, function()
-			for playerID = 0, DOTA_MAX_TEAM_PLAYERS-1 do
-				if PlayerResource:IsValidPlayerID(playerID) then
-					-- If this player still hasn't picked a hero, random one
-					-- PlayerResource:IsConnected(index) is custom-made; can be found in 'player_resource.lua' library
-					if not PlayerResource:HasSelectedHero(playerID) and PlayerResource:IsConnected(playerID) and (not PlayerResource:IsBroadcaster(playerID)) then
-						PlayerResource:GetPlayer(playerID):MakeRandomHeroSelection() -- this will cause an error if player is disconnected
-						PlayerResource:SetHasRandomed(playerID)
-						PlayerResource:SetCanRepick(playerID, false)
-						DebugPrint("[BAREBONES] Randomed a hero for a player number "..playerID)
-					end
-				end
-			end
-		end)
-
 	elseif new_state == DOTA_GAMERULES_STATE_STRATEGY_TIME then
 		DebugPrint("[BAREBONES] Game State changed to: DOTA_GAMERULES_STATE_STRATEGY_TIME")
 
@@ -72,7 +57,7 @@ function barebones:OnGameRulesStateChange(keys)
 	end
 end
 
--- An NPC has spawned somewhere in game.  This includes heroes
+-- An NPC has spawned somewhere in game. This includes heroes
 function barebones:OnNPCSpawned(keys)
 	DebugPrint("[BAREBONES] A unit Spawned")
 	--PrintTable(keys)
@@ -82,11 +67,79 @@ function barebones:OnNPCSpawned(keys)
 
 	-- Put things here that will happen for every unit or hero when they spawn
 
-	-- OnHeroInGame (can be found in 'gamemode.lua')
+	-- OnHeroInGame
 	if npc:IsRealHero() and npc.bFirstSpawned == nil then
 		npc.bFirstSpawned = true
 		self:OnHeroInGame(npc)
 	end
+end
+
+--[[
+  Hero spawned for the first time. It can happen if the player's hero is replaced with a new hero for any reason.  
+  This can be used for initializing heroes, such as adding levels, changing the starting gold, removing/adding abilities, adding physics, etc.
+  This happens to bot and custom created heroes as well.
+  The hero parameter is the hero entity that just spawned.
+  
+]]
+function barebones:OnHeroInGame(hero)
+	-- Innate abilities like Earth Spirit Stone Remnant (abilities that a hero needs to have auto-leveled up at the start of the game)
+	-- Add all custom innate abilities here
+	local innate_abilities = {
+		"innate_ability1",
+		"innate_ability2"
+	}
+
+	-- Cycle through any innate abilities found, then set their level to 1
+	for i = 1, #innate_abilities do
+		local current_ability = hero:FindAbilityByName(innate_abilities[i])
+		if current_ability then
+			current_ability:SetLevel(1)
+		end
+	end
+
+	Timers:CreateTimer(0.5, function()
+		local playerID = hero:GetPlayerID()	-- never nil (-1 by default), needs delay 1 or more frames
+
+		if PlayerResource:IsFakeClient(playerID) then
+			-- This is happening only for bots
+			DebugPrint("[BAREBONES] Bot hero "..hero:GetUnitName().." (re)spawned in the game.")
+			-- Set starting gold for bots
+			hero:SetGold(NORMAL_START_GOLD, false)
+		else
+			DebugPrint("[BAREBONES] OnHeroInGame running for a non-bot player!")
+			if not PlayerResource.PlayerData[playerID] then
+				PlayerResource.PlayerData[playerID] = {}
+				DebugPrint("[BAREBONES] PlayerResource's PlayerData for playerID "..playerID.." was not properly initialized.")
+			end
+			-- Set some hero stuff on first spawn or on every spawn (custom or not)
+			if PlayerResource.PlayerData[playerID].already_set_hero == true then
+				-- This is happening only when players create new heroes with custom hero-create spells:
+				-- Custom Illusion spells
+			else
+				-- This is happening for players when their primary hero spawns for the first time
+				DebugPrint("[BAREBONES] Hero "..hero:GetUnitName().." spawned in the game for the first time for the player with ID "..playerID)
+
+				-- Make heroes briefly visible on spawn (to prevent bad fog of war interactions)
+				hero:MakeVisibleToTeam(DOTA_TEAM_GOODGUYS, 0.5)
+				hero:MakeVisibleToTeam(DOTA_TEAM_BADGUYS, 0.5)
+
+				-- Set the starting gold for the player's hero
+				-- If the NORMAL_START_GOLD is smaller then 600, remove Strategy Time and use SetGold
+				PlayerResource:ModifyGold(playerID, NORMAL_START_GOLD-600, false, 0)
+
+				-- Create an item and add it to the player, effectively ensuring they start with the item
+				if ADD_ITEM_TO_HERO_ON_SPAWN then
+					local item = CreateItem("item_example_item", hero, hero)
+					hero:AddItem(item)
+				end
+
+				-- Make sure that stuff above will not happen again for the player if some other hero spawns
+				-- for him for the first time during the game 
+				PlayerResource.PlayerData[playerID].already_set_hero = true
+				DebugPrint("[BAREBONES] Hero "..hero:GetUnitName().." set for the player with ID "..playerID)
+			end
+		end
+	end)
 end
 
 -- An item was picked up off the ground
@@ -94,6 +147,7 @@ function barebones:OnItemPickedUp(keys)
 	DebugPrint("[BAREBONES] OnItemPickedUp")
 	--PrintTable(keys)
 
+	-- Find who picked up the item
 	local unit_entity
 	if keys.UnitEntitIndex then
 		unit_entity = EntIndexToHScript(keys.UnitEntitIndex)
@@ -135,24 +189,6 @@ function barebones:OnPlayerReconnect(keys)
 	end
 end
 
--- An item was purchased by a player
-function barebones:OnItemPurchased(keys)
-	DebugPrint("[BAREBONES] OnItemPurchased")
-	--PrintTable(keys)
-
-	-- The playerID of the hero who is buying something
-	local playerID = keys.PlayerID
-	if not playerID then
-		return
-	end
-
-	-- The name of the item purchased
-	local item_name = keys.itemname
-
-	-- The cost of the item purchased
-	local item_cost = keys.itemcost
-end
-
 -- An ability was used by a player
 function barebones:OnAbilityUsed(keys)
 	--PrintTable(keys)
@@ -160,24 +196,7 @@ function barebones:OnAbilityUsed(keys)
 	local playerID = keys.PlayerID
 	local ability_name = keys.abilityname
 
-	-- If you need to adjust abilities on their cast, use Order Filter, not this
-end
-
--- A non-player entity (necronomicon unit, chen creep, etc) used an ability
-function barebones:OnNonPlayerUsedAbility(keys)
-	--PrintTable(keys)
-
-	local ability_name = keys.abilityname
-
-	-- If you need to adjust abilities on their cast, use Order Filter, not this
-end
-
--- A player changed their name, useless in most cases
-function barebones:OnPlayerChangedName(keys)
-	--PrintTable(keys)
-
-	local new_name = keys.newname
-	local old_name = keys.oldName
+	-- If you need to adjust abilities on their cast, use Order Filter or modifier events, not this
 end
 
 -- A player leveled up an ability; Note: IT DOESN'T TRIGGER WHEN YOU USE SetLevel() ON THE ABILITY!
@@ -195,8 +214,8 @@ function barebones:OnPlayerLearnedAbility(keys)
 		playerID = keys.PlayerID
 	end
 
-    -- PlayerResource:GetAssignedHero(index) is custom-made;can be found in 'player_resource.lua' library
-	local hero = PlayerResource:GetAssignedHero(playerID)
+    -- PlayerResource:GetBarebonesAssignedHero(index) is custom-made;can be found in 'player_resource.lua' library
+	local hero = PlayerResource:GetBarebonesAssignedHero(playerID)
 
 	-- Handling talents without custom net tables, this is just an example
 	local talents = {
@@ -216,15 +235,6 @@ function barebones:OnPlayerLearnedAbility(keys)
 	end
 end
 
--- A channelled ability finished by either completing or being interrupted
-function barebones:OnAbilityChannelFinished(keys)
-	DebugPrint("[BAREBONES] OnAbilityChannelFinished")
-	--PrintTable(keys)
-
-	local ability_name = keys.abilityname
-	local interrupted = keys.interrupted == 1
-end
-
 -- A player leveled up
 function barebones:OnPlayerLevelUp(keys)
 	DebugPrint("[BAREBONES] OnPlayerLevelUp")
@@ -237,7 +247,7 @@ function barebones:OnPlayerLevelUp(keys)
 	local hero
 	if player then
 		playerID = player:GetPlayerID()
-		hero = PlayerResource:GetAssignedHero(playerID)
+		hero = PlayerResource:GetBarebonesAssignedHero(playerID)
 	end
 
 	if hero then
@@ -257,7 +267,7 @@ function barebones:OnPlayerLevelUp(keys)
 			hero:SetMaximumGoldBounty(gold_bounty)
 		end
 
-		-- Add a skill point when a hero levels
+		-- Add a skill point when a hero levels up
 		if SKILL_POINTS_AT_EVERY_LEVEL then
 			local levels_without_ability_point = {17, 19, 21, 22, 23, 24}	-- on this levels you should get a skill point
 			for i = 1, #levels_without_ability_point do
@@ -269,7 +279,7 @@ function barebones:OnPlayerLevelUp(keys)
 		end
 
 		-- If you want to remove skill points when a hero levels up then uncomment the following line:
-		--hero:SetAbilityPoints(0)
+		-- hero:SetAbilityPoints(0)
 	end
 end
 
@@ -312,15 +322,6 @@ function barebones:OnRuneActivated(keys)
   -- This event can be used for adding more effects to existing runes.
 end
 
--- A player took damage from a tower
-function barebones:OnPlayerTakeTowerDamage(keys)
-	DebugPrint("[BAREBONES] OnPlayerTakeTowerDamage")
-	--PrintTable(keys)
-
-	local playerID = keys.PlayerID
-	local damage = keys.damage
-end
-
 -- A player picked or randomed a hero (this is happening before OnHeroInGame because OnHeroInGame has a timers delay).
 function barebones:OnPlayerPickHero(keys)
 	DebugPrint("[BAREBONES] OnPlayerPickHero")
@@ -349,50 +350,48 @@ function barebones:OnPlayerPickHero(keys)
 	end)
 end
 
--- A player killed another player in a multi-team context
-function barebones:OnTeamKillCredit(keys)
-	DebugPrint("[BAREBONES] OnTeamKillCredit")
-	--PrintTable(keys)
-
-	local killer_userID = keys.killer_userid
-	local victim_userID = keys.victim_userid
-	local streak = keys.herokills
-	local killer_team = keys.teamnumber
-
-	-- If you want to change assist gold or assist experience on hero death use OnEntityKilled or Damage Filter, not this
-end
-
 -- An entity died (an entity killed an entity)
 function barebones:OnEntityKilled(keys)
-	DebugPrint("[BAREBONES] An entity was killed.")
-	--PrintTable(keys)
+    DebugPrint("[BAREBONES] An entity was killed.")
+    --PrintTable(keys)
 
-	-- The Unit that was Killed
-	local killed_unit = EntIndexToHScript(keys.entindex_killed)
+    -- Indexes:
+    local killed_entity_index = keys.entindex_killed
+    local attacker_entity_index = keys.entindex_attacker
+	local inflictor_index = keys.entindex_inflictor -- it can be nil if not killed by an item/ability
 
-	-- The Killing entity
-	local killer_unit = nil
+    -- Find the entity that was killed
+    local killed_unit
+    if killed_entity_index then
+      killed_unit = EntIndexToHScript(killed_entity_index)
+    end
 
-	if keys.entindex_attacker ~= nil then
-		killer_unit = EntIndexToHScript(keys.entindex_attacker)
-	end
+    -- Find the entity (killer) that killed the entity mentioned above
+    local killer_unit
+    if attacker_entity_index then
+      killer_unit = EntIndexToHScript(attacker_entity_index)
+    end
 
-	-- The ability/item used to kill, or nil if not killed by an item/ability
-	local killing_ability = nil
+	if killed_unit == nil or killer_unit == nil then
+      -- don't continue if killer or killed entity dont exist
+      return
+    end
 
-	if keys.entindex_inflictor ~= nil then
-		killing_ability = EntIndexToHScript(keys.entindex_inflictor)
-	end
+	-- Find the ability/item used to kill, or nil if not killed by an item/ability
+    local killing_ability
+    if inflictor_index then
+      killing_ability = EntIndexToHScript(inflictor_index)
+    end
 
-	-- For Meepo clones, find the original
-	if killed_unit:IsClone() then
-		if killed_unit:GetCloneSource() then
-			killed_unit = killed_unit:GetCloneSource()
-		end
-	end
+    -- For Meepo clones, find the original
+    if killed_unit:IsClone() then
+      if killed_unit:GetCloneSource() then
+        killed_unit = killed_unit:GetCloneSource()
+      end
+    end
 
 	-- Killed Unit is a hero (not an illusion) and he is not reincarnating
-	if killed_unit:IsRealHero() and (not killed_unit:IsReincarnating()) then
+	if killed_unit:IsRealHero() and not killed_unit:IsTempestDouble() and not killed_unit:IsReincarnating() then
 		-- Hero gold bounty update for the killer
 		if USE_CUSTOM_HERO_GOLD_BOUNTY then
 			if killer_unit:IsRealHero() then
@@ -417,7 +416,7 @@ function barebones:OnEntityKilled(keys)
 		if ENABLE_HERO_RESPAWN then
 			local killed_unit_level = killed_unit:GetLevel()
 
-			-- Respawn time without buyback penalty (+25 sec)
+			-- Calculating respawn time without buyback penalty
 			local respawn_time = 1
 			if USE_CUSTOM_RESPAWN_TIMES then
 				-- Get respawn time from the table that we defined
@@ -427,13 +426,13 @@ function barebones:OnEntityKilled(keys)
 				respawn_time = killed_unit:GetRespawnTime()
 			end
 
-			-- Fixing respawn time after level 25, this is usually bugged in custom games
-			local respawn_time_after_25 = 100 + (killed_unit_level-25)*5
-			if killed_unit_level > 25 and respawn_time < respawn_time_after_25	then
-				respawn_time = respawn_time_after_25
+			-- Fixing respawn time after level 30, this is usually bugged in custom games if default respawn times are used -> respawn time are either too long or too short. We fix that.
+			local respawn_time_after_30 = 100 + (killed_unit_level-30)*5
+			if killed_unit_level > 30 and respawn_time ~= respawn_time_after_30 and not USE_CUSTOM_RESPAWN_TIMES then
+				respawn_time = respawn_time_after_30
 			end
 
-			-- Bloodstone reduction (bloodstone can't be in backpack)
+			-- Old Bloodstone respawn reduction (this example doesn't check items in backpack because bloodstone cannot go in backpack)
 			-- for i=DOTA_ITEM_SLOT_1, DOTA_ITEM_SLOT_6 do
 				-- local item = killed_unit:GetItemInSlot(i)
 				-- if item then
@@ -443,7 +442,7 @@ function barebones:OnEntityKilled(keys)
 						-- local reduction_per_charge = item:GetLevelSpecialValueFor("respawn_time_reduction", item:GetLevel() - 1)
 						-- local respawn_reduction = charges_before_death*reduction_per_charge
 						-- respawn_time = math.max(1, respawn_time-respawn_reduction)
-						-- break -- break the for loop, to prevent multiple bloodstones granting respawn reduction
+						-- break -- break for loop, to prevent multiple bloodstones granting respawn reduction
 					-- end
 				-- end
 			-- end
@@ -462,18 +461,19 @@ function barebones:OnEntityKilled(keys)
 				-- If a hero is killed by a neutral creep, respawn time can be modified here
 			end
 
-			-- Maximum Respawn Time
+			-- Capping Respawn Time (MAX respawn time)
 			if respawn_time > MAX_RESPAWN_TIME then
-				DebugPrint("Reducing respawn time of "..killed_unit:GetUnitName().." because it was too long.")
+				DebugPrint("[BAREBONES] Reducing respawn time of "..killed_unit:GetUnitName().." because it was too long.")
 				respawn_time = MAX_RESPAWN_TIME
 			end
-
+			
+			-- If hero is actually reincarnating don't change his respawn time:
 			if not killed_unit:IsReincarnating() then
 				killed_unit:SetTimeUntilRespawn(respawn_time)
 			end
 		end
 
-		-- Buyback Cooldown
+		-- Hero Buyback Cooldown
 		if CUSTOM_BUYBACK_COOLDOWN_ENABLED then
 			PlayerResource:SetCustomBuybackCooldown(killed_unit:GetPlayerID(), CUSTOM_BUYBACK_COOLDOWN_TIME)
 		end
@@ -511,8 +511,8 @@ function barebones:OnEntityKilled(keys)
 		GameRules:SetCustomVictoryMessageDuration(POST_GAME_TIME)
 	end
 
-	-- Remove dead non-hero units from selection -> bugged ability/cast bar
-	if killed_unit:IsIllusion() or (killed_unit:IsControllableByAnyPlayer() and (not killed_unit:IsRealHero()) and (not killed_unit:IsCourier()) and (not killed_unit:IsClone())) and (not killed_unit:IsTempestDouble()) then
+	-- Remove dead non-hero units from selection -> fixing bugged ability/cast bar
+	if killed_unit:IsIllusion() or (killed_unit:IsControllableByAnyPlayer() and not killed_unit:IsRealHero() and not killed_unit:IsCourier() and not killed_unit:IsClone() and not killed_unit:IsTempestDouble()) then
 		local player = killed_unit:GetPlayerOwner()
 		local playerID
 		if player == nil then
@@ -541,43 +541,6 @@ function barebones:OnConnectFull(keys)
 
 	-- PlayerResource:OnPlayerConnect(event) is custom-made; can be found in 'player_resource.lua' library
 	PlayerResource:OnPlayerConnect(keys)
-end
-
--- This function is called whenever illusions are created and tells you which was/is the original entity
-function barebones:OnIllusionsCreated(keys)
-	DebugPrint("[BAREBONES] OnIllusionsCreated")
-	--PrintTable(keys)
-
-	local original_entity = EntIndexToHScript(keys.original_entindex)
-end
-
--- This function is called whenever an item is combined to create a new item
-function barebones:OnItemCombined(keys)
-	DebugPrint("[BAREBONES] OnItemCombined")
-	--PrintTable(keys)
-
-	-- The playerID of the hero that combined an item
-	local playerID = keys.PlayerID
-	if not playerID then
-		return 
-	end
-
-	-- The name of the item that was combined
-	local item_name = keys.itemname
-
-	-- The cost of the item combined
-	local item_cost = keys.itemcost
-end
-
--- This function is called whenever an ability begins its PhaseStart phase (but before it is actually cast)
-function barebones:OnAbilityCastBegins(keys)
-	DebugPrint("[BAREBONES] OnAbilityCastBegins")
-	--PrintTable(keys)
-
-	local playerID = keys.PlayerID
-	local ability_name = keys.abilityname
-
-	-- If you need to adjust abilities on their cast, use Order Filter, not this
 end
 
 -- This function is called whenever a tower is destroyed

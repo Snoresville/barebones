@@ -39,30 +39,28 @@ function CDOTA_PlayerResource:AssignHero(playerID, hero_entity)
 end
 
 -- Fetches a player's hero
-function CDOTA_PlayerResource:GetAssignedHero(playerID)
-	if self:IsRealPlayer(playerID) then
-		local player = self:GetPlayer(playerID)
-		if player then 
-			local hero = player:GetAssignedHero()
-			if hero then
-				return hero
-			else
-				return self.PlayerData[playerID].hero
-			end
-		else
-			return self.PlayerData[playerID].hero
-		end
-	elseif self:IsFakeClient(playerID) then
-		-- For bots
-		local player = self:GetPlayer(playerID)
-		return player:GetAssignedHero()
-	else
-		local player = self:GetPlayer(playerID)
-		if player then
-			return player:GetAssignedHero()
-		end
-	end
-	return nil
+function CDOTA_PlayerResource:GetBarebonesAssignedHero(playerID)
+  local player = self:GetPlayer(playerID)
+  if self:IsRealPlayer(playerID) then
+    if player then 
+      local hero = player:GetAssignedHero()
+      if hero then
+        return hero
+      else
+        return self.PlayerData[playerID].hero
+      end
+    else
+      return self.PlayerData[playerID].hero
+    end
+  elseif self:IsFakeClient(playerID) then
+    -- For bots
+    return player:GetAssignedHero()
+  else
+    if player then
+      return player:GetAssignedHero()
+    end
+  end
+  return nil
 end
 
 -- Fetches a player's hero name
@@ -198,11 +196,21 @@ end
 
 -- Stops a specific player from redistributing their gold to its allies
 function CDOTA_PlayerResource:StopAbandonGoldRedistribution(playerID)
-	self.PlayerData[playerID].distribute_gold_to_allies = false
-	self:ModifyGold(playerID, -self:GetGold(playerID), false, DOTA_ModifyGold_AbandonedRedistribute)
-	print("player "..playerID.." is no longer redistributing gold to its allies.")
+  self.PlayerData[playerID].distribute_gold_to_allies = false
+  self:ModifyGold(playerID, -self:GetGold(playerID), false, DOTA_ModifyGold_AbandonedRedistribute)
+  print("player "..playerID.." is no longer redistributing gold to its allies.")
 end
 
 function CDOTA_PlayerResource:GetRealSteamID(PlayerID)
-	return tostring(PlayerResource:GetSteamID(PlayerID))
+  return tostring(self:GetSteamID(PlayerID))
+end
+
+function CDOTA_PlayerResource:GetTotalEarnedXPForTeam(teamID)
+  local total_xp = 0
+  for playerID = 0, DOTA_MAX_TEAM_PLAYERS-1 do
+    if (self:IsValidPlayerID(playerID)) and self:GetTeam(playerID) == teamID then
+      total_xp = total_xp + self:GetTotalEarnedXP(playerID)
+    end
+  end
+  return total_xp
 end

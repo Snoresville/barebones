@@ -8,8 +8,9 @@ LOCK_TEAMS = false 						-- Should we Lock (true) or unlock (false) team assigne
 
 CUSTOM_GAME_SETUP_TIME = 25.0			-- How long should custom game setup last - the screen where players pick a team?
 HERO_SELECTION_TIME = 60.0				-- How long should we let people select their hero? Should be at least 5 seconds.
-HERO_SELECTION_PENALTY_TIME = 19.0      -- How long should the penalty time for not picking a hero last? During this time player loses gold.
-BANNING_PHASE_TIME = 30.0               -- How long should the banning phase last? This will work only if "EnablePickRules" is "1" in 'addoninfo.txt'
+HERO_SELECTION_PENALTY_TIME = 10.0      -- How long should the penalty time for not picking a hero last? During this time player loses gold.
+ENABLE_BANNING_PHASE = false            -- Should we enable banning phase? Set to true if "EnablePickRules" is "1" in 'addoninfo.txt'
+BANNING_PHASE_TIME = 20.0               -- How long should the banning phase last? This will work only if "EnablePickRules" is "1" in 'addoninfo.txt'
 STRATEGY_TIME = 20.0					-- How long should strategy time last? Bug: You can buy items during strategy time and it will not be spent!
 SHOWCASE_TIME = 12.0					-- How long should show case time be?
 PRE_GAME_TIME = 80.0					-- How long after showcase time should the horn blow and the game start?
@@ -20,7 +21,6 @@ GOLD_PER_TICK = 2						-- How much gold should players get per tick?
 GOLD_TICK_TIME = 1.0					-- How long should we wait in seconds between gold ticks?
 
 NORMAL_START_GOLD = 600					-- Starting Gold if picked normally
-RANDOM_START_GOLD = 800					-- Starting Gold if randomed
 
 RECOMMENDED_BUILDS_DISABLED = false		-- Should we disable the recommended item builds for heroes
 CAMERA_DISTANCE_OVERRIDE = 1134.0		-- How far out should we allow the camera to go? 1134 is the default in Dota.
@@ -36,6 +36,7 @@ CUSTOM_BUYBACK_COOLDOWN_TIME = 480.0	-- Custom buyback cooldown time (needed if 
 BUYBACK_FIXED_GOLD_COST = 500			-- Fixed custom buyback gold cost (needed if CUSTOM_BUYBACK_COST_ENABLED is true).
 
 CUSTOM_SCAN_COOLDOWN = 210				-- Custom cooldown of Scan in seconds. Doesn't affect Scan's starting cooldown!
+CUSTOM_GLYPH_COOLDOWN = 300             -- Custom cooldown of Glyph in seconds.
 
 DISABLE_FOG_OF_WAR_ENTIRELY = false		-- Should we disable fog of war entirely for both teams?
 USE_UNSEEN_FOG_OF_WAR = false			-- Should we make unseen and fogged areas of the map completely black until uncovered by each team? 
@@ -80,7 +81,7 @@ DISABLE_STASH_PURCHASING = false        -- Should we prevent players from being 
 DISABLE_ANNOUNCER = false               -- Should we disable the announcer from working in the game?
 FORCE_PICKED_HERO = nil                 -- What hero should we force all players to spawn as? (e.g. "npc_dota_hero_axe").  Use nil to allow players to pick their own hero.
 -- This will not work if "EnablePickRules" is "1" in 'addoninfo.txt'!
-TELEPORT_SCROLL_ON_START = true         -- Should the heroes have a teleport scroll in their inventory right at the start of the game?
+--TELEPORT_SCROLL_ON_START = true         -- Should the heroes have a teleport scroll in their inventory right at the start of the game?
 ADD_ITEM_TO_HERO_ON_SPAWN = false		-- Add an example item to the picked hero when he spawns?
 SKILL_POINTS_AT_EVERY_LEVEL = false		-- Should we allow heroes to gain skill points even at levels 17, 19, 21, 22, 23 and 24?
 -- NOTE: If SKILL_POINTS_AT_EVERY_LEVEL is true, there will be strange interactions with heroes like Invoker and Meepo.
@@ -134,7 +135,8 @@ DISABLE_DAY_NIGHT_CYCLE = false               -- Should we disable the day night
 DISABLE_KILLING_SPREE_ANNOUNCER = false       -- Shuold we disable the killing spree announcer?
 DISABLE_STICKY_ITEM = false                   -- Should we disable the sticky item button in the quick buy area?
 ENABLE_PAUSING = true                         -- Should we allow players to pause the game?
-DISABLE_ITEM_STEALING_FROM_COURIER = false    -- Should we allow players to take items they don't own from the courier?
+DEFAULT_DOTA_COURIER = true                   -- Enable courier for each player with default dota properties
+--DISABLE_ITEM_STEALING_FROM_COURIER = false    -- Should we allow players to take items they don't own from the courier? ()
 
 USE_DEFAULT_RUNE_SYSTEM = true			-- Should we use the default dota rune spawn timings and the same runes as dota have?
 BOUNTY_RUNE_SPAWN_INTERVAL = 300		-- How long in seconds should we wait between bounty rune spawns? BUGGED! WORKS FOR POWERUPS TOO!

@@ -103,6 +103,7 @@ function barebones:DamageFilter(keys)
 	-- DAMAGE_TYPE_ALL = 7
 	-- DAMAGE_TYPE_HP_REMOVAL = 8
 
+	-- Find the ability/item that dealt the dmg, if normal attack or no ability/item it will be nil
 	local damaging_ability
 	if inflictor then
 		damaging_ability = EntIndexToHScript(inflictor)
@@ -284,6 +285,7 @@ function barebones:GoldFilter(keys)
 	local gold = keys.gold
 	local playerID = keys.player_id_const
 	local reason = keys.reason_const
+	local reliable = keys.reliable
 
 	-- Reasons:
 	-- DOTA_ModifyGold_Unspecified = 0
@@ -327,7 +329,8 @@ function barebones:InventoryFilter(keys)
 	-- Inventory slots: DOTA_ITEM_SLOT_1 - DOTA_ITEM_SLOT_9
 	-- Backpack slots: DOTA_ITEM_SLOT_7 - DOTA_ITEM_SLOT_9
 	-- Stash slots: DOTA_STASH_SLOT_1 - DOTA_STASH_SLOT_6
-	-- Teleport scroll slot: 15 (no enum)
+	-- Teleport scroll slot: 15? (no enum)
+	-- Neutral item slot: 16? (no enum)
 
 	local unit_with_inventory
 	local unit_name
@@ -352,11 +355,13 @@ function barebones:InventoryFilter(keys)
 		owner_name = owner_of_this_item:GetUnitName()
 	end
 
+	--[[ crashes?
 	if not TELEPORT_SCROLL_ON_START then
 		if item:GetAbilityName() == "item_tpscroll" and item:GetPurchaser() == nil then
 			return false
 		end
 	end
+	]]
 
 	return true
 end

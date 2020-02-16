@@ -6,7 +6,7 @@ BMDdota made most libraries. His email: bmddota@gmail.com
 
 If you have some questions for me, contact me on ModDota discord.
 
-### Version 2.0.6.
+### Version 2.0.7.
 
 ## Introduction
 Barebones is meant to be a jumping off point for creating a mod with all the basic stuff taken care of for you.
@@ -86,5 +86,6 @@ This version of Barebones now only prints out (spams) debugging information when
 ## TO DO:
 - Add attributes library.
 - Add max movement speed configuration.
+- Simplify barebones more.
 
-If you have any questions or concerns, contact me on ModDota discord.
+If you have any questions or concerns, contact me on ModDota discord or via mail (darko1290@gmail.com).

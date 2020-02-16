@@ -9,10 +9,9 @@ else
 end
 
 require('util')
-require('custom_illusions')
-require('libraries/timers')				-- Core lua library
-require('libraries/player_resource')	-- Core lua library
-require('gamemode')						-- Core barebones file
+require('libraries/timers')                      -- Core lua library
+require('libraries/player_resource')             -- Core lua library
+require('gamemode')                              -- Core barebones file
 
 function Precache(context)
 --[[

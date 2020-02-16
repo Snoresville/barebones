@@ -1,7 +1,7 @@
 "AddonInfo"
 {
 	"TeamCount" 	      	"2"
-	"maps"      			"template_map your_map_name"
+	"maps"      			"template_map dota"
 	"IsPlayable"  			"1"
 	"PenaltiesEnabled"  	"0"         // For enabling/disabling the leaver penalty
 	"CheckAFKPlayers" 		"1"			// For automatically kicking afk players from the lobby
@@ -12,7 +12,7 @@
 	{
 	  "MaxPlayers"          "10"
 	}
-	"your_map_name"
+	"dota"
 	{
 	  "MaxPlayers"          "10"
 	}

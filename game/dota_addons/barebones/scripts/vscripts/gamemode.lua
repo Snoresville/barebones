@@ -1,18 +1,12 @@
 -- This is the primary barebones gamemode script and should be used to assist in initializing your game mode
-BAREBONES_VERSION = "2.0.6"
+BAREBONES_VERSION = "2.0.7"
 
--- Physics library can be used for advanced physics/motion/collision of units.  See PhysicsReadme.txt for more information.
-require('libraries/physics')
--- Projectiles library can be used for advanced 3D projectile systems.
-require('libraries/projectiles')
+
 -- Notifications library can be used for sending panorama notifications to the UIs of players/teams/everyone
 require('libraries/notifications')
--- Animations library can be used for starting customized animations on units from lua
-require('libraries/animations')
 -- Attachments library can be used for performing "Frankenstein" attachments on units
-require('libraries/attachments')
--- PlayerTables library can be used to synchronize client-server data via player/client-specific net tables
-require('libraries/playertables')
+--require('libraries/attachments')
+
 -- Selection library (by Noya) provides player selection inspection and management from server lua
 require('libraries/selection')
 
@@ -48,82 +42,31 @@ function barebones:PostLoadPrecache()
 end
 
 --[[
-  This function is called once and only once as soon as the first player (almost certain to be the server in local lobbies) loads in.
-  It can be used to initialize state that isn't initializeable in InitGameMode() but needs to be done before everyone loads in.
-]]
-function barebones:OnFirstPlayerLoaded()
-	DebugPrint("[BAREBONES] First Player has loaded.")
-
-end
-
---[[
   This function is called once and only once after all players have loaded into the game, right as the hero selection time begins.
   It can be used to initialize non-hero player state or adjust the hero selection (i.e. force random etc)
 ]]
 function barebones:OnAllPlayersLoaded()
-	DebugPrint("[BAREBONES] All Players have loaded into the game.")
-
-end
-
---[[
-  This function is called once and only once for every player when they spawn into the game for the first time.  It is also called
-  if the player's hero is replaced with a new hero for any reason.  This function is useful for initializing heroes, such as adding
-  levels, changing the starting gold, removing/adding abilities, adding physics, etc.
-
-  The hero parameter is the hero entity that just spawned in
-]]
-function barebones:OnHeroInGame(hero)
-
-	-- Innate abilities (this is applied to bots and custom created heroes/illusions too)
-	self:InitializeInnateAbilities(hero)
-
-	Timers:CreateTimer(0.5, function()
-		local playerID = hero:GetPlayerID()	-- never nil (-1 by default), needs delay 1 or more frames
-
-		if PlayerResource:IsFakeClient(playerID) then
-			-- This is happening only for bots
-			DebugPrint("[BAREBONES] Bot hero "..hero:GetUnitName().." (re)spawned in the game.")
-			-- Set starting gold for bots
-			hero:SetGold(NORMAL_START_GOLD, false)
-		else
-			DebugPrint("[BAREBONES] OnHeroInGame running for a non-bot player!")
-			if not PlayerResource.PlayerData[playerID] then
-				PlayerResource.PlayerData[playerID] = {}
-				DebugPrint("[BAREBONES] PlayerResource's PlayerData for playerID "..playerID.." was not properly initialized.")
-			end
-			-- Set some hero stuff on first spawn or on every spawn (custom or not)
-			if PlayerResource.PlayerData[playerID].already_set_hero == true then
-				-- This is happening only when players create new heroes with custom hero-create spells:
-				-- Custom Illusion spells
-			else
-				-- This is happening for players when their primary hero spawns for the first time
-				DebugPrint("[BAREBONES] Hero "..hero:GetUnitName().." spawned in the game for the first time for the player with ID "..playerID)
-
-				-- Make heroes briefly visible on spawn (to prevent bad fog interactions)
-				hero:MakeVisibleToTeam(DOTA_TEAM_GOODGUYS, 0.5)
-				hero:MakeVisibleToTeam(DOTA_TEAM_BADGUYS, 0.5)
-
-				-- Set the starting gold for the player's hero
-				if PlayerResource:HasRandomed(playerID) then
-					PlayerResource:ModifyGold(playerID, RANDOM_START_GOLD-600, false, 0)
-				else
-					-- If the NORMAL_START_GOLD is smaller then 600, remove Strategy Time and use SetGold
-					PlayerResource:ModifyGold(playerID, NORMAL_START_GOLD-600, false, 0)
-				end
-
-				-- Create an item and add it to the player, effectively ensuring they start with the item
-				if ADD_ITEM_TO_HERO_ON_SPAWN then
-					local item = CreateItem("item_example_item", hero, hero)
-					hero:AddItem(item)
-				end
-
-				-- Make sure that stuff above will not happen again for the player if some other hero spawns
-				-- for him for the first time during the game 
-				PlayerResource.PlayerData[playerID].already_set_hero = true
-				DebugPrint("[BAREBONES] Hero "..hero:GetUnitName().." set for the player with ID "..playerID)
-			end
-		end
-	end)
+  DebugPrint("[BAREBONES] All Players have loaded into the game.")
+  
+  -- Force Random a hero for every play that didnt pick a hero when time runs out
+  local delay = HERO_SELECTION_TIME + HERO_SELECTION_PENALTY_TIME + STRATEGY_TIME - 0.1
+  if ENABLE_BANNING_PHASE then
+    delay = delay + BANNING_PHASE_TIME
+  end
+  Timers:CreateTimer(delay, function()
+    for playerID = 0, DOTA_MAX_TEAM_PLAYERS-1 do
+      if PlayerResource:IsValidPlayerID(playerID) then
+        -- If this player still hasn't picked a hero, random one
+        -- PlayerResource:IsConnected(index) is custom-made; can be found in 'player_resource.lua' library
+        if not PlayerResource:HasSelectedHero(playerID) and PlayerResource:IsConnected(playerID) and (not PlayerResource:IsBroadcaster(playerID)) then
+          PlayerResource:GetPlayer(playerID):MakeRandomHeroSelection() -- this will cause an error if player is disconnected
+          PlayerResource:SetHasRandomed(playerID)
+          PlayerResource:SetCanRepick(playerID, false)
+          DebugPrint("[BAREBONES] Randomed a hero for a player number "..playerID)
+        end
+      end
+    end
+  end)
 end
 
 --[[
@@ -142,9 +85,9 @@ function barebones:InitGameMode()
 	DebugPrint("[BAREBONES] Starting to load Game Rules.")
 
 	-- Setup rules
-	GameRules:SetHeroRespawnEnabled(ENABLE_HERO_RESPAWN)
-	GameRules:SetUseUniversalShopMode(UNIVERSAL_SHOP_MODE)
 	GameRules:SetSameHeroSelectionEnabled(ALLOW_SAME_HERO_SELECTION)
+	GameRules:SetUseUniversalShopMode(UNIVERSAL_SHOP_MODE)
+	GameRules:SetHeroRespawnEnabled(ENABLE_HERO_RESPAWN)
 
 	GameRules:SetHeroSelectionTime(HERO_SELECTION_TIME) --THIS IS IGNORED when "EnablePickRules" is "1" in 'addoninfo.txt' !
 	GameRules:SetHeroSelectPenaltyTime(HERO_SELECTION_PENALTY_TIME)
@@ -165,7 +108,7 @@ function barebones:InitGameMode()
 	GameRules:SetStartingGold(NORMAL_START_GOLD) -- Not sure if it works
 
 	if USE_CUSTOM_HERO_GOLD_BOUNTY then
-		GameRules:SetUseBaseGoldBountyOnHeroes(false)
+		GameRules:SetUseBaseGoldBountyOnHeroes(false) -- if true Heroes will use their default base gold bounty which is similar to creep gold bounty, rather than DOTA specific formulas
 	end
 
 	GameRules:SetHeroMinimapIconScale(MINIMAP_ICON_SIZE)
@@ -174,6 +117,12 @@ function barebones:InitGameMode()
 	GameRules:SetFirstBloodActive(ENABLE_FIRST_BLOOD)
 	GameRules:SetHideKillMessageHeaders(HIDE_KILL_BANNERS)
 	GameRules:LockCustomGameSetupTeamAssignment(LOCK_TEAMS)
+	
+	-- For testing
+	-- Disable music events
+	--GameRules:SetCustomGameAllowHeroPickMusic(false)
+	--GameRules:SetCustomGameAllowMusicAtGameStart(false)
+	--GameRules:SetCustomGameAllowBattleMusic(false)
 
 	-- This is multi-team configuration stuff
 	if USE_AUTOMATIC_PLAYERS_PER_TEAM then
@@ -209,31 +158,22 @@ function barebones:InitGameMode()
 
 	-- Event Hooks / Listeners
 	ListenToGameEvent('dota_player_gained_level', Dynamic_Wrap(barebones, 'OnPlayerLevelUp'), self)
-	ListenToGameEvent('dota_ability_channel_finished', Dynamic_Wrap(barebones, 'OnAbilityChannelFinished'), self)
 	ListenToGameEvent('dota_player_learned_ability', Dynamic_Wrap(barebones, 'OnPlayerLearnedAbility'), self)
 	ListenToGameEvent('entity_killed', Dynamic_Wrap(barebones, 'OnEntityKilled'), self)
 	ListenToGameEvent('player_connect_full', Dynamic_Wrap(barebones, 'OnConnectFull'), self)
 	ListenToGameEvent('player_disconnect', Dynamic_Wrap(barebones, 'OnDisconnect'), self)
-	ListenToGameEvent('dota_item_purchased', Dynamic_Wrap(barebones, 'OnItemPurchased'), self)
 	ListenToGameEvent('dota_item_picked_up', Dynamic_Wrap(barebones, 'OnItemPickedUp'), self)
 	ListenToGameEvent('last_hit', Dynamic_Wrap(barebones, 'OnLastHit'), self)
-	ListenToGameEvent('dota_non_player_used_ability', Dynamic_Wrap(barebones, 'OnNonPlayerUsedAbility'), self)
-	ListenToGameEvent('player_changename', Dynamic_Wrap(barebones, 'OnPlayerChangedName'), self)
 	ListenToGameEvent('dota_rune_activated_server', Dynamic_Wrap(barebones, 'OnRuneActivated'), self)
-	ListenToGameEvent('dota_player_take_tower_damage', Dynamic_Wrap(barebones, 'OnPlayerTakeTowerDamage'), self)
 	ListenToGameEvent('tree_cut', Dynamic_Wrap(barebones, 'OnTreeCut'), self)
 
 	ListenToGameEvent('dota_player_used_ability', Dynamic_Wrap(barebones, 'OnAbilityUsed'), self)
 	ListenToGameEvent('game_rules_state_change', Dynamic_Wrap(barebones, 'OnGameRulesStateChange'), self)
 	ListenToGameEvent('npc_spawned', Dynamic_Wrap(barebones, 'OnNPCSpawned'), self)
 	ListenToGameEvent('dota_player_pick_hero', Dynamic_Wrap(barebones, 'OnPlayerPickHero'), self)
-	ListenToGameEvent('dota_team_kill_credit', Dynamic_Wrap(barebones, 'OnTeamKillCredit'), self)
 	ListenToGameEvent("player_reconnected", Dynamic_Wrap(barebones, 'OnPlayerReconnect'), self)
 	ListenToGameEvent("player_chat", Dynamic_Wrap(barebones, 'OnPlayerChat'), self)
 
-	ListenToGameEvent("dota_illusions_created", Dynamic_Wrap(barebones, 'OnIllusionsCreated'), self)
-	ListenToGameEvent("dota_item_combined", Dynamic_Wrap(barebones, 'OnItemCombined'), self)
-	ListenToGameEvent("dota_player_begin_cast", Dynamic_Wrap(barebones, 'OnAbilityCastBegins'), self)
 	ListenToGameEvent("dota_tower_kill", Dynamic_Wrap(barebones, 'OnTowerKill'), self)
 	ListenToGameEvent("dota_player_selected_custom_team", Dynamic_Wrap(barebones, 'OnPlayerSelectedCustomTeam'), self)
 	ListenToGameEvent("dota_npc_goal_reached", Dynamic_Wrap(barebones, 'OnNPCGoalReached'), self)
@@ -274,7 +214,7 @@ function barebones:InitGameMode()
 	gamemode:SetModifyGoldFilter(Dynamic_Wrap(barebones, "GoldFilter"), self)
 
 	-- Setting the Inventory filter
-	gamemode:SetItemAddedToInventoryFilter(Dynamic_Wrap(barebones, "InventoryFilter"), self)
+	--gamemode:SetItemAddedToInventoryFilter(Dynamic_Wrap(barebones, "InventoryFilter"), self)
 
 	DebugPrint("[BAREBONES] Done with setting Filters.")
 
@@ -323,8 +263,11 @@ function barebones:CaptureGameMode()
 	if FORCE_PICKED_HERO ~= nil then
 		gamemode:SetCustomGameForceHero(FORCE_PICKED_HERO) -- THIS WILL NOT WORK when "EnablePickRules" is "1" in 'addoninfo.txt' !
 	else
-		gamemode:SetDraftingBanningTimeOverride(BANNING_PHASE_TIME)
 		gamemode:SetDraftingHeroPickSelectTimeOverride(HERO_SELECTION_TIME)
+		gamemode:SetDraftingBanningTimeOverride(0)
+		if ENABLE_BANNING_PHASE then
+			gamemode:SetDraftingBanningTimeOverride(BANNING_PHASE_TIME)
+		end
 	end
 	gamemode:SetFixedRespawnTime(FIXED_RESPAWN_TIME)
 	gamemode:SetFountainConstantManaRegen(FOUNTAIN_CONSTANT_MANA_REGEN)
@@ -336,7 +279,7 @@ function barebones:CaptureGameMode()
 	gamemode:SetStashPurchasingDisabled(DISABLE_STASH_PURCHASING)
 
 	if USE_DEFAULT_RUNE_SYSTEM then
-		gamemode:SetUseDefaultDOTARuneSpawnLogic(USE_DEFAULT_RUNE_SYSTEM)
+		gamemode:SetUseDefaultDOTARuneSpawnLogic(true)
 	else
 		-- Most runes are broken by Valve, if they don't fix them: use RuneSpawnFilter
 		for rune, spawn in pairs(ENABLED_RUNES) do
@@ -352,24 +295,15 @@ function barebones:CaptureGameMode()
 	gamemode:SetStickyItemDisabled(DISABLE_STICKY_ITEM)
 	gamemode:SetPauseEnabled(ENABLE_PAUSING)
 	gamemode:SetCustomScanCooldown(CUSTOM_SCAN_COOLDOWN)
-
-	self:OnFirstPlayerLoaded()
-end
-
--- Initializes heroes' innate abilities (abilities that a hero needs to have auto-leveled up at the start of the game)
-function barebones:InitializeInnateAbilities(hero)
-
-	-- List of all innate abilities
-	local innate_abilities = {
-		"detonator_conjure_image",
-		"innate_ability2"
-	}
-
-	-- Cycle through any innate abilities found, then set their level to 1
-	for i = 1, #innate_abilities do
-		local current_ability = hero:FindAbilityByName(innate_abilities[i])
-		if current_ability then
-			current_ability:SetLevel(1)
-		end
+	
+	
+	if DEFAULT_DOTA_COURIER then
+		gamemode:SetFreeCourierModeEnabled(true)
 	end
+	
+	-- For testing
+	--gamemode:DisableHudFlip(true)                                  -- Use to disable hud flip for this mod
+	--gamemode:SetDeathOverlayDisabled(true)                         -- Specify whether the full screen death overlay effect plays when the selected hero dies.
+	--gamemode:SetWeatherEffectsDisabled(true)                       -- Set if weather effects are disabled.
+	gamemode:SetCustomGlyphCooldown(CUSTOM_GLYPH_COOLDOWN)           -- custom glyph cooldown
 end
