@@ -1,11 +1,5 @@
 -- This is the primary barebones gamemode script and should be used to assist in initializing your game mode
-BAREBONES_VERSION = "2.0.7"
-
-
--- Notifications library can be used for sending panorama notifications to the UIs of players/teams/everyone
-require('libraries/notifications')
--- Attachments library can be used for performing "Frankenstein" attachments on units
---require('libraries/attachments')
+BAREBONES_VERSION = "2.0.8"
 
 -- Selection library (by Noya) provides player selection inspection and management from server lua
 require('libraries/selection')
@@ -105,7 +99,7 @@ function barebones:InitGameMode()
 
 	GameRules:SetGoldPerTick(GOLD_PER_TICK)
 	GameRules:SetGoldTickTime(GOLD_TICK_TIME)
-	GameRules:SetStartingGold(NORMAL_START_GOLD) -- Not sure if it works
+	GameRules:SetStartingGold(NORMAL_START_GOLD)
 
 	if USE_CUSTOM_HERO_GOLD_BOUNTY then
 		GameRules:SetUseBaseGoldBountyOnHeroes(false) -- if true Heroes will use their default base gold bounty which is similar to creep gold bounty, rather than DOTA specific formulas
@@ -117,12 +111,6 @@ function barebones:InitGameMode()
 	GameRules:SetFirstBloodActive(ENABLE_FIRST_BLOOD)
 	GameRules:SetHideKillMessageHeaders(HIDE_KILL_BANNERS)
 	GameRules:LockCustomGameSetupTeamAssignment(LOCK_TEAMS)
-	
-	-- For testing
-	-- Disable music events
-	--GameRules:SetCustomGameAllowHeroPickMusic(false)
-	--GameRules:SetCustomGameAllowMusicAtGameStart(false)
-	--GameRules:SetCustomGameAllowBattleMusic(false)
 
 	-- This is multi-team configuration stuff
 	if USE_AUTOMATIC_PLAYERS_PER_TEAM then
@@ -214,7 +202,7 @@ function barebones:InitGameMode()
 	gamemode:SetModifyGoldFilter(Dynamic_Wrap(barebones, "GoldFilter"), self)
 
 	-- Setting the Inventory filter
-	--gamemode:SetItemAddedToInventoryFilter(Dynamic_Wrap(barebones, "InventoryFilter"), self)
+	gamemode:SetItemAddedToInventoryFilter(Dynamic_Wrap(barebones, "InventoryFilter"), self)
 
 	DebugPrint("[BAREBONES] Done with setting Filters.")
 
@@ -295,15 +283,10 @@ function barebones:CaptureGameMode()
 	gamemode:SetStickyItemDisabled(DISABLE_STICKY_ITEM)
 	gamemode:SetPauseEnabled(ENABLE_PAUSING)
 	gamemode:SetCustomScanCooldown(CUSTOM_SCAN_COOLDOWN)
-	
-	
+	gamemode:SetCustomGlyphCooldown(CUSTOM_GLYPH_COOLDOWN)
+	gamemode:DisableHudFlip(FORCE_MINIMAP_ON_THE_LEFT)
+
 	if DEFAULT_DOTA_COURIER then
 		gamemode:SetFreeCourierModeEnabled(true)
 	end
-	
-	-- For testing
-	--gamemode:DisableHudFlip(true)                                  -- Use to disable hud flip for this mod
-	--gamemode:SetDeathOverlayDisabled(true)                         -- Specify whether the full screen death overlay effect plays when the selected hero dies.
-	--gamemode:SetWeatherEffectsDisabled(true)                       -- Set if weather effects are disabled.
-	gamemode:SetCustomGlyphCooldown(CUSTOM_GLYPH_COOLDOWN)           -- custom glyph cooldown
 end

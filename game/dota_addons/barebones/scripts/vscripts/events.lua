@@ -111,6 +111,9 @@ function barebones:OnHeroInGame(hero)
 				PlayerResource.PlayerData[playerID] = {}
 				DebugPrint("[BAREBONES] PlayerResource's PlayerData for playerID "..playerID.." was not properly initialized.")
 			end
+			if hero:IsClone() then
+				DebugPrint("[BAREBONES] Spawned hero is a clone (for example: meepo clone or monkey king ult clone)")
+			end
 			-- Set some hero stuff on first spawn or on every spawn (custom or not)
 			if PlayerResource.PlayerData[playerID].already_set_hero == true then
 				-- This is happening only when players create new heroes with custom hero-create spells:
@@ -125,7 +128,7 @@ function barebones:OnHeroInGame(hero)
 
 				-- Set the starting gold for the player's hero
 				-- If the NORMAL_START_GOLD is smaller then 600, remove Strategy Time and use SetGold
-				PlayerResource:ModifyGold(playerID, NORMAL_START_GOLD-600, false, 0)
+				--PlayerResource:ModifyGold(playerID, NORMAL_START_GOLD-600, false, 0)
 
 				-- Create an item and add it to the player, effectively ensuring they start with the item
 				if ADD_ITEM_TO_HERO_ON_SPAWN then

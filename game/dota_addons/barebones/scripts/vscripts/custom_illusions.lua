@@ -8,7 +8,8 @@
 -- Known issues (for both methods): Morphling Morph wrong attributes, power treads are always strength, 
 -- terrorblade custom illusions during metamorphosis are missing attack projectiles;
 -- custom illusions are missing talent trees (but visually only)
-function CDOTA_BaseNPC:CreateIllusion(caster, ability, duration, position, damage_dealt, damage_taken, controllable, method)
+if CDOTA_BaseNPC then
+  function CDOTA_BaseNPC:CreateIllusion(caster, ability, duration, position, damage_dealt, damage_taken, controllable, method)
 	if caster == nil or ability == nil or duration == nil then
 		print("caster, ability and duration need to be defined for CreateIllusion!")
 		return nil
@@ -351,11 +352,11 @@ function CDOTA_BaseNPC:CreateIllusion(caster, ability, duration, position, damag
 	end
 
 	return illusion
-end
+  end
 
--- Is this CDOTA_BaseNPC a custom created illusion?
--- Returns boolean
-function CDOTA_BaseNPC:IsCustomIllusion()
+  -- Is this CDOTA_BaseNPC a custom created illusion?
+  -- Returns boolean
+  function CDOTA_BaseNPC:IsCustomIllusion()
 	if self == nil then
 		return nil
 	end
@@ -364,4 +365,5 @@ function CDOTA_BaseNPC:IsCustomIllusion()
 	end
 
 	return false
+  end
 end
