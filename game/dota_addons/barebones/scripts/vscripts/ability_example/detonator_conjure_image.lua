@@ -1,4 +1,4 @@
-﻿require('custom_illusions')
+﻿require('libraries/custom_illusions')
 
 if detonator_conjure_image == nil then
 	detonator_conjure_image = class({})

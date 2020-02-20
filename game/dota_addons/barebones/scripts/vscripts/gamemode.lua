@@ -1,5 +1,5 @@
 -- This is the primary barebones gamemode script and should be used to assist in initializing your game mode
-BAREBONES_VERSION = "2.0.8"
+BAREBONES_VERSION = "2.0.9"
 
 -- Selection library (by Noya) provides player selection inspection and management from server lua
 require('libraries/selection')
@@ -97,7 +97,7 @@ function barebones:InitGameMode()
 		GameRules:SetUseCustomHeroXPValues(true)
 	end
 
-	GameRules:SetGoldPerTick(GOLD_PER_TICK)
+	--GameRules:SetGoldPerTick(GOLD_PER_TICK) -- Doesn't work
 	GameRules:SetGoldTickTime(GOLD_TICK_TIME)
 	GameRules:SetStartingGold(NORMAL_START_GOLD)
 
@@ -208,11 +208,6 @@ function barebones:InitGameMode()
 
 	-- Global Lua Modifiers
 	LinkLuaModifier("modifier_custom_invulnerable", "modifiers/modifier_custom_invulnerable", LUA_MODIFIER_MOTION_NONE)
-
-	-- Talent modifiers (this can be done in ability scripts, but it can be done here as well)
-	LinkLuaModifier("modifier_ability_name_talent_name_1", "modifiers/talents/modifier_ability_name_talent_name_1", LUA_MODIFIER_MOTION_NONE)
-	LinkLuaModifier("modifier_ability_name_talent_name_2", "modifiers/talents/modifier_ability_name_talent_name_2", LUA_MODIFIER_MOTION_NONE)
-	LinkLuaModifier("modifier_ability_name_talent_name_3", "modifiers/talents/modifier_ability_name_talent_name_3", LUA_MODIFIER_MOTION_NONE)
 
 	print("[BAREBONES] initialized.")
 	DebugPrint("[BAREBONES] Done loading the game mode!\n\n")

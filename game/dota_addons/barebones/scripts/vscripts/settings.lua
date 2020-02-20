@@ -17,7 +17,7 @@ PRE_GAME_TIME = 80.0                    -- How long after showcase time should t
 POST_GAME_TIME = 60.0                   -- How long should we let people stay around before closing the server automatically?
 TREE_REGROW_TIME = 300.0                -- How long should it take individual trees to respawn after being cut down/destroyed?
 
-GOLD_PER_TICK = 100                     -- How much gold should players get per tick? DOESN'T WORK ?!
+--GOLD_PER_TICK = 100                     -- How much gold should players get per tick? DOESN'T WORK
 GOLD_TICK_TIME = 1.0                    -- How long should we wait in seconds between gold ticks?
 
 NORMAL_START_GOLD = 600                 -- Starting Gold
@@ -56,7 +56,7 @@ TOP_BAR_VISIBLE = true                  -- Should we display the top bar score/c
 SHOW_KILLS_ON_TOPBAR = true             -- Should we display kills only on the top bar? (No denies, suicides, kills by neutrals)  Requires USE_CUSTOM_TOP_BAR_VALUES
 
 ENABLE_TOWER_BACKDOOR_PROTECTION = true -- Should we enable backdoor protection for our towers?
---REMOVE_ILLUSIONS_ON_DEATH = false       -- Should we remove all illusions if the main hero dies? BUGGED!?
+--REMOVE_ILLUSIONS_ON_DEATH = false       -- Should we remove all illusions if the main hero dies? DOESN'T WORK
 DISABLE_GOLD_SOUNDS = false             -- Should we disable the gold sound when players get gold?
 
 END_GAME_ON_KILLS = false               -- Should the game end after a certain number of kills?
@@ -69,7 +69,7 @@ MAX_LEVEL = 30                          -- What level should we let heroes get t
 -- Fill this table up with the required XP per level if you want to change it
 XP_PER_LEVEL_TABLE = {}
 XP_PER_LEVEL_TABLE[1] = 0
-for i=2, MAX_LEVEL do
+for i = 2, MAX_LEVEL do
   XP_PER_LEVEL_TABLE[i] = XP_PER_LEVEL_TABLE[i-1] + i*100
 end
 
@@ -120,7 +120,7 @@ CUSTOM_RESPAWN_TIME[24] = 95
 CUSTOM_RESPAWN_TIME[25] = 100
 
 if MAX_LEVEL > 25 then
-	for i=26, MAX_LEVEL do
+	for i = 26, MAX_LEVEL do
 		CUSTOM_RESPAWN_TIME[i] = CUSTOM_RESPAWN_TIME[i-1] + 5
 	end
 end

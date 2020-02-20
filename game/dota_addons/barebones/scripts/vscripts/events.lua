@@ -217,7 +217,7 @@ function barebones:OnPlayerLearnedAbility(keys)
 		playerID = keys.PlayerID
 	end
 
-    -- PlayerResource:GetBarebonesAssignedHero(index) is custom-made;can be found in 'player_resource.lua' library
+    -- PlayerResource:GetBarebonesAssignedHero(index) is custom-made; can be found in 'player_resource.lua' library
 	local hero = PlayerResource:GetBarebonesAssignedHero(playerID)
 
 	-- Handling talents without custom net tables, this is just an example
