@@ -10,6 +10,7 @@ function barebones:OnDisconnect(keys)
 	local networkID = keys.networkid
 	local reason = keys.reason
 	local userID = keys.userid
+	local playerID = keys.PlayerID
 end
 
 -- The overall game state has changed
@@ -152,7 +153,7 @@ function barebones:OnItemPickedUp(keys)
 
 	-- Find who picked up the item
 	local unit_entity
-	if keys.UnitEntitIndex then
+	if keys.UnitEntitIndex then -- keys.UnitEntitIndex may be always nil
 		unit_entity = EntIndexToHScript(keys.UnitEntitIndex)
 	elseif keys.HeroEntityIndex then
 		unit_entity = EntIndexToHScript(keys.HeroEntityIndex)
@@ -168,15 +169,9 @@ function barebones:OnPlayerReconnect(keys)
 	DebugPrint("[BAREBONES] A Player has reconnected.")
 	--PrintTable(keys)
 
-	--local name = keys.name
-	--local network_id = keys.networkid
-	--local user_id = keys.userid
-	--local xu_id = keys.xuid
-	--local reason = keys.reason
-
 	local new_state = GameRules:State_Get()
 	if new_state > DOTA_GAMERULES_STATE_HERO_SELECTION then
-		local playerID = keys.PlayerID
+		local playerID = keys.PlayerID or keys.player_id
 
 		if PlayerResource:HasSelectedHero(playerID) or PlayerResource:HasRandomed(playerID) then
 			-- This playerID already had a hero before disconnect
@@ -207,7 +202,11 @@ function barebones:OnPlayerLearnedAbility(keys)
 	DebugPrint("[BAREBONES] OnPlayerLearnedAbility")
 	--PrintTable(keys)
 
-	local player = EntIndexToHScript(keys.player)
+	local player
+	if keys.player then
+		player = EntIndexToHScript(keys.player)
+	end
+
 	local ability_name = keys.abilityname
 
 	local playerID
@@ -243,13 +242,13 @@ function barebones:OnPlayerLevelUp(keys)
 	DebugPrint("[BAREBONES] OnPlayerLevelUp")
 	--PrintTable(keys)
 
-	local player = EntIndexToHScript(keys.player)
 	local level = keys.level
+	local playerID = keys.player_id or keys.PlayerID -- Valve keep changing this :)
 
-	local playerID
-	local hero
-	if player then
-		playerID = player:GetPlayerID()
+	local hero 
+	if keys.hero_entindex then
+		hero = EntIndexToHScript(keys.hero_entindex)
+	else
 		hero = PlayerResource:GetBarebonesAssignedHero(playerID)
 	end
 
@@ -538,9 +537,9 @@ function barebones:OnConnectFull(keys)
 
 	self:CaptureGameMode()
 
-	local index = keys.index
+	local index = keys.index           -- player slot
 	local playerID = keys.PlayerID
-	local userID = keys.userid
+	local userID = keys.userid         -- user ID on server
 
 	-- PlayerResource:OnPlayerConnect(event) is custom-made; can be found in 'player_resource.lua' library
 	PlayerResource:OnPlayerConnect(keys)
@@ -566,14 +565,31 @@ function barebones:OnPlayerSelectedCustomTeam(keys)
 	local team = keys.team_id
 end
 
--- This function is called whenever an NPC reaches its goal position/target (npc can be a lane creep)
+-- This function is called whenever an NPC reaches its goal position/target (npc can be a lane creep, goal entity can be a path corner)
 function barebones:OnNPCGoalReached(keys)
 	DebugPrint("[BAREBONES] OnNPCGoalReached")
 	--PrintTable(keys)
 
-	local goal_entity = EntIndexToHScript(keys.goal_entindex)
-	local next_goal_entity = EntIndexToHScript(keys.next_goal_entindex)
-	local npc = EntIndexToHScript(keys.npc_entindex)
+	local goal_entity_index = keys.goal_entindex             -- Entity index of the next goal entity on the path (if any) which the npc will now be pathing towards
+	local next_goal_entity_index = keys.next_goal_entindex   -- Entity index of the path goal entity which has been reached
+	local npc_index = keys.npc_entindex                      -- Entity index of the npc which was following a path and has reached a goal entity
+
+	local npc
+	local goal_entity
+
+	if npc_index and goal_entity_index then
+		npc = EntIndexToHScript(npc_index)
+		goal_entity = EntIndexToHScript(goal_entity_index)
+	end
+
+	local next_goal_entity
+	if next_goal_entity_index then
+		next_goal_entity = EntIndexToHScript(next_goal_entity_index)
+	end
+
+	if npc and goal_entity then
+		-- Your code here
+	end
 end
 
 -- This function is called whenever any player sends a chat message to team or to All
@@ -581,7 +597,8 @@ function barebones:OnPlayerChat(keys)
 	DebugPrint("[BAREBONES] Player used the chat")
 	--PrintTable(keys)
 
-	local team_only = keys.teamonly
+	local team_only = keys.teamonly -- true if team only chat
 	local userID = keys.userid
+	local playerID = keys.playerid
 	local text = keys.text
 end

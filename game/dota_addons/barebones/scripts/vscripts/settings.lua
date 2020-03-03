@@ -18,7 +18,7 @@ POST_GAME_TIME = 60.0                   -- How long should we let people stay ar
 TREE_REGROW_TIME = 300.0                -- How long should it take individual trees to respawn after being cut down/destroyed?
 
 --GOLD_PER_TICK = 100                     -- How much gold should players get per tick? DOESN'T WORK
-GOLD_TICK_TIME = 1.0                    -- How long should we wait in seconds between gold ticks?
+--GOLD_TICK_TIME = 1.0                    -- How long should we wait in seconds between gold ticks? DOESN'T WORK
 
 NORMAL_START_GOLD = 600                 -- Starting Gold
 

@@ -97,8 +97,8 @@ function barebones:InitGameMode()
 		GameRules:SetUseCustomHeroXPValues(true)
 	end
 
-	--GameRules:SetGoldPerTick(GOLD_PER_TICK) -- Doesn't work
-	GameRules:SetGoldTickTime(GOLD_TICK_TIME)
+	--GameRules:SetGoldPerTick(GOLD_PER_TICK) -- Doesn't work 24.2.2020
+	--GameRules:SetGoldTickTime(GOLD_TICK_TIME) -- Doesn't work 24.2.2020
 	GameRules:SetStartingGold(NORMAL_START_GOLD)
 
 	if USE_CUSTOM_HERO_GOLD_BOUNTY then
@@ -264,7 +264,7 @@ function barebones:CaptureGameMode()
 	if USE_DEFAULT_RUNE_SYSTEM then
 		gamemode:SetUseDefaultDOTARuneSpawnLogic(true)
 	else
-		-- Most runes are broken by Valve, if they don't fix them: use RuneSpawnFilter
+		-- Most runes are broken by Valve, RuneSpawnFilter also doesn't work
 		for rune, spawn in pairs(ENABLED_RUNES) do
 			gamemode:SetRuneEnabled(rune, spawn)
 		end
