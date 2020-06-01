@@ -1,5 +1,5 @@
 -- This is the primary barebones gamemode script and should be used to assist in initializing your game mode
-BAREBONES_VERSION = "2.0.9"
+BAREBONES_VERSION = "2.0.10"
 
 -- Selection library (by Noya) provides player selection inspection and management from server lua
 require('libraries/selection')
@@ -42,7 +42,7 @@ end
 function barebones:OnAllPlayersLoaded()
   DebugPrint("[BAREBONES] All Players have loaded into the game.")
   
-  -- Force Random a hero for every play that didnt pick a hero when time runs out
+  -- Force Random a hero for every player that didnt pick a hero when time runs out
   local delay = HERO_SELECTION_TIME + HERO_SELECTION_PENALTY_TIME + STRATEGY_TIME - 0.1
   if ENABLE_BANNING_PHASE then
     delay = delay + BANNING_PHASE_TIME
@@ -52,8 +52,8 @@ function barebones:OnAllPlayersLoaded()
       if PlayerResource:IsValidPlayerID(playerID) then
         -- If this player still hasn't picked a hero, random one
         -- PlayerResource:IsConnected(index) is custom-made; can be found in 'player_resource.lua' library
-        if not PlayerResource:HasSelectedHero(playerID) and PlayerResource:IsConnected(playerID) and (not PlayerResource:IsBroadcaster(playerID)) then
-          PlayerResource:GetPlayer(playerID):MakeRandomHeroSelection() -- this will cause an error if player is disconnected
+        if not PlayerResource:HasSelectedHero(playerID) and PlayerResource:IsConnected(playerID) and not PlayerResource:IsBroadcaster(playerID) then
+          PlayerResource:GetPlayer(playerID):MakeRandomHeroSelection() -- this will cause an error if player is disconnected, that's why we check if player is connected
           PlayerResource:SetHasRandomed(playerID)
           PlayerResource:SetCanRepick(playerID, false)
           DebugPrint("[BAREBONES] Randomed a hero for a player number "..playerID)
@@ -189,9 +189,6 @@ function barebones:InitGameMode()
 	-- Setting the Tracking Projectile filter
 	gamemode:SetTrackingProjectileFilter(Dynamic_Wrap(barebones, "ProjectileFilter"), self)
 
-	-- Setting the rune spawn filter
-	gamemode:SetRuneSpawnFilter(Dynamic_Wrap(barebones, "RuneSpawnFilter"), self)
-
 	-- Setting the bounty rune pickup filter
 	gamemode:SetBountyRunePickupFilter(Dynamic_Wrap(barebones, "BountyRuneFilter"), self)
 
@@ -242,6 +239,7 @@ function barebones:CaptureGameMode()
 	--gamemode:SetRemoveIllusionsOnDeath(REMOVE_ILLUSIONS_ON_DEATH)
 
 	gamemode:SetAlwaysShowPlayerInventory(SHOW_ONLY_PLAYER_INVENTORY)
+	--gamemode:SetAlwaysShowPlayerNames(true) -- use this when you need to hide real hero names
 	gamemode:SetAnnouncerDisabled(DISABLE_ANNOUNCER)
 	if FORCE_PICKED_HERO ~= nil then
 		gamemode:SetCustomGameForceHero(FORCE_PICKED_HERO) -- THIS WILL NOT WORK when "EnablePickRules" is "1" in 'addoninfo.txt' !
@@ -252,7 +250,7 @@ function barebones:CaptureGameMode()
 			gamemode:SetDraftingBanningTimeOverride(BANNING_PHASE_TIME)
 		end
 	end
-	gamemode:SetFixedRespawnTime(FIXED_RESPAWN_TIME)
+	--gamemode:SetFixedRespawnTime(FIXED_RESPAWN_TIME) -- FIXED_RESPAWN_TIME should be float
 	gamemode:SetFountainConstantManaRegen(FOUNTAIN_CONSTANT_MANA_REGEN)
 	gamemode:SetFountainPercentageHealthRegen(FOUNTAIN_PERCENTAGE_HEALTH_REGEN)
 	gamemode:SetFountainPercentageManaRegen(FOUNTAIN_PERCENTAGE_MANA_REGEN)

@@ -22,7 +22,7 @@ TREE_REGROW_TIME = 300.0                -- How long should it take individual tr
 
 NORMAL_START_GOLD = 600                 -- Starting Gold
 
-RECOMMENDED_BUILDS_DISABLED = false     -- Should we disable the recommended item builds for heroes
+RECOMMENDED_BUILDS_DISABLED = false     -- Should we disable the recommended item builds for heroes? Turns the panel for showing recommended items at the shop off/on.
 CAMERA_DISTANCE_OVERRIDE = 1134.0       -- How far out should we allow the camera to go? 1134 is the default in Dota.
 
 MINIMAP_ICON_SIZE = 1                   -- What icon size should we use for our heroes?
@@ -41,7 +41,7 @@ CUSTOM_GLYPH_COOLDOWN = 300             -- Custom cooldown of Glyph in seconds. 
 DISABLE_FOG_OF_WAR_ENTIRELY = false     -- Should we disable fog of war entirely for both teams?
 USE_UNSEEN_FOG_OF_WAR = false           -- Should we make unseen and fogged areas of the map completely black until uncovered by each team? 
 -- NOTE: DISABLE_FOG_OF_WAR_ENTIRELY must be false for USE_UNSEEN_FOG_OF_WAR to work
-USE_STANDARD_DOTA_BOT_THINKING = false  -- Should we have bots act like they would in Dota? (This requires 3 lanes, normal items, etc)
+USE_STANDARD_DOTA_BOT_THINKING = false  -- Should we have bots act like they would in Dota? (This requires 3 lanes, vanilla items, vanilla heroes etc)
 
 USE_CUSTOM_HERO_GOLD_BOUNTY = false     -- Should the gold for hero kills be modified (true) or same as in default Dota (false)?
 HERO_KILL_GOLD_BASE = 110               -- Hero gold bounty base value
@@ -55,9 +55,9 @@ USE_CUSTOM_TOP_BAR_VALUES = true        -- Should we do customized top bar value
 TOP_BAR_VISIBLE = true                  -- Should we display the top bar score/count at all?
 SHOW_KILLS_ON_TOPBAR = true             -- Should we display kills only on the top bar? (No denies, suicides, kills by neutrals)  Requires USE_CUSTOM_TOP_BAR_VALUES
 
-ENABLE_TOWER_BACKDOOR_PROTECTION = true -- Should we enable backdoor protection for our towers?
+ENABLE_TOWER_BACKDOOR_PROTECTION = true -- Should we enable backdoor protection for our buildings?
 --REMOVE_ILLUSIONS_ON_DEATH = false       -- Should we remove all illusions if the main hero dies? DOESN'T WORK
-DISABLE_GOLD_SOUNDS = false             -- Should we disable the gold sound when players get gold?
+DISABLE_GOLD_SOUNDS = false             -- Should we disable the gold sound when players acquire gold?
 
 END_GAME_ON_KILLS = false               -- Should the game end after a certain number of kills?
 KILLS_TO_END_GAME_FOR_TEAM = 100        -- How many kills for a team should signify an end of game?
@@ -76,17 +76,16 @@ end
 ENABLE_FIRST_BLOOD = true               -- Should we enable first blood for the first kill in this game?
 HIDE_KILL_BANNERS = false               -- Should we hide the kill banners that show when a player is killed?
 LOSE_GOLD_ON_DEATH = true               -- Should we have players lose the normal amount of dota gold on death?
-SHOW_ONLY_PLAYER_INVENTORY = false      -- Should we only allow players to see their own inventory even when selecting other units?
+SHOW_ONLY_PLAYER_INVENTORY = false      -- Should we allow players to only see their own inventory even when selecting other units?
 DISABLE_STASH_PURCHASING = false        -- Should we prevent players from being able to buy items into their stash when not at a shop?
 DISABLE_ANNOUNCER = false               -- Should we disable the announcer from working in the game?
 FORCE_PICKED_HERO = nil                 -- What hero should we force all players to spawn as? (e.g. "npc_dota_hero_axe").  Use nil to allow players to pick their own hero.
 -- This will not work if "EnablePickRules" is "1" in 'addoninfo.txt'!
-TELEPORT_SCROLL_ON_START = true         -- Should the heroes have a teleport scroll in their inventory right at the start of the game?
+
 ADD_ITEM_TO_HERO_ON_SPAWN = false       -- Add an example item to the picked hero when he spawns?
 SKILL_POINTS_AT_EVERY_LEVEL = false     -- Should we allow heroes to gain skill points even at levels 17, 19, 21, 22, 23 and 24?
 -- NOTE: If SKILL_POINTS_AT_EVERY_LEVEL is true, there will be strange interactions with heroes like Invoker and Meepo.
 
-FIXED_RESPAWN_TIME = -1                 -- What time should we use for a fixed respawn timer?  Use -1 to keep the default dota behavior.
 -- NOTE: use FIXED_RESPAWN_TIME if you want the same respawn time on every level.
 MAX_RESPAWN_TIME = 125					-- Default Dota doesn't have a limit (it can go above 125). Fast game modes should have 20 seconds.
 USE_CUSTOM_RESPAWN_TIMES = false		-- Should we use custom respawn times (true) or dota default (false)?
@@ -136,7 +135,7 @@ DISABLE_KILLING_SPREE_ANNOUNCER = false -- Should we disable the killing spree a
 DISABLE_STICKY_ITEM = false             -- Should we disable the sticky item button in the quick buy area?
 ENABLE_PAUSING = true                   -- Should we allow players to pause the game?
 DEFAULT_DOTA_COURIER = true             -- Enable courier for each player with default dota properties
---DISABLE_ITEM_STEALING_FROM_COURIER = false    -- Should we allow players to take items they don't own from the courier?
+
 FORCE_MINIMAP_ON_THE_LEFT = false       -- Should we disable hud flip aka force the default dota hud positions? 
 -- Note: Some players have minimap on the right and gold/shop on the left.
 
@@ -171,8 +170,8 @@ TEAM_COLORS[DOTA_TEAM_CUSTOM_8] = { 140, 42, 244 }  --    Purple
 USE_AUTOMATIC_PLAYERS_PER_TEAM = true   -- Should we set the number of players to 10 / MAX_NUMBER_OF_TEAMS?
 
 CUSTOM_TEAM_PLAYER_COUNT = {}           -- If we're not automatically setting the number of players per team, use this table
-CUSTOM_TEAM_PLAYER_COUNT[DOTA_TEAM_GOODGUYS] = 5
-CUSTOM_TEAM_PLAYER_COUNT[DOTA_TEAM_BADGUYS]  = 5
+CUSTOM_TEAM_PLAYER_COUNT[DOTA_TEAM_GOODGUYS] = 5 -- you need to set this for each map if maps have a different max number of players per team
+CUSTOM_TEAM_PLAYER_COUNT[DOTA_TEAM_BADGUYS]  = 5 -- you need to set this for each map if maps have a different max number of players
 CUSTOM_TEAM_PLAYER_COUNT[DOTA_TEAM_CUSTOM_1] = 0
 CUSTOM_TEAM_PLAYER_COUNT[DOTA_TEAM_CUSTOM_2] = 0
 CUSTOM_TEAM_PLAYER_COUNT[DOTA_TEAM_CUSTOM_3] = 0
