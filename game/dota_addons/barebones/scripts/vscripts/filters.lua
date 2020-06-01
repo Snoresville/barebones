@@ -77,7 +77,6 @@ function barebones:OrderFilter(filter_table)
 		end
 	end
 	]]
-	end
 
 	return true
 end
