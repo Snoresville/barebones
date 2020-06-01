@@ -44,6 +44,8 @@ function barebones:OrderFilter(filter_table)
 	-- DOTA_UNIT_ORDER_VECTOR_TARGET_CANCELED = 34
 	-- DOTA_UNIT_ORDER_CAST_RIVER_PAINT = 35
 	-- DOTA_UNIT_ORDER_PREGAME_ADJUST_ITEM_ASSIGNMENT = 36
+	-- DOTA_UNIT_ORDER_DROP_ITEM_AT_FOUNTAIN = 37
+	-- DOTA_UNIT_ORDER_TAKE_ITEM_FROM_NEUTRAL_ITEM_STASH = 39
 
 	-- Example 1: If the order is an ability
 	if order == DOTA_UNIT_ORDER_CAST_POSITION or order == DOTA_UNIT_ORDER_CAST_TARGET or order == DOTA_UNIT_ORDER_CAST_NO_TARGET or order == DOTA_UNIT_ORDER_CAST_TOGGLE or order == DOTA_UNIT_ORDER_CAST_TOGGLE_AUTO then
@@ -59,20 +61,22 @@ function barebones:OrderFilter(filter_table)
 		local destination_y = filter_table.position_y
     end
 	
-	if DISABLE_ITEM_STEALING_FROM_COURIER then
-		if order == DOTA_UNIT_ORDER_DROP_ITEM or order == DOTA_UNIT_ORDER_GIVE_ITEM then
-			local unit_with_order = EntIndexToHScript(units["0"])
-			local ability_index = filter_table.entindex_ability
-			local ability = EntIndexToHScript(ability_index)
+	-- Example 3: Disable item sharing for a custom courier that everyone can control
+	--[[
+	if order == DOTA_UNIT_ORDER_DROP_ITEM or order == DOTA_UNIT_ORDER_GIVE_ITEM then
+		local unit_with_order = EntIndexToHScript(units["0"])
+		local ability_index = filter_table.entindex_ability
+		local ability = EntIndexToHScript(ability_index)
 
-			if unit_with_order:IsCourier() and ability and ability:IsItem() then
-				local purchaser = ability:GetPurchaser()
-				if purchaser and purchaser:GetPlayerID() ~= playerID then
-					CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(playerID), "display_custom_error", { message = "#hud_error_courier_cant_order_item" })
-					return false
-				end
+		if unit_with_order:IsCourier() and ability and ability:IsItem() then
+			local purchaser = ability:GetPurchaser()
+			if purchaser and purchaser:GetPlayerID() ~= playerID then
+				CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(playerID), "display_custom_error", { message = "#hud_error_courier_cant_order_item" })
+				return false
 			end
 		end
+	end
+	]]
 	end
 
 	return true
@@ -164,10 +168,13 @@ function barebones:ExperienceFilter(keys)
 	local reason = keys.reason_const
 
 	-- Reasons:
-	--DOTA_ModifyXP_Unspecified		0
-	--DOTA_ModifyXP_HeroKill		1
-	--DOTA_ModifyXP_CreepKill		2
-	--DOTA_ModifyXP_RoshanKill		3
+	-- DOTA_ModifyXP_Unspecified = 0
+	-- DOTA_ModifyXP_HeroKill = 1
+	-- DOTA_ModifyXP_CreepKill = 2
+	-- DOTA_ModifyXP_RoshanKill = 3
+	-- DOTA_ModifyXP_TomeOfKnowledge = 4
+	-- DOTA_ModifyXP_Outpost = 5
+	-- DOTA_ModifyXP_MAX = 6
 
 	return true
 end
@@ -195,45 +202,6 @@ function barebones:BountyRuneFilter(keys)
 	local gold_bounty = keys.gold_bounty
 	local playerID = keys.player_id_const
 	local xp_bounty = keys.xp_bounty		-- value: 0
-
-	return true
-end
-
--- Rune filter, can be used to modify what runes spawn and don't spawn, can be used to replace runes
-function barebones:RuneSpawnFilter(keys)
-	--PrintTable(keys)
-
-	local rune = keys.rune_type
-	local spawner_index = keys.spawner_entindex_const
-
-	-- Rune enums:
-	-- DOTA_RUNE_INVALID		-1
-	-- DOTA_RUNE_DOUBLEDAMAGE	0
-	-- DOTA_RUNE_HASTE			1
-	-- DOTA_RUNE_ILLUSION		2
-	-- DOTA_RUNE_INVISIBILITY	3
-	-- DOTA_RUNE_REGENERATION	4
-	-- DOTA_RUNE_BOUNTY			5
-	-- DOTA_RUNE_ARCANE			6
-
-	-- local number_of_runes = 6
-	-- keys.rune_type = RandomInt(0, number_of_runes)
-
-	-- local random_number =  RandomFloat(0, 100)
-	-- local chance_to_spawn = 100/number_of_runes
-	-- if random_number <= chance_to_spawn then
-		-- keys.rune_type = DOTA_RUNE_DOUBLEDAMAGE
-	-- elseif random_number > chance_to_spawn and random_number <= 2*chance_to_spawn then
-		-- keys.rune_type = DOTA_RUNE_HASTE
-	-- elseif random_number > 2*chance_to_spawn and random_number <= 3*chance_to_spawn then
-		-- keys.rune_type = DOTA_RUNE_ILLUSION
-	-- elseif random_number > 3*chance_to_spawn and random_number <= 4*chance_to_spawn then
-		-- keys.rune_type = DOTA_RUNE_INVISIBILITY
-	-- elseif random_number > 4*chance_to_spawn and random_number <= 5*chance_to_spawn then
-		-- keys.rune_type = DOTA_RUNE_REGENERATION
-	-- else
-		-- keys.rune_type = DOTA_RUNE_ARCANE
-	-- end
 
 	return true
 end
@@ -302,9 +270,13 @@ function barebones:GoldFilter(keys)
 	-- DOTA_ModifyGold_Building = 11
 	-- DOTA_ModifyGold_HeroKill = 12
 	-- DOTA_ModifyGold_CreepKill = 13
-	-- DOTA_ModifyGold_RoshanKill = 14
-	-- DOTA_ModifyGold_CourierKill = 15
-	-- DOTA_ModifyGold_SharedGold = 16
+	-- DOTA_ModifyGold_NeutralKill = 14
+	-- DOTA_ModifyGold_RoshanKill = 15
+	-- DOTA_ModifyGold_CourierKill = 16
+	-- DOTA_ModifyGold_BountyRune = 17
+	-- DOTA_ModifyGold_SharedGold = 18
+	-- DOTA_ModifyGold_AbilityGold = 19
+	-- DOTA_ModifyGold_WardKill = 20
 
 	-- Disable all hero kill gold
 	if DISABLE_ALL_GOLD_FROM_HERO_KILLS then
@@ -329,8 +301,16 @@ function barebones:InventoryFilter(keys)
 	-- Inventory slots: DOTA_ITEM_SLOT_1 - DOTA_ITEM_SLOT_9
 	-- Backpack slots: DOTA_ITEM_SLOT_7 - DOTA_ITEM_SLOT_9
 	-- Stash slots: DOTA_STASH_SLOT_1 - DOTA_STASH_SLOT_6
-	-- Teleport scroll slot: 15? (no enum)
-	-- Neutral item slot: 16? (no enum)
+	-- Teleport scroll slot: DOTA_ITEM_TP_SCROLL = 15
+	-- Neutral item slot: DOTA_ITEM_NEUTRAL_SLOT = 16
+	-- Other constants:
+	-- DOTA_ITEM_INVENTORY_SIZE = 9 (DOTA_ITEM_SLOT_1 = 0; DOTA_ITEM_SLOT_9 = 8)
+	-- DOTA_ITEM_STASH_MIN = 9 (same as DOTA_STASH_SLOT_1)
+	-- DOTA_ITEM_STASH_MAX = 15
+	-- DOTA_ITEM_TRANSIENT_ITEM = 17
+	-- DOTA_ITEM_TRANSIENT_RECIPE = 18
+	-- DOTA_ITEM_MAX = 19
+	-- DOTA_ITEM_TRANSIENT_CAST_ITEM = 20
 
 	local unit_with_inventory
 	local unit_name
@@ -353,12 +333,6 @@ function barebones:InventoryFilter(keys)
 	local owner_name
 	if owner_of_this_item then
 		owner_name = owner_of_this_item:GetUnitName()
-	end
-
-	if not TELEPORT_SCROLL_ON_START then
-		if item:GetAbilityName() == "item_tpscroll" and item:GetPurchaser() == nil then
-			return false
-		end
 	end
 
 	return true

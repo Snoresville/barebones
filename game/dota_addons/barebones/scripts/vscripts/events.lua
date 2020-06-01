@@ -187,7 +187,7 @@ function barebones:OnPlayerReconnect(keys)
 	end
 end
 
--- An ability was used by a player
+-- An ability was used by a player; Doesn't trigger on disconnected players.
 function barebones:OnAbilityUsed(keys)
 	--PrintTable(keys)
 
@@ -480,7 +480,7 @@ function barebones:OnEntityKilled(keys)
 			PlayerResource:SetCustomBuybackCooldown(killed_unit:GetPlayerID(), CUSTOM_BUYBACK_COOLDOWN_TIME)
 		end
 
-		-- Buyback Fixed Gold Cost
+		-- Hero Buyback Gold Cost, you can replace BUYBACK_FIXED_GOLD_COST with your formula
 		if CUSTOM_BUYBACK_COST_ENABLED then
 			PlayerResource:SetCustomBuybackCost(killed_unit:GetPlayerID(), BUYBACK_FIXED_GOLD_COST)
 		end
