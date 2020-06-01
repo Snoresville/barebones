@@ -77,11 +77,12 @@ This version of Barebones now only prints out (spams) debugging information when
 ## Additional Information
 - Barebones also comes with a sample loading screen implementation in panorama which you can view and edit via the content panorama directory.
 - You can change the name of the multiteams used at the Game Setup screen by editing the game/barebones/panorama/localization/addon_english.txt file.
-- You can adjust the number of players allowed on each of your maps by editing addoninfo.txt.
+- You can adjust the number of players allowed on each of your maps by editing both addoninfo.txt. and settings.lua
 - For making custom buildings use: https://github.com/MNoya/BuildingHelper
-- DOTA 2 Scripting API both on Server and on Client side: https://dota.tools/vscripts/
+- DOTA 2 Scripting API both on Server and on Client side (maintained by ark120202): https://dota.tools/vscripts/
 - Official Dota 2 Scripting API: https://developer.valvesoftware.com/wiki/Dota_2_Workshop_Tools/Scripting/API
-- ModDota Dota 2 Scripting API (updated regularly by Sinz) http://docs.moddota.com/
+- ModDota Dota 2 Scripting API (maintained by Sinz) http://docs.moddota.com/
+- Dota 2 custom game template with TypeScript Panorama and Scripts: https://github.com/ModDota/TypeScriptAddonTemplate
 
 ## TO DO:
 - Add attributes library.
