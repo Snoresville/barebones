@@ -92,6 +92,8 @@ function barebones:InitGameMode()
 	GameRules:SetStrategyTime(STRATEGY_TIME)
 
 	GameRules:SetTreeRegrowTime(TREE_REGROW_TIME)
+	
+	GameRules:GetGameModeEntity():SetCustomGameForceHero( "npc_dota_hero_wisp" )
 
 	if USE_CUSTOM_HERO_LEVELS then
 		GameRules:SetUseCustomHeroXPValues(true)

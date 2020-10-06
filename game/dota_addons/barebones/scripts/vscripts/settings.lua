@@ -20,7 +20,7 @@ TREE_REGROW_TIME = 300.0                -- How long should it take individual tr
 --GOLD_PER_TICK = 100                     -- How much gold should players get per tick? DOESN'T WORK
 --GOLD_TICK_TIME = 1.0                    -- How long should we wait in seconds between gold ticks? DOESN'T WORK
 
-NORMAL_START_GOLD = 600                 -- Starting Gold
+NORMAL_START_GOLD = 0	                -- Starting Gold
 
 RECOMMENDED_BUILDS_DISABLED = false     -- Should we disable the recommended item builds for heroes? Turns the panel for showing recommended items at the shop off/on.
 CAMERA_DISTANCE_OVERRIDE = 1134.0       -- How far out should we allow the camera to go? 1134 is the default in Dota.
@@ -134,7 +134,7 @@ DISABLE_DAY_NIGHT_CYCLE = false         -- Should we disable the day night cycle
 DISABLE_KILLING_SPREE_ANNOUNCER = false -- Should we disable the killing spree announcer?
 DISABLE_STICKY_ITEM = false             -- Should we disable the sticky item button in the quick buy area?
 ENABLE_PAUSING = true                   -- Should we allow players to pause the game?
-DEFAULT_DOTA_COURIER = true             -- Enable courier for each player with default dota properties
+DEFAULT_DOTA_COURIER = false            -- Enable courier for each player with default dota properties
 
 FORCE_MINIMAP_ON_THE_LEFT = false       -- Should we disable hud flip aka force the default dota hud positions? 
 -- Note: Some players have minimap on the right and gold/shop on the left.
