@@ -10,6 +10,8 @@ require('settings')
 require('events')
 -- filters.lua
 require('filters')
+-- custom hero select
+require('custom_hero_select')
 
 --[[
   This function should be used to set up Async precache calls at the beginning of the gameplay.
@@ -93,8 +95,13 @@ function barebones:InitGameMode()
 
 	GameRules:SetTreeRegrowTime(TREE_REGROW_TIME)
 	
-	GameRules:GetGameModeEntity():SetCustomGameForceHero( "npc_dota_hero_wisp" )
-
+	if IsInToolsMode() then
+		--GameRules:GetGameModeEntity():SetCustomGameForceHero( "npc_dota_hero_enchantress" )
+		GameRules:GetGameModeEntity():SetCustomGameForceHero( "npc_dota_hero_wisp" )
+	else
+		GameRules:GetGameModeEntity():SetCustomGameForceHero( "npc_dota_hero_wisp" )
+	end
+	
 	if USE_CUSTOM_HERO_LEVELS then
 		GameRules:SetUseCustomHeroXPValues(true)
 	end
