@@ -72,6 +72,7 @@ function barebones:OnNPCSpawned(keys)
 	if npc:IsRealHero() and npc.bFirstSpawned == nil then
 		npc.bFirstSpawned = true
 		self:OnHeroInGame(npc)
+		
 	end
 end
 
@@ -89,6 +90,16 @@ function barebones:OnHeroInGame(hero)
 		"innate_ability1",
 		"innate_ability2"
 	}
+	
+	--[[
+	print("quest test")	
+	CustomGameEventManager:Send_ServerToAllClients("quest_new", {title = "Panorama Learning", description = "I think I'm getting the hang of this...", goal = 1, id = 2})
+	CustomGameEventManager:Send_ServerToAllClients("quest_update", {id = 2, current = 1, goal = 1})
+	Timers:CreateTimer(2, function()
+		CustomGameEventManager:Send_ServerToAllClients("quest_remove", {id = 2})
+		return nil
+	end)
+	--]]
 
 	-- Cycle through any innate abilities found, then set their level to 1
 	for i = 1, #innate_abilities do

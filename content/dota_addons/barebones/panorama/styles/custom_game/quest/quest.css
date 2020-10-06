@@ -1,0 +1,88 @@
+/* Quest Panel */
+.QuestPanel
+{
+	width: 400px;
+	height: 400px;
+	
+	horizontal-align: left;
+	vertical-align:	top;
+	
+	margin-top: 120px;
+	margin-left: 10px;
+	
+	/*background-color: blue; */
+}
+
+#QuestPanelTitle
+{
+	horizontal-align: center;
+	
+	font-size: 32px;
+	color: white;
+	text-decoration: underline;
+	text-shadow: 2px 2px 8px 3.0 #333333b0;
+}
+
+#QuestList
+{
+	margin-top: 45px;
+	flow-children: down;
+}
+
+/* Quest Styles */
+
+.Quest
+{
+	flow-children: right;
+}
+
+#LeftSide
+{
+	width: 50px;
+	height: 50px;
+	margin: 5px;
+	
+}
+
+#RightSide
+{
+	flow-children: down;
+}
+
+#BottomSide
+{
+	margin-top: 5px;
+	width: 300px;
+	border: 2px solid black;
+	background-color: rgba(125,0,0,0.65);
+}
+
+#QuestBackground
+{
+	background-color: rgb(0,185,0);
+	height: 100%;
+	width: 100%;
+}
+
+#QuestTitle
+{
+	margin-top: 4px;
+	color: white;
+	font-size: 18px;
+	
+	text-shadow: 2px 2px 8px 3.0 #333333b0;
+}
+
+#QuestDescription
+{
+	margin-left: 5px;
+	color: white;
+}
+
+#QuestProgress
+{
+	margin-right: 5px;
+	color: white;
+	horizontal-align: right;
+	
+}

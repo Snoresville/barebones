@@ -16,6 +16,10 @@
 				dotaHud.FindChild("PreGame").visible = false;
 				dotaHud.FindChildTraverse("inventory_neutral_slot_container").style.visibility = "collapse";
 				dotaHud.FindChildTraverse("inventory_tpscroll_container").style.visibility = "collapse";
+				
+				var panel = $.GetContextPanel().GetParent().GetParent().GetParent();
+				panel.FindChildTraverse('StatBranch').style.visibility = "collapse"
+				panel.FindChildTraverse('level_stats_frame').style.visibility = "collapse"	
 			}
 		}
 		(function()
@@ -74,6 +78,6 @@
 		-->
 		
 		<!-- Ingame HUD -->
-		<!-- <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/hero_selection.xml" /> -->
+		<!-- <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/quest/quest.xml"/> -->>
 	</Panel>
 </root>

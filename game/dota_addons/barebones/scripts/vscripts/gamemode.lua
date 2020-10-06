@@ -218,6 +218,7 @@ function barebones:InitGameMode()
 	
 	-- Increase/decrease maximum item limit per hero
 	Convars:SetInt('dota_max_physical_items_purchase_limit', 64)
+	
 end
 
 -- This function is called as the first player loads and sets up the game mode parameters
@@ -290,3 +291,4 @@ function barebones:CaptureGameMode()
 		gamemode:SetFreeCourierModeEnabled(true)
 	end
 end
+
