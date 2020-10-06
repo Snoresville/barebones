@@ -10,8 +10,6 @@ require('settings')
 require('events')
 -- filters.lua
 require('filters')
--- custom hero select
-require('custom_hero_select')
 
 --[[
   This function should be used to set up Async precache calls at the beginning of the gameplay.
