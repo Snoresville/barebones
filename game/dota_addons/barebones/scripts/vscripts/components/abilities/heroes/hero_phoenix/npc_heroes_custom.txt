@@ -1,0 +1,19 @@
+"DOTAHeroes"
+{
+	//=================================================================================================================
+	// HERO: Shadow Fiend
+	//=================================================================================================================
+	"npc_dota_hero_phoenix_pf"
+	{
+		"override_hero"			"npc_dota_hero_phoenix"
+		"Ability1"		"phoenix_icarus_dive_pf"
+		"Ability2"		"phoenix_fire_spirits_pf"
+		"Ability3"		"phoenix_sun_ray_pf"
+		"Ability4"		"phoenix_sun_ray_stop_pf"
+		"Ability5"		"phoenix_sun_ray_toggle_move_pf"
+		"Ability6"		"phoenix_supernova_pf"
+		"Ability7"					"phoenix_launch_fire_spirit_pf"
+		"Ability8"					"phoenix_icarus_dive_stop_pf"
+		"Ability9"					"phoenix_sun_ray_stop_pf"
+	}
+}

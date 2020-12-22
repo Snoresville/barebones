@@ -79,6 +79,8 @@ function barebones:InitGameMode()
 	DebugPrint("[BAREBONES] Starting to load Game Rules.")
 
 	-- Setup rules
+	GameRules:SetCustomGameSetupAutoLaunchDelay(1)
+
 	GameRules:SetSameHeroSelectionEnabled(ALLOW_SAME_HERO_SELECTION)
 	GameRules:SetUseUniversalShopMode(UNIVERSAL_SHOP_MODE)
 	GameRules:SetHeroRespawnEnabled(ENABLE_HERO_RESPAWN)
@@ -95,9 +97,9 @@ function barebones:InitGameMode()
 	
 	if IsInToolsMode() then
 		--GameRules:GetGameModeEntity():SetCustomGameForceHero( "npc_dota_hero_enchantress" )
-		GameRules:GetGameModeEntity():SetCustomGameForceHero( "npc_dota_hero_wisp" )
+		GameRules:GetGameModeEntity():SetCustomGameForceHero( "npc_dota_hero_phoenix" )
 	else
-		GameRules:GetGameModeEntity():SetCustomGameForceHero( "npc_dota_hero_wisp" )
+		GameRules:GetGameModeEntity():SetCustomGameForceHero( "npc_dota_hero_phoenix" )
 	end
 	
 	if USE_CUSTOM_HERO_LEVELS then

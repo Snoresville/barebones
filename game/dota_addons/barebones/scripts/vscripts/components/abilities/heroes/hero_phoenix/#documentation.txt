@@ -1,0 +1,25 @@
+-- Installation --
+The original path of these files is:
+scripts/vscripts/components/abilities/heroes/hero_phoenix/
+
+If the path to these files has to be changed, then you must also change the paths to lua files in abilities in npc_abilites_custom.txt
+
+In the original npc_abilites_custom.txt:
+#base ../vscripts/components/abilities/heroes/hero_phoenix/npc_abilities_custom.txt
+
+In the original npc_heroes_custom.txt:
+#base ../vscripts/components/abilities/heroes/hero_phoenix/npc_heroes_custom.txt
+
+Change the base file path depending on where you place the files
+
+-- Dummy Unit --
+Phoenix script uses dummy units, so put the dummy unit definition in npc_units_custom.txt
+
+-- Fire Spirit Particle --
+Because the original particle for fire spirits is fucked, I have to steal the working version from Dota IMBA
+It has already been referenced in the code for the location of said particle, which is provided in the folder.
+If you change the destination, you will need to reference the particle file again in phoenix_fire_spirits_pf.lua
+
+-- English Text --
+Copy the text from addon_english.txt to the one in the resource folder. 
+I dunno how to grab it through the #base implementation, so you'll have to make changes that way.

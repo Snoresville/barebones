@@ -54,3 +54,5 @@
 		"VisionNighttimeRange"    	"1800"                  // Range of vision at night time.
 	}
 }
+
+#base ../vscripts/components/abilities/heroes/hero_phoenix/npc_heroes_custom.txt
